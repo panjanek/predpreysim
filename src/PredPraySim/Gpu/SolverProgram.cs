@@ -14,13 +14,21 @@ namespace PredPraySim.Gpu
     {
         public int AgentsBuffer => agentsBuffer;
 
+        public int PlantsTex => plantsTex;
+
         private int moveProgram;
 
         private int configBuffer;
 
         private int agentsBuffer;
 
+        private int plantsTex = 0;
+
         private int currentAgentsCount = 0;
+
+        private int currentWidth = 0;
+
+        private int currentHeight = 0;
 
         private int maxGroupsX;
         public SolverProgram()
@@ -36,12 +44,13 @@ namespace PredPraySim.Gpu
         {
             lock (this)
             {
-                PrepareBuffers(config.agentsCount);
+                PrepareBuffers(config);
                 UploadConfig(ref config);
 
                 GL.UseProgram(moveProgram);
                 GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 0, configBuffer);
                 GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 1, agentsBuffer);
+                GL.BindImageTexture(5, plantsTex, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
                 GL.DispatchCompute(DispatchGroupsX(config.agentsCount), 1, 1);
                 GL.MemoryBarrier(MemoryBarrierFlags.ShaderStorageBarrierBit);
             }
@@ -59,18 +68,26 @@ namespace PredPraySim.Gpu
         {
             lock (this)
             {
-                PrepareBuffers(agents.Length);
+                PrepareBuffers(config);
                 GL.BindBuffer(BufferTarget.ShaderStorageBuffer, agentsBuffer);
                 GL.BufferSubData(BufferTarget.ShaderStorageBuffer, 0, agents.Length * Marshal.SizeOf<Agent>(), agents);
             }
         }
 
-        private void PrepareBuffers(int agentsCount)
+        private void PrepareBuffers(ShaderConfig config)
         {
-            if (currentAgentsCount != agentsCount)
+            if (currentAgentsCount != config.agentsCount)
             {
-                currentAgentsCount = agentsCount;
+                currentAgentsCount = config.agentsCount;
                 GpuUtil.CreateBuffer(ref agentsBuffer, currentAgentsCount, Marshal.SizeOf<Agent>());
+            }
+
+            if (currentWidth != config.width || currentHeight != config.height)
+            {
+                currentWidth = config.width;
+                currentHeight = config.height;
+                if (plantsTex != 0) GL.DeleteTexture(plantsTex);
+                plantsTex = TextureUtil.CreateFloatTexture(config.width, config.height);
             }
         }
     }

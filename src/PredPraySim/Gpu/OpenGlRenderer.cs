@@ -138,7 +138,7 @@ namespace PredPraySim.Gpu
         private void GlControl_Paint(object? sender, PaintEventArgs e)
         {
             //TODO
-            displayProgram.Draw(app.simulation, GetProjectionMatrix(), solverProgram.AgentsBuffer);
+            displayProgram.Draw(app.simulation, GetProjectionMatrix(), solverProgram.AgentsBuffer, solverProgram.PlantsTex);
 
             glControl.SwapBuffers();
             frameCounter++;
@@ -153,6 +153,7 @@ namespace PredPraySim.Gpu
             //compute
             if (!Paused)
             {
+                app.simulation.shaderConfig.t += app.simulation.shaderConfig.dt;
                 solverProgram.Run(ref app.simulation.shaderConfig);
             }
 

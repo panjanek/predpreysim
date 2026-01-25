@@ -16,7 +16,7 @@ struct Agent
 {
     vec2 position;
     float angle;
-    uint species;
+    uint type;
 };
 
 layout(std430, binding = 0) buffer ConfigBuffer {
@@ -26,6 +26,8 @@ layout(std430, binding = 0) buffer ConfigBuffer {
 layout(std430, binding = 1) buffer AgentsBuffer {
     Agent agents[];
 };
+
+layout(rgba32f, binding = 5) uniform image2D uPlantsImage;
 
 void torus(inout vec2 pos)
 {
@@ -80,11 +82,21 @@ void update_one(uint idx)
 {
     Agent agent = agents[idx];
 
+    float random01 = get_random_float_01(agent, 100037); 
 
-    //agent.position += vec2(spec.velocity*cos(agent.angle),spec.velocity*sin(agent.angle));
-    agent.position += vec2(0.1, 0.1);
+    float velocity = 0.1;
+    agent.angle += (0.5-random01) * 0.1;
+    agent.position += vec2(velocity*cos(agent.angle),velocity*sin(agent.angle));
+    //agent.position += vec2(0.1, 0.1);
+    
     torus(agent.position);
     agents[idx] = agent;
+
+    if (agent.type == 0)
+    {
+        ivec2 pixelPos = ivec2(uint(agent.position.x), uint(agent.position.y));
+        imageStore(uPlantsImage, pixelPos, vec4(1,1,1,1)); 
+    }
 }
 
 void main()

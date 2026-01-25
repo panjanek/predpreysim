@@ -1,0 +1,31 @@
+﻿#version 330 core
+
+in vec2 uv;
+
+uniform sampler2D uPlantsImage;
+
+out vec4 fragColor;
+
+float amplify(float x, int pow)
+{
+    float a = 1;
+    for(int i=0; i<pow; i++)
+        a = a * (1-x);
+
+    return 1-a;
+}
+
+void main()
+{
+
+    float plant = texture(uPlantsImage, uv).r;
+    
+    float r = amplify(0, 3);
+    float g = amplify(plant, 3);
+    float b = amplify(0, 3);
+    
+    fragColor = vec4(r, g, b ,1);
+
+    //if (pos.x<0 || pos.x >=1 || pos.y<0 || pos.y>=1)
+    //    fragColor *= 0.5;
+}

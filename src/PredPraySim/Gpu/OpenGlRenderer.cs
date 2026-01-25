@@ -16,6 +16,7 @@ using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 using Panel = System.Windows.Controls.Panel;
 using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
+using PredPraySim.Models;
 
 namespace PredPraySim.Gpu
 {
@@ -34,6 +35,8 @@ namespace PredPraySim.Gpu
         private Panel placeholder;
 
         private System.Windows.Forms.Integration.WindowsFormsHost host;
+
+        private SolverProgram solverProgram;
 
         public OpenGlRenderer(Panel placeholder, AppContext app)
         {
@@ -55,6 +58,8 @@ namespace PredPraySim.Gpu
             glControl.Dock = DockStyle.Fill;
             host.Child = glControl;
             placeholder.Children.Add(host);
+
+            solverProgram = new SolverProgram();
 
             glControl.Paint += GlControl_Paint;
             glControl.SizeChanged += GlControl_SizeChanged;
@@ -90,10 +95,12 @@ namespace PredPraySim.Gpu
             //compute
             if (!Paused)
             {
-                //TODO
+                solverProgram.Run(ref app.simulation.shaderConfig);
             }
 
             glControl.Invalidate();
         }
+
+        public void UploadAgents(Agent[] agents) => solverProgram.UploadAgents(app.simulation.shaderConfig, app.simulation.agents);
     }
 }

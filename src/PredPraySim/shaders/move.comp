@@ -1,0 +1,98 @@
+﻿#version 430 core
+
+#pragma optimize(on)
+
+layout(local_size_x = {LocalSizeX}) in;
+
+struct ShaderConfig {
+    int agentsCount;
+    int width;
+    int height;
+    float dt;
+    float t;
+};
+
+struct Agent
+{
+    vec2 position;
+    float angle;
+    uint species;
+};
+
+layout(std430, binding = 0) buffer ConfigBuffer {
+    ShaderConfig config;
+};
+
+layout(std430, binding = 1) buffer AgentsBuffer {
+    Agent agents[];
+};
+
+void torus(inout vec2 pos)
+{
+    if (pos.x > config.width)
+        pos.x -= config.width;
+    else if (pos.x < 0)
+        pos.x += config.width;
+
+    if (pos.y > config.height)
+        pos.y -= config.height;
+    else if (pos.y < 0)
+        pos.y += config.height;
+}
+
+void itorus(inout ivec2 pos)
+{
+    if (pos.x > config.width)
+        pos.x -= config.width;
+    else if (pos.x < 0)
+        pos.x += config.width;
+
+    if (pos.y > config.height)
+        pos.y -= config.height;
+    else if (pos.y < 0)
+        pos.y += config.height;
+}
+
+uint hash(uint state)
+{
+    state ^= 2747636419u;
+    state *= 2654435769u;
+    state ^= state >> 16;
+    state *= 2654435769u;
+    state ^= state >> 16;
+    state *= 2654435769u;
+    return state;
+}
+
+float scaleToRange01(uint state)
+{
+    return state / 4294967295.0;
+}
+
+float get_random_float_01(Agent agent, uint seed)
+{
+     uint random = hash(uint(agent.position.y * config.width + agent.position.x) + hash(gl_GlobalInvocationID.x + int(config.t) * seed));
+     float random01 = scaleToRange01(random);
+     return random01;
+}
+
+void update_one(uint idx)
+{
+    Agent agent = agents[idx];
+
+
+    //agent.position += vec2(spec.velocity*cos(agent.angle),spec.velocity*sin(agent.angle));
+    agent.position += vec2(0.1, 0.1);
+    torus(agent.position);
+    agents[idx] = agent;
+}
+
+void main()
+{
+    uint idx = gl_GlobalInvocationID.x;
+
+    if (idx >=0 && idx < config.agentsCount) 
+    {
+        update_one(idx);
+    }
+}

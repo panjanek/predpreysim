@@ -5,6 +5,10 @@ struct Agent
     vec2 position;
     float angle;
     uint type;
+    float energy;
+    float age;
+    int state;
+    int pad;
 };
 
 layout(std430, binding = 1) buffer AgentsBuffer {
@@ -25,5 +29,7 @@ void main()
         vColor = vec3(0.3,0.3,1);
     else if (agents[id].type == 2)
         vColor = vec3(1,0.3,0.3);
+
+    gl_PointSize = 2;
 
 }

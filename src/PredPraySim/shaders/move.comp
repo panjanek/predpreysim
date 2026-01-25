@@ -17,6 +17,10 @@ struct Agent
     vec2 position;
     float angle;
     uint type;
+    float energy;
+    float age;
+    int state;
+    int pad;
 };
 
 layout(std430, binding = 0) buffer ConfigBuffer {
@@ -27,9 +31,13 @@ layout(std430, binding = 1) buffer AgentsBuffer {
     Agent agents[];
 };
 
-layout(rgba32f, binding = 5) uniform image2D uPlantsImage;
-layout(rgba32f, binding = 6) uniform image2D uPrayImage;
-layout(rgba32f, binding = 7) uniform image2D uPredImage;
+layout(rgba32f, binding = 2) uniform image2D inPlants;
+layout(rgba32f, binding = 3) uniform image2D inPray;
+layout(rgba32f, binding = 4) uniform image2D inPred;
+
+layout(rgba32f, binding = 5) uniform image2D outPlants;
+layout(rgba32f, binding = 6) uniform image2D outPray;
+layout(rgba32f, binding = 7) uniform image2D outPred;
 
 void torus(inout vec2 pos)
 {
@@ -84,23 +92,24 @@ void update_one(uint idx)
 {
     Agent agent = agents[idx];
 
-    float random01 = get_random_float_01(agent, 100037); 
-
-    float velocity = 0.1;
-    agent.angle += (0.5-random01) * 0.1;
-    agent.position += vec2(velocity*cos(agent.angle),velocity*sin(agent.angle));
-    //agent.position += vec2(0.1, 0.1);
+    if (agent.type > 0)
+    {
+        float random01 = get_random_float_01(agent, 100037);
+        float velocity = 0.1;
+        agent.angle += (0.5-random01) * 0.1;
+        agent.position += vec2(velocity*cos(agent.angle),velocity*sin(agent.angle));
+    }
     
     torus(agent.position);
     agents[idx] = agent;
 
     ivec2 pixelPos = ivec2(uint(agent.position.x), uint(agent.position.y));
     if (agent.type == 0)
-        imageStore(uPlantsImage, pixelPos, vec4(1,1,1,1)); 
+        imageStore(outPlants, pixelPos, vec4(1,1,1,1)); 
     else if (agent.type == 1)
-        imageStore(uPrayImage, pixelPos, vec4(1,1,1,1));
+        imageStore(outPray, pixelPos, vec4(1,1,1,1));
     else if (agent.type == 2)
-        imageStore(uPredImage, pixelPos, vec4(1,1,1,1));
+        imageStore(outPred, pixelPos, vec4(1,1,1,1));
 }
 
 void main()

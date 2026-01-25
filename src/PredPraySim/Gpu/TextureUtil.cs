@@ -9,6 +9,16 @@ namespace PredPraySim.Gpu
 {
     public static class TextureUtil
     {
+        public static void CopyTexture2D(int srcTex, int dstTex, int width, int height)
+        {
+            GL.CopyImageSubData(
+                srcTex, ImageTarget.Texture2D, 0,  // src
+                0, 0, 0,
+                dstTex, ImageTarget.Texture2D, 0,  // dst
+                0, 0, 0,
+                width, height, 1);
+        }
+
         public static int CreateFloatTexture(int width, int height)
         {
             int tex = GL.GenTexture();

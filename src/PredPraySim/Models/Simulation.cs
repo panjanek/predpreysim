@@ -17,7 +17,7 @@ namespace PredPraySim.Models
 
         public float[] kernel;
 
-        public float decay = 0.99f;
+        public float decay = 0.98f;
 
         public static Dictionary<string, float[]> AvailableKernels { get; set; } = new()
         {
@@ -78,7 +78,7 @@ namespace PredPraySim.Models
             shaderConfig = new ShaderConfig();
             agents = new Agent[shaderConfig.agentsCount];
             InitRandomly();
-            kernel = MathUtil.Normalize(AvailableKernels["Default"], decay);
+            kernel = MathUtil.Normalize(AvailableKernels["Strong"], decay);
         }
 
         private void InitRandomly()

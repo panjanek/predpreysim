@@ -8,7 +8,7 @@ using OpenTK.Mathematics;
 
 namespace PredPraySim.Models
 {
-    [StructLayout(LayoutKind.Explicit, Size = 16)]
+    [StructLayout(LayoutKind.Explicit, Size = 32)]
     public struct Agent
     {
         [FieldOffset(0)]
@@ -19,5 +19,17 @@ namespace PredPraySim.Models
 
         [FieldOffset(12)]
         public int type;
+
+        [FieldOffset(16)]
+        public float energy;
+
+        [FieldOffset(20)]
+        public float age;
+
+        [FieldOffset(24)]
+        public int state;
+
+        [FieldOffset(28)]
+        public int pad;
     }
 }

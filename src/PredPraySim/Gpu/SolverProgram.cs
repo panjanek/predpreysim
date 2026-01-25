@@ -31,13 +31,19 @@ namespace PredPraySim.Gpu
 
         private int plantsTexB = 0;
 
+        private int plantsTexC = 0;
+
         private int prayTexA = 0;
 
         private int prayTexB = 0;
 
+        private int prayTexC = 0;
+
         private int predTexA = 0;
 
         private int predTexB = 0;
+
+        private int predTexC = 0;
 
         private int currentAgentsCount = 0;
 
@@ -97,14 +103,28 @@ namespace PredPraySim.Gpu
                 UploadConfig(ref config);
 
                 //move agents
+                TextureUtil.CopyTexture2D(plantsTexA, plantsTexC, config.width, config.height);
+                TextureUtil.CopyTexture2D(prayTexA, prayTexC, config.width, config.height);
+                TextureUtil.CopyTexture2D(predTexA, predTexC, config.width, config.height);
                 GL.UseProgram(moveProgram);
                 GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 0, configBuffer);
                 GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 1, agentsBuffer);
-                GL.BindImageTexture(5, plantsTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
-                GL.BindImageTexture(6, prayTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
-                GL.BindImageTexture(7, predTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
+                GL.BindImageTexture(2, plantsTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
+                GL.BindImageTexture(3, prayTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
+                GL.BindImageTexture(4, predTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
+                GL.BindImageTexture(5, plantsTexC, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
+                GL.BindImageTexture(6, prayTexC, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
+                GL.BindImageTexture(7, predTexC, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
                 GL.DispatchCompute(DispatchGroupsX(config.agentsCount), 1, 1);
                 GL.MemoryBarrier(MemoryBarrierFlags.ShaderStorageBarrierBit);
+                TextureUtil.CopyTexture2D(plantsTexC, plantsTexA, config.width, config.height);
+                TextureUtil.CopyTexture2D(prayTexC, prayTexA, config.width, config.height);
+                TextureUtil.CopyTexture2D(predTexC, predTexA, config.width, config.height);
+
+                //(plantsTexA, plantsTexB) = (plantsTexB, plantsTexA);
+                //(prayTexA, prayTexB) = (prayTexB, prayTexA);
+                //(predTexA, predTexB) = (predTexB, predTexA);
+
 
                 //blur
                 GL.Viewport(0, 0, config.width, config.height); //this is important for the blur.frag, later must be set to real viewport
@@ -171,16 +191,22 @@ namespace PredPraySim.Gpu
                 plantsTexA = TextureUtil.CreateFloatTexture(config.width, config.height);
                 if (plantsTexB != 0) GL.DeleteTexture(plantsTexB);
                 plantsTexB = TextureUtil.CreateFloatTexture(config.width, config.height);
+                if (plantsTexC != 0) GL.DeleteTexture(plantsTexC);
+                plantsTexC = TextureUtil.CreateFloatTexture(config.width, config.height);
 
                 if (prayTexA != 0) GL.DeleteTexture(prayTexA);
                 prayTexA = TextureUtil.CreateFloatTexture(config.width, config.height);
                 if (prayTexB != 0) GL.DeleteTexture(prayTexB);
                 prayTexB = TextureUtil.CreateFloatTexture(config.width, config.height);
+                if (prayTexC != 0) GL.DeleteTexture(prayTexC);
+                prayTexC = TextureUtil.CreateFloatTexture(config.width, config.height);
 
                 if (predTexA != 0) GL.DeleteTexture(predTexA);
                 predTexA = TextureUtil.CreateFloatTexture(config.width, config.height);
                 if (predTexB != 0) GL.DeleteTexture(predTexB);
                 predTexB = TextureUtil.CreateFloatTexture(config.width, config.height);
+                if (predTexC != 0) GL.DeleteTexture(predTexC);
+                predTexC = TextureUtil.CreateFloatTexture(config.width, config.height);
 
                 fboA = TextureUtil.CreateFboForTextures(plantsTexA, prayTexA, predTexA);
                 GL.ClearColor(0f, 0f, 0f, 0f);

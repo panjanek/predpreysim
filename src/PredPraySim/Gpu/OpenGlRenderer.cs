@@ -5,23 +5,25 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using OpenTK.GLControl;
-using OpenTK.Windowing.Common;
 using OpenTK.GLControl;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Common;
+using PredPraySim.Models;
+using PredPraySim.Utils;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using AppContext = PredPraySim.Models.AppContext;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 using Panel = System.Windows.Controls.Panel;
 using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
-using PredPraySim.Models;
 
 namespace PredPraySim.Gpu
 {
     public class OpenGlRenderer
     {
+        public const double ZoomingSpeed = 0.0005;
         public int FrameCounter => frameCounter;
 
         public bool Paused { get; set; }
@@ -68,9 +70,46 @@ namespace PredPraySim.Gpu
             solverProgram = new SolverProgram();
             displayProgram = new DisplayProgram();
 
+            var dragging = new DraggingHandler(glControl, (mousePos, isLeft) => isLeft, (prev, curr) =>
+            {
+                var delta = (curr - prev) / zoom;
+                delta.Y = -delta.Y;
+                center -= delta;
+
+            }, () => { });
+
+            glControl.MouseWheel += (s, e) =>
+            {
+                var pos = new Vector2(e.X, e.Y);
+                float zoomRatio = (float)(1.0 + ZoomingSpeed * e.Delta);
+
+                var projectionMatrix = GetProjectionMatrix();
+                var topLeft1 = GpuUtil.ScreenToWorld(new Vector2(0, 0), projectionMatrix, glControl.Width, glControl.Height);
+                var bottomRight1 = GpuUtil.ScreenToWorld(new Vector2(glControl.Width, glControl.Height), projectionMatrix, glControl.Width, glControl.Height);
+                var zoomCenter = GpuUtil.ScreenToWorld(pos, projectionMatrix, glControl.Width, glControl.Height);
+
+                var currentSize = bottomRight1 - topLeft1;
+                var newSize = currentSize / (float)zoomRatio;
+
+                var c = zoomCenter - topLeft1;
+                var b = c / (float)zoomRatio;
+
+                var topLeft2 = zoomCenter - b;
+                var bottomRight2 = topLeft2 + newSize;
+
+                center = (bottomRight2 + topLeft2) / 2;
+                zoom = zoom * zoomRatio;
+            };
+
             glControl.Paint += GlControl_Paint;
             glControl.SizeChanged += GlControl_SizeChanged;
             GlControl_SizeChanged(this, null);
+        }
+
+        public void ResetOrigin()
+        {
+            center = new Vector2(app.simulation.shaderConfig.width / 2, app.simulation.shaderConfig.height / 2);
+            zoom = 1f;
         }
 
         private void GlControl_SizeChanged(object? sender, EventArgs e)

@@ -21,6 +21,7 @@ namespace PredPraySim.Models
             simulation = new Simulation();
             renderer = new OpenGlRenderer(mainWindow.placeholder, this);
             renderer.UploadAgents(simulation.agents);
+            renderer.ResetOrigin();
         }
     }
 }

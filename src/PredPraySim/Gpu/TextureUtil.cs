@@ -42,7 +42,7 @@ namespace PredPraySim.Gpu
             GL.BindTexture(TextureTarget.Texture2D, 0);
         }
 
-        public static int CreateFboForTexture(int texture)
+        public static int CreateFboForTextures(int textureA, int textureB, int textureC)
         {
             int fbo = GL.GenFramebuffer();
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, fbo);
@@ -51,11 +51,32 @@ namespace PredPraySim.Gpu
                 FramebufferTarget.Framebuffer,
                 FramebufferAttachment.ColorAttachment0,
                 TextureTarget.Texture2D,
-                texture,
+                textureA,
                 0
             );
 
-            GL.DrawBuffers(1, new[] { DrawBuffersEnum.ColorAttachment0 });
+            GL.FramebufferTexture2D(
+                FramebufferTarget.Framebuffer,
+                FramebufferAttachment.ColorAttachment1,
+                TextureTarget.Texture2D,
+                textureB,
+                0
+            );
+
+            GL.FramebufferTexture2D(
+                FramebufferTarget.Framebuffer,
+                FramebufferAttachment.ColorAttachment2,
+                TextureTarget.Texture2D,
+                textureC,
+                0
+            );
+
+            GL.DrawBuffers(3, new[]
+            {
+                DrawBuffersEnum.ColorAttachment0,
+                DrawBuffersEnum.ColorAttachment1,
+                DrawBuffersEnum.ColorAttachment2
+            });
 
             var status = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
             if (status != FramebufferErrorCode.FramebufferComplete)

@@ -17,9 +17,9 @@ namespace PredPraySim.Gpu
 
         public int PlantsTex => plantsTexB;
 
-        public int PrayTex => prayTexA;
+        public int PrayTex => prayTexB;
 
-        public int PredTex => predTexA;
+        public int PredTex => predTexB;
 
         private int moveProgram;
 
@@ -51,6 +51,10 @@ namespace PredPraySim.Gpu
 
         private int blurInPlantsLocation;
 
+        private int blurInPrayLocation;
+
+        private int blurInPredLocation;
+
         private int blurTexelSizeLocation;
 
         private int blurKernelLocation;
@@ -71,6 +75,10 @@ namespace PredPraySim.Gpu
             blurProgram = ShaderUtil.CompileAndLinkRenderShader("blur.vert", "blur.frag");
             blurInPlantsLocation = GL.GetUniformLocation(blurProgram, "inPlants");
             if (blurInPlantsLocation == -1) throw new Exception("Uniform 'inPlants' not found. Shader optimized it out?");
+            blurInPrayLocation = GL.GetUniformLocation(blurProgram, "inPray");
+            if (blurInPrayLocation == -1) throw new Exception("Uniform 'inPray' not found. Shader optimized it out?");
+            blurInPredLocation = GL.GetUniformLocation(blurProgram, "inPred");
+            if (blurInPredLocation == -1) throw new Exception("Uniform 'inPred' not found. Shader optimized it out?");
             blurTexelSizeLocation = GL.GetUniformLocation(blurProgram, "uTexelSize");
             if (blurTexelSizeLocation == -1) throw new Exception("Uniform 'uTexelSize' not found. Shader optimized it out?");
             blurKernelLocation = GL.GetUniformLocation(blurProgram, "uKernel");
@@ -110,12 +118,20 @@ namespace PredPraySim.Gpu
                 GL.ActiveTexture(TextureUnit.Texture0);
                 GL.BindTexture(TextureTarget.Texture2D, plantsTexA);
                 GL.Uniform1(blurInPlantsLocation, 0);
+                GL.ActiveTexture(TextureUnit.Texture1);
+                GL.BindTexture(TextureTarget.Texture2D, prayTexA);
+                GL.Uniform1(blurInPrayLocation, 1);
+                GL.ActiveTexture(TextureUnit.Texture2);
+                GL.BindTexture(TextureTarget.Texture2D, predTexA);
+                GL.Uniform1(blurInPredLocation, 2);
                 GL.Uniform2(blurTexelSizeLocation, 1.0f / config.width, 1.0f / config.height);
                 GL.Uniform1(blurKernelLocation, 25, kernel);
                 PolygonUtil.RenderTriangles(vao);
 
                 // Swap
                 (plantsTexA, plantsTexB) = (plantsTexB, plantsTexA);
+                (prayTexA, prayTexB) = (prayTexB, prayTexA);
+                (predTexA, predTexB) = (predTexB, predTexA);
                 (fboA, fboB) = (fboB, fboA);
             }
         }
@@ -166,10 +182,10 @@ namespace PredPraySim.Gpu
                 if (predTexB != 0) GL.DeleteTexture(predTexB);
                 predTexB = TextureUtil.CreateFloatTexture(config.width, config.height);
 
-                fboA = TextureUtil.CreateFboForTexture(plantsTexA);
+                fboA = TextureUtil.CreateFboForTextures(plantsTexA, prayTexA, predTexA);
                 GL.ClearColor(0f, 0f, 0f, 0f);
                 GL.Clear(ClearBufferMask.ColorBufferBit);
-                fboB = TextureUtil.CreateFboForTexture(plantsTexB);
+                fboB = TextureUtil.CreateFboForTextures(plantsTexB, prayTexB, predTexB);
                 GL.ClearColor(0f, 0f, 0f, 0f);
                 GL.Clear(ClearBufferMask.ColorBufferBit);
             }

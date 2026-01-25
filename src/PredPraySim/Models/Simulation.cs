@@ -17,7 +17,7 @@ namespace PredPraySim.Models
 
         public float[] kernel;
 
-        public float decay = 0.98f;
+        public float decay = 0.99f;
 
         public static Dictionary<string, float[]> AvailableKernels { get; set; } = new()
         {

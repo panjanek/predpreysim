@@ -1,14 +1,18 @@
 ﻿#version 330 core
 
 uniform sampler2D inPlants;
+uniform sampler2D inPray;
+uniform sampler2D inPred;
+
 uniform vec2 uTexelSize;         // (1.0/width, 1.0/height)
 uniform float uKernel[25];
 
 layout(location = 0) out vec4 outPlants;
+layout(location = 1) out vec4 outPray;
+layout(location = 2) out vec4 outPred;
 
-void main()
+vec4 blur(sampler2D tex, vec2 uv)
 {
-    vec2 uv = gl_FragCoord.xy * uTexelSize;
     vec4 sum = vec4(0,0,0,0);
     float norm = 0;
     int k = 0;
@@ -31,7 +35,7 @@ void main()
             if (src.y > 1.0)
                 src.y -= 1.0;
 
-            vec4 current = texture(inPlants, src);
+            vec4 current = texture(tex, src);
             norm += uKernel[k];
             sum += current * uKernel[k++];
         }
@@ -43,7 +47,13 @@ void main()
     if (result.r > 1.0)
       result.r=1.0;
 
-    outPlants = result;
+    return result;
+}
 
-    //outPlants = vec4(0.1,0,0,0);
+void main()
+{
+    vec2 uv = gl_FragCoord.xy * uTexelSize;
+    outPlants = blur(inPlants, uv);
+    outPray = blur(inPray, uv);
+    outPred = blur(inPred, uv);
 }

@@ -15,6 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="shaders\points.frag" />
+    <EmbeddedResource Include="shaders\points.vert" />
     <EmbeddedResource Include="shaders\move.comp" />
   </ItemGroup>
 

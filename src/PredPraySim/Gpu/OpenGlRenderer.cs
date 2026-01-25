@@ -38,6 +38,12 @@ namespace PredPraySim.Gpu
 
         private SolverProgram solverProgram;
 
+        private DisplayProgram displayProgram;
+
+        private float zoom = 0.5f;
+
+        private Vector2 center;
+
         public OpenGlRenderer(Panel placeholder, AppContext app)
         {
             this.placeholder = placeholder;
@@ -60,6 +66,7 @@ namespace PredPraySim.Gpu
             placeholder.Children.Add(host);
 
             solverProgram = new SolverProgram();
+            displayProgram = new DisplayProgram();
 
             glControl.Paint += GlControl_Paint;
             glControl.SizeChanged += GlControl_SizeChanged;
@@ -78,9 +85,21 @@ namespace PredPraySim.Gpu
             glControl.Invalidate();
         }
 
+        private Matrix4 GetProjectionMatrix()
+        {
+            // rescale by windows display scale setting to match WPF coordinates
+            var w = (float)((glControl.Width / 1) / zoom) / 2;
+            var h = (float)((glControl.Height / 1) / zoom) / 2;
+            var translate = Matrix4.CreateTranslation(-center.X, -center.Y, 0.0f);
+            var ortho = Matrix4.CreateOrthographicOffCenter(-w, w, -h, h, -1f, 1f);
+            var matrix = translate * ortho;
+            return matrix;
+        }
+
         private void GlControl_Paint(object? sender, PaintEventArgs e)
         {
             //TODO
+            displayProgram.Draw(app.simulation, GetProjectionMatrix(), solverProgram.AgentsBuffer);
 
             glControl.SwapBuffers();
             frameCounter++;

@@ -12,6 +12,8 @@ namespace PredPraySim.Gpu
 {
     public class SolverProgram
     {
+        public int AgentsBuffer => agentsBuffer;
+
         private int moveProgram;
 
         private int configBuffer;

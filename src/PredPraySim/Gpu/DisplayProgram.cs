@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using OpenTK.Compute.OpenCL;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using PredPraySim.Models;
+using PredPreySim.Models;
 
-namespace PredPraySim.Gpu
+namespace PredPreySim.Gpu
 {
     public class DisplayProgram
     {

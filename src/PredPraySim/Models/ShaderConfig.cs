@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PredPraySim.Models
+namespace PredPreySim.Models
 {
     [StructLayout(LayoutKind.Explicit, Size = 20)]
     public struct ShaderConfig

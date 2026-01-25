@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using OpenTK.Mathematics;
-using PredPraySim.Utils;
+using PredPreySim.Utils;
 
-namespace PredPraySim.Models
+namespace PredPreySim.Models
 {
     public class Simulation
     {

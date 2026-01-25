@@ -9,10 +9,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using AppContext = PredPraySim.Models.AppContext;
+using AppContext = PredPreySim.Models.AppContext;
 using Application = System.Windows.Application;
 
-namespace PredPraySim
+namespace PredPreySim
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

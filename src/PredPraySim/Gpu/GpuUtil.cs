@@ -8,7 +8,7 @@ using OpenTK.Mathematics;
 using OpenTK.GLControl;
 using OpenTK.Graphics.OpenGL;
 
-namespace PredPraySim.Gpu
+namespace PredPreySim.Gpu
 {
     public static class GpuUtil
     {

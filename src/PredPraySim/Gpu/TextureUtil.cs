@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL;
 
-namespace PredPraySim.Gpu
+namespace PredPreySim.Gpu
 {
     public static class TextureUtil
     {

@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms.VisualStyles;
 using OpenTK.GLControl;
 using OpenTK.Graphics.OpenGL;
-using PredPraySim.Models;
+using PredPreySim.Models;
 
-namespace PredPraySim.Gpu
+namespace PredPreySim.Gpu
 {
     public class SolverProgram
     {

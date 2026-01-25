@@ -10,16 +10,16 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Common;
-using PredPraySim.Models;
-using PredPraySim.Utils;
+using PredPreySim.Models;
+using PredPreySim.Utils;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
-using AppContext = PredPraySim.Models.AppContext;
+using AppContext = PredPreySim.Models.AppContext;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 using Panel = System.Windows.Controls.Panel;
 using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 
-namespace PredPraySim.Gpu
+namespace PredPreySim.Gpu
 {
     public class OpenGlRenderer
     {

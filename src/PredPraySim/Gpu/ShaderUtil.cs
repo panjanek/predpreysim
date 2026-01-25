@@ -6,9 +6,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL;
-using PredPraySim.Utils;
+using PredPreySim.Utils;
 
-namespace PredPraySim.Gpu
+namespace PredPreySim.Gpu
 {
     public static class ShaderUtil
     {
@@ -99,7 +99,7 @@ namespace PredPraySim.Gpu
         {
             var assembly = Assembly.GetExecutingAssembly();
             var a = assembly.GetManifestResourceNames();
-            var resourceName = $"PredPraySim.shaders.{name}";
+            var resourceName = $"PredPreySim.shaders.{name}";
             using Stream stream = assembly.GetManifestResourceStream(resourceName) ?? throw new InvalidOperationException($"Resource not found: {resourceName}");
             using StreamReader reader = new StreamReader(stream);
             return reader.ReadToEnd();

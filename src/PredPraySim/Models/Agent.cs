@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Mathematics;
 
-namespace PredPraySim.Models
+namespace PredPreySim.Models
 {
     [StructLayout(LayoutKind.Explicit, Size = 32)]
     public struct Agent

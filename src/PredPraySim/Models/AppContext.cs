@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PredPraySim.Gpu;
+using PredPreySim.Gpu;
 
-namespace PredPraySim.Models
+namespace PredPreySim.Models
 {
     public class AppContext
     {

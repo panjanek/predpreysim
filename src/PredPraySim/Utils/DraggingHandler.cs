@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using OpenTK.GLControl;
 using OpenTK.Mathematics;
 
-namespace PredPraySim.Utils
+namespace PredPreySim.Utils
 {
     public class DraggingHandler
     {

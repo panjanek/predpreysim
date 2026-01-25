@@ -17,7 +17,6 @@ float amplify(float x, int pow)
 
 void main()
 {
-
     float plant = texture(uPlantsImage, uv).r;
     
     float r = amplify(0, 3);
@@ -25,7 +24,4 @@ void main()
     float b = amplify(0, 3);
     
     fragColor = vec4(r, g, b ,1);
-
-    //if (pos.x<0 || pos.x >=1 || pos.y<0 || pos.y>=1)
-    //    fragColor *= 0.5;
 }

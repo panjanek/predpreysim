@@ -10,7 +10,11 @@ void main()
     if (r > 1.0)
         discard;
 
-    float alpha = smoothstep(1.0, 0.5, r);
-    alpha = alpha;
-    outputColor = vec4(vColor*alpha, alpha);
+    vec3 color = vColor;
+    if (r > 0.8)
+        color = vec3(0,0,0);
+    else if (r > 0.6)
+        color = vec3(1,1,1);
+
+    outputColor = vec4(color, 1.0);
 }

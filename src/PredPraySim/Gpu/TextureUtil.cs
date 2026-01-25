@@ -22,7 +22,9 @@ namespace PredPraySim.Gpu
             GL.TexParameter(TextureTarget.Texture2D,
                 TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
 
+
             ClearTexture(tex);
+
             return tex;
         }
 

@@ -1,3 +1,3 @@
-# predpraysim
-Predator Pray model simulations
+# predpreysim
+Predator Prey model simulations
 work in progress...

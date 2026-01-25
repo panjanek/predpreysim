@@ -28,6 +28,8 @@ layout(std430, binding = 1) buffer AgentsBuffer {
 };
 
 layout(rgba32f, binding = 5) uniform image2D uPlantsImage;
+layout(rgba32f, binding = 6) uniform image2D uPrayImage;
+layout(rgba32f, binding = 7) uniform image2D uPredImage;
 
 void torus(inout vec2 pos)
 {
@@ -92,11 +94,13 @@ void update_one(uint idx)
     torus(agent.position);
     agents[idx] = agent;
 
+    ivec2 pixelPos = ivec2(uint(agent.position.x), uint(agent.position.y));
     if (agent.type == 0)
-    {
-        ivec2 pixelPos = ivec2(uint(agent.position.x), uint(agent.position.y));
         imageStore(uPlantsImage, pixelPos, vec4(1,1,1,1)); 
-    }
+    else if (agent.type == 1)
+        imageStore(uPrayImage, pixelPos, vec4(1,1,1,1));
+    else if (agent.type == 2)
+        imageStore(uPredImage, pixelPos, vec4(1,1,1,1));
 }
 
 void main()

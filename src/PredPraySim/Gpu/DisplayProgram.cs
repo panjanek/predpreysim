@@ -20,6 +20,10 @@ namespace PredPraySim.Gpu
 
         private int plantsImageLocation;
 
+        private int prayImageLocation;
+
+        private int predImageLocation;
+
         private int dispTexSizeLocation;
 
         private int dispProjLocation;
@@ -38,6 +42,10 @@ namespace PredPraySim.Gpu
             dispProgram = ShaderUtil.CompileAndLinkRenderShader("display.vert", "display.frag");
             plantsImageLocation = GL.GetUniformLocation(dispProgram, "uPlantsImage");
             if (plantsImageLocation == -1) throw new Exception("Uniform 'uPlantsImage' not found. Shader optimized it out?");
+            prayImageLocation = GL.GetUniformLocation(dispProgram, "uPrayImage");
+            if (prayImageLocation == -1) throw new Exception("Uniform 'uPrayImage' not found. Shader optimized it out?");
+            predImageLocation = GL.GetUniformLocation(dispProgram, "uPredImage");
+            if (predImageLocation == -1) throw new Exception("Uniform 'uPredImage' not found. Shader optimized it out?");
             dispProjLocation = GL.GetUniformLocation(dispProgram, "projection");
             if (dispProjLocation == -1) throw new Exception("Uniform 'projection' not found. Shader optimized it out?");
             dispTexSizeLocation = GL.GetUniformLocation(dispProgram, "texSize");
@@ -47,7 +55,7 @@ namespace PredPraySim.Gpu
             GL.BindVertexArray(dummyVao);
         }
 
-        public void Draw(Simulation simulation, Matrix4 projectionMatrix, int agentsBuffer, int plantTex)
+        public void Draw(Simulation simulation, Matrix4 projectionMatrix, int agentsBuffer, int plantTex, int prayTex, int predTex)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
@@ -58,6 +66,12 @@ namespace PredPraySim.Gpu
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, plantTex);
             GL.Uniform1(plantsImageLocation, 0);
+            GL.ActiveTexture(TextureUnit.Texture1);
+            GL.BindTexture(TextureTarget.Texture2D, prayTex);
+            GL.Uniform1(prayImageLocation, 1);
+            GL.ActiveTexture(TextureUnit.Texture2);
+            GL.BindTexture(TextureTarget.Texture2D, predTex);
+            GL.Uniform1(predImageLocation, 2);
             GL.Uniform2(dispTexSizeLocation, new Vector2(simulation.shaderConfig.width, simulation.shaderConfig.height));
             GL.UniformMatrix4(dispProjLocation, false, ref projectionMatrix);
             GL.DrawArrays(PrimitiveType.Triangles, 0, 6);

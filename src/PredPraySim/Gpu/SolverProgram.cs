@@ -16,6 +16,10 @@ namespace PredPraySim.Gpu
 
         public int PlantsTex => plantsTex;
 
+        public int PrayTex => prayTex;
+
+        public int PredTex => predTex;
+
         private int moveProgram;
 
         private int configBuffer;
@@ -23,6 +27,10 @@ namespace PredPraySim.Gpu
         private int agentsBuffer;
 
         private int plantsTex = 0;
+
+        private int prayTex = 0;
+
+        private int predTex = 0;
 
         private int currentAgentsCount = 0;
 
@@ -51,6 +59,8 @@ namespace PredPraySim.Gpu
                 GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 0, configBuffer);
                 GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 1, agentsBuffer);
                 GL.BindImageTexture(5, plantsTex, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
+                GL.BindImageTexture(6, prayTex, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
+                GL.BindImageTexture(7, predTex, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
                 GL.DispatchCompute(DispatchGroupsX(config.agentsCount), 1, 1);
                 GL.MemoryBarrier(MemoryBarrierFlags.ShaderStorageBarrierBit);
             }
@@ -86,8 +96,13 @@ namespace PredPraySim.Gpu
             {
                 currentWidth = config.width;
                 currentHeight = config.height;
+
                 if (plantsTex != 0) GL.DeleteTexture(plantsTex);
                 plantsTex = TextureUtil.CreateFloatTexture(config.width, config.height);
+                if (prayTex != 0) GL.DeleteTexture(prayTex);
+                prayTex = TextureUtil.CreateFloatTexture(config.width, config.height);
+                if (predTex != 0) GL.DeleteTexture(predTex);
+                predTex = TextureUtil.CreateFloatTexture(config.width, config.height);
             }
         }
     }

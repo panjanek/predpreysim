@@ -137,8 +137,7 @@ namespace PredPraySim.Gpu
 
         private void GlControl_Paint(object? sender, PaintEventArgs e)
         {
-            //TODO
-            displayProgram.Draw(app.simulation, GetProjectionMatrix(), solverProgram.AgentsBuffer, solverProgram.PlantsTex);
+            displayProgram.Draw(app.simulation, GetProjectionMatrix(), solverProgram.AgentsBuffer, solverProgram.PlantsTex, solverProgram.PrayTex, solverProgram.PredTex);
 
             glControl.SwapBuffers();
             frameCounter++;

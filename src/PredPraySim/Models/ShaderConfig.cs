@@ -13,7 +13,7 @@ namespace PredPraySim.Models
         public ShaderConfig() { }
 
         [FieldOffset(0)]
-        public int agentsCount = 1000;
+        public int agentsCount = 10000;
 
         [FieldOffset(4)]
         public int width = 1920*1;

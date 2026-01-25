@@ -1,0 +1,61 @@
+﻿#version 430 core
+
+#pragma optimize(on)
+
+layout(local_size_x = {LocalSizeX}) in;
+
+struct ShaderConfig {
+    int agentsCount;
+    int width;
+    int height;
+    float dt;
+    float t;
+};
+
+struct Agent
+{
+    vec2 position;
+    float angle;
+    uint type;
+    float energy;
+    float age;
+    int state;
+    int pad;
+};
+
+layout(std430, binding = 0) buffer ConfigBuffer {
+    ShaderConfig config;
+};
+
+layout(std430, binding = 1) buffer AgentsBuffer {
+    Agent agents[];
+};
+
+layout(rgba32f, binding = 2) uniform image2D inPlants;
+layout(rgba32f, binding = 3) uniform image2D inPray;
+layout(rgba32f, binding = 4) uniform image2D inPred;
+
+void update_one(uint idx)
+{
+    Agent agent = agents[idx];
+    ivec2 pixelPos = ivec2(uint(agent.position.x), uint(agent.position.y));
+    if (agent.type == 0)
+    {
+        vec4 prey = imageLoad(inPray, pixelPos);
+        if (prey.r == 1)
+            agent.state = 1;
+    }
+
+    agents[idx] = agent;
+}
+    
+
+void main()
+{
+    uint idx = gl_GlobalInvocationID.x;
+
+    if (idx >=0 && idx < config.agentsCount) 
+    {
+        update_one(idx);
+    }
+}

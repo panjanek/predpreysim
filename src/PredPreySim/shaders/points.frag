@@ -11,6 +11,9 @@ void main()
         discard;
 
     vec3 color = vColor;
+    if (color.r == 0 && color.g == 0 && color.b == 0)
+        discard;
+
     if (r > 0.8)
         color = vec3(0,0,0);
     else if (r > 0.6)

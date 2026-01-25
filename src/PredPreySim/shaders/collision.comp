@@ -35,6 +35,29 @@ layout(rgba32f, binding = 2) uniform image2D inPlants;
 layout(rgba32f, binding = 3) uniform image2D inPray;
 layout(rgba32f, binding = 4) uniform image2D inPred;
 
+uint hash(uint state)
+{
+    state ^= 2747636419u;
+    state *= 2654435769u;
+    state ^= state >> 16;
+    state *= 2654435769u;
+    state ^= state >> 16;
+    state *= 2654435769u;
+    return state;
+}
+
+float scaleToRange01(uint state)
+{
+    return state / 4294967295.0;
+}
+
+float get_random_float_01(Agent agent, uint seed)
+{
+     uint random = hash(uint(agent.position.y * config.width + agent.position.x) + hash(gl_GlobalInvocationID.x + int(config.t) * seed));
+     float random01 = scaleToRange01(random);
+     return random01;
+}
+
 void update_one(uint idx)
 {
     Agent agent = agents[idx];
@@ -43,7 +66,11 @@ void update_one(uint idx)
     {
         vec4 prey = imageLoad(inPray, pixelPos);
         if (prey.r == 1)
+        {
             agent.state = 1;
+            agent.age = -100;
+            agent.position = vec2(config.width * get_random_float_01(agent, 100037), config.height * get_random_float_01(agent, 20347));
+        }
     }
 
     agents[idx] = agent;

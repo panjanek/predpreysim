@@ -88,6 +88,12 @@ float get_random_float_01(Agent agent, uint seed)
 void update_one(uint idx)
 {
     Agent agent = agents[idx];
+
+    agent.age += config.dt;
+    if (agent.type == 0 && agent.state == 1 && agent.age > 0)
+        agent.state = 0;
+       
+    agents[idx] = agent;
     if (agent.state == 1)
         return;
 

@@ -41,5 +41,28 @@ namespace PredPraySim.Gpu
 
             GL.BindTexture(TextureTarget.Texture2D, 0);
         }
+
+        public static int CreateFboForTexture(int texture)
+        {
+            int fbo = GL.GenFramebuffer();
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, fbo);
+
+            GL.FramebufferTexture2D(
+                FramebufferTarget.Framebuffer,
+                FramebufferAttachment.ColorAttachment0,
+                TextureTarget.Texture2D,
+                texture,
+                0
+            );
+
+            GL.DrawBuffers(1, new[] { DrawBuffersEnum.ColorAttachment0 });
+
+            var status = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
+            if (status != FramebufferErrorCode.FramebufferComplete)
+                throw new Exception($"FBO incomplete: {status}");
+
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            return fbo;
+        }
     }
 }

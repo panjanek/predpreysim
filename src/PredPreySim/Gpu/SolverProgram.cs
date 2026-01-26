@@ -31,6 +31,8 @@ namespace PredPreySim.Gpu
 
         private int agentsBuffer;
 
+        private int networkBuffer;
+
         private int greenTexA = 0;
 
         private int greenTexB = 0;
@@ -44,6 +46,8 @@ namespace PredPreySim.Gpu
         private int redTexB = 0;
 
         private int currentAgentsCount = 0;
+
+        private int currentNetworkLen = 0;
 
         private int currentWidth = 0;
 
@@ -99,13 +103,14 @@ namespace PredPreySim.Gpu
         {
             lock (this)
             {
-                PrepareBuffers(config);
+                PrepareBuffers(config, currentNetworkLen);
                 UploadConfig(ref config);
 
                 // -------------------- move agents -----------------------
                 GL.UseProgram(moveProgram);
                 GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 0, configBuffer);
                 GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 1, agentsBuffer);
+                GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 5, networkBuffer);
                 GL.BindImageTexture(2, greenTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
                 GL.BindImageTexture(3, blueTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
                 GL.BindImageTexture(4, redTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
@@ -170,22 +175,32 @@ namespace PredPreySim.Gpu
             GL.BufferSubData(BufferTarget.ShaderStorageBuffer, 0, Marshal.SizeOf<ShaderConfig>(), ref config);
         }
 
-        public void UploadAgents(ShaderConfig config, Agent[] agents)
+        public void UploadAgents(ShaderConfig config, Agent[] agents, float[] network)
         {
             lock (this)
             {
-                PrepareBuffers(config);
+                PrepareBuffers(config, network.Length);
+
                 GL.BindBuffer(BufferTarget.ShaderStorageBuffer, agentsBuffer);
                 GL.BufferSubData(BufferTarget.ShaderStorageBuffer, 0, agents.Length * Marshal.SizeOf<Agent>(), agents);
+
+                GL.BindBuffer(BufferTarget.ShaderStorageBuffer, networkBuffer);
+                GL.BufferSubData(BufferTarget.ShaderStorageBuffer, 0, network.Length * Marshal.SizeOf<float>(), network);
             }
         }
 
-        private void PrepareBuffers(ShaderConfig config)
+        private void PrepareBuffers(ShaderConfig config, int networkLen)
         {
             if (currentAgentsCount != config.agentsCount)
             {
                 currentAgentsCount = config.agentsCount;
                 GpuUtil.CreateBuffer(ref agentsBuffer, currentAgentsCount, Marshal.SizeOf<Agent>());
+            }
+
+            if (currentNetworkLen != networkLen)
+            {
+                currentNetworkLen = networkLen;
+                GpuUtil.CreateBuffer(ref networkBuffer, currentNetworkLen, Marshal.SizeOf<float>());
             }
 
             if (currentWidth != config.width || currentHeight != config.height)

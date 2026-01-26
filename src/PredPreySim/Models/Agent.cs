@@ -30,6 +30,6 @@ namespace PredPreySim.Models
         public int state;
 
         [FieldOffset(28)]
-        public int pad;
+        public int nnOffset;
     }
 }

@@ -57,7 +57,7 @@ namespace PredPreySim.Gpu
             glControl = new GLControl(new GLControlSettings
             {
                 API = OpenTK.Windowing.Common.ContextAPI.OpenGL,
-                APIVersion = new Version(3, 3), // OpenGL 3.3
+                APIVersion = new Version(4, 3), 
                 Profile = ContextProfile.Compatability,
                 Flags = ContextFlags.Default,
                 IsEventDriven = false,
@@ -170,6 +170,6 @@ namespace PredPreySim.Gpu
             glControl.Invalidate();
         }
 
-        public void UploadAgents(Agent[] agents) => solverProgram.UploadAgents(app.simulation.shaderConfig, app.simulation.agents);
+        public void UploadAgents() => solverProgram.UploadAgents(app.simulation.shaderConfig, app.simulation.agents, app.simulation.network);
     }
 }

@@ -8,7 +8,7 @@ struct Agent
     float energy;
     float age;
     int state;
-    int pad;
+    int nnOffset;
 };
 
 layout(std430, binding = 1) buffer AgentsBuffer {

@@ -20,7 +20,7 @@ namespace PredPreySim.Models
             this.mainWindow = mainWindow;
             simulation = new Simulation();
             renderer = new OpenGlRenderer(mainWindow.placeholder, this);
-            renderer.UploadAgents(simulation.agents);
+            renderer.UploadAgents();
             renderer.ResetOrigin();
         }
     }

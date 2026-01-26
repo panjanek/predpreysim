@@ -1,8 +1,8 @@
 ﻿#version 330 core
 
-uniform sampler2D inPlants;
-uniform sampler2D inPray;
-uniform sampler2D inPred;
+uniform sampler2D inGreen;
+uniform sampler2D inBlue;
+uniform sampler2D inRed;
 
 uniform vec2 uTexelSize;         // (1.0/width, 1.0/height)
 uniform float uKernel[25];
@@ -53,7 +53,7 @@ vec4 blur(sampler2D tex, vec2 uv)
 void main()
 {
     vec2 uv = gl_FragCoord.xy * uTexelSize;
-    outPlants = blur(inPlants, uv);
-    outPray = blur(inPray, uv);
-    outPred = blur(inPred, uv);
+    outPlants = blur(inGreen, uv);
+    outPray = blur(inBlue, uv);
+    outPred = blur(inRed, uv);
 }

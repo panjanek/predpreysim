@@ -15,11 +15,11 @@ namespace PredPreySim.Gpu
     {
         public int AgentsBuffer => agentsBuffer;
 
-        public int PlantsTex => plantsTexB;
+        public int GreenTex => greenTexB;
 
-        public int PrayTex => prayTexB;
+        public int BlueTex => blueTexB;
 
-        public int PredTex => predTexB;
+        public int RedTex => redTexB;
 
         private int moveProgram;
 
@@ -31,17 +31,17 @@ namespace PredPreySim.Gpu
 
         private int agentsBuffer;
 
-        private int plantsTexA = 0;
+        private int greenTexA = 0;
 
-        private int plantsTexB = 0;
+        private int greenTexB = 0;
 
-        private int prayTexA = 0;
+        private int blueTexA = 0;
 
-        private int prayTexB = 0;
+        private int blueTexB = 0;
 
-        private int predTexA = 0;
+        private int redTexA = 0;
 
-        private int predTexB = 0;
+        private int redTexB = 0;
 
         private int currentAgentsCount = 0;
 
@@ -53,11 +53,11 @@ namespace PredPreySim.Gpu
 
         private int blurProgram;
 
-        private int blurInPlantsLocation;
+        private int blurInGreenLocation;
 
-        private int blurInPrayLocation;
+        private int blurInBlueLocation;
 
-        private int blurInPredLocation;
+        private int blurInRedLocation;
 
         private int blurTexelSizeLocation;
 
@@ -79,12 +79,12 @@ namespace PredPreySim.Gpu
             GpuUtil.CreateBuffer(ref configBuffer, 1, Marshal.SizeOf<ShaderConfig>());
 
             blurProgram = ShaderUtil.CompileAndLinkRenderShader("blur.vert", "blur.frag");
-            blurInPlantsLocation = GL.GetUniformLocation(blurProgram, "inPlants");
-            if (blurInPlantsLocation == -1) throw new Exception("Uniform 'inPlants' not found. Shader optimized it out?");
-            blurInPrayLocation = GL.GetUniformLocation(blurProgram, "inPray");
-            if (blurInPrayLocation == -1) throw new Exception("Uniform 'inPray' not found. Shader optimized it out?");
-            blurInPredLocation = GL.GetUniformLocation(blurProgram, "inPred");
-            if (blurInPredLocation == -1) throw new Exception("Uniform 'inPred' not found. Shader optimized it out?");
+            blurInGreenLocation = GL.GetUniformLocation(blurProgram, "inGreen");
+            if (blurInGreenLocation == -1) throw new Exception("Uniform 'inGreen' not found. Shader optimized it out?");
+            blurInBlueLocation = GL.GetUniformLocation(blurProgram, "inBlue");
+            if (blurInBlueLocation == -1) throw new Exception("Uniform 'inBlue' not found. Shader optimized it out?");
+            blurInRedLocation = GL.GetUniformLocation(blurProgram, "inRed");
+            if (blurInRedLocation == -1) throw new Exception("Uniform 'inRed' not found. Shader optimized it out?");
             blurTexelSizeLocation = GL.GetUniformLocation(blurProgram, "uTexelSize");
             if (blurTexelSizeLocation == -1) throw new Exception("Uniform 'uTexelSize' not found. Shader optimized it out?");
             blurKernelLocation = GL.GetUniformLocation(blurProgram, "uKernel");
@@ -106,9 +106,9 @@ namespace PredPreySim.Gpu
                 GL.UseProgram(moveProgram);
                 GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 0, configBuffer);
                 GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 1, agentsBuffer);
-                GL.BindImageTexture(2, plantsTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
-                GL.BindImageTexture(3, prayTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
-                GL.BindImageTexture(4, predTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
+                GL.BindImageTexture(2, greenTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
+                GL.BindImageTexture(3, blueTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
+                GL.BindImageTexture(4, redTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
                 GL.DispatchCompute(DispatchGroupsX(config.agentsCount), 1, 1);
                 GL.MemoryBarrier(MemoryBarrierFlags.ShaderStorageBarrierBit);
 
@@ -116,9 +116,9 @@ namespace PredPreySim.Gpu
                 GL.UseProgram(markProgram);
                 GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 0, configBuffer);
                 GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 1, agentsBuffer);
-                GL.BindImageTexture(2, plantsTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
-                GL.BindImageTexture(3, prayTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
-                GL.BindImageTexture(4, predTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
+                GL.BindImageTexture(2, greenTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
+                GL.BindImageTexture(3, blueTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
+                GL.BindImageTexture(4, redTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
                 GL.DispatchCompute(DispatchGroupsX(config.agentsCount), 1, 1);
                 GL.MemoryBarrier(MemoryBarrierFlags.ShaderStorageBarrierBit);
 
@@ -126,9 +126,9 @@ namespace PredPreySim.Gpu
                 GL.UseProgram(collisionsProgram);
                 GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 0, configBuffer);
                 GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 1, agentsBuffer);
-                GL.BindImageTexture(2, plantsTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
-                GL.BindImageTexture(3, prayTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
-                GL.BindImageTexture(4, predTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
+                GL.BindImageTexture(2, greenTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
+                GL.BindImageTexture(3, blueTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
+                GL.BindImageTexture(4, redTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
                 GL.DispatchCompute(DispatchGroupsX(config.agentsCount), 1, 1);
                 GL.MemoryBarrier(MemoryBarrierFlags.ShaderStorageBarrierBit);
 
@@ -142,22 +142,22 @@ namespace PredPreySim.Gpu
 
                 GL.UseProgram(blurProgram);
                 GL.ActiveTexture(TextureUnit.Texture0);
-                GL.BindTexture(TextureTarget.Texture2D, plantsTexA);
-                GL.Uniform1(blurInPlantsLocation, 0);
+                GL.BindTexture(TextureTarget.Texture2D, greenTexA);
+                GL.Uniform1(blurInGreenLocation, 0);
                 GL.ActiveTexture(TextureUnit.Texture1);
-                GL.BindTexture(TextureTarget.Texture2D, prayTexA);
-                GL.Uniform1(blurInPrayLocation, 1);
+                GL.BindTexture(TextureTarget.Texture2D, blueTexA);
+                GL.Uniform1(blurInBlueLocation, 1);
                 GL.ActiveTexture(TextureUnit.Texture2);
-                GL.BindTexture(TextureTarget.Texture2D, predTexA);
-                GL.Uniform1(blurInPredLocation, 2);
+                GL.BindTexture(TextureTarget.Texture2D, redTexA);
+                GL.Uniform1(blurInRedLocation, 2);
                 GL.Uniform2(blurTexelSizeLocation, 1.0f / config.width, 1.0f / config.height);
                 GL.Uniform1(blurKernelLocation, 25, kernel);
                 PolygonUtil.RenderTriangles(vao);
 
                 // Swap
-                (plantsTexA, plantsTexB) = (plantsTexB, plantsTexA);
-                (prayTexA, prayTexB) = (prayTexB, prayTexA);
-                (predTexA, predTexB) = (predTexB, predTexA);
+                (greenTexA, greenTexB) = (greenTexB, greenTexA);
+                (blueTexA, blueTexB) = (blueTexB, blueTexA);
+                (redTexA, redTexB) = (redTexB, redTexA);
                 (fboA, fboB) = (fboB, fboA);
             }
         }
@@ -193,25 +193,25 @@ namespace PredPreySim.Gpu
                 currentWidth = config.width;
                 currentHeight = config.height;
 
-                if (plantsTexA != 0) GL.DeleteTexture(plantsTexA);
-                plantsTexA = TextureUtil.CreateFloatTexture(config.width, config.height);
-                if (plantsTexB != 0) GL.DeleteTexture(plantsTexB);
-                plantsTexB = TextureUtil.CreateFloatTexture(config.width, config.height);
+                if (greenTexA != 0) GL.DeleteTexture(greenTexA);
+                greenTexA = TextureUtil.CreateFloatTexture(config.width, config.height);
+                if (greenTexB != 0) GL.DeleteTexture(greenTexB);
+                greenTexB = TextureUtil.CreateFloatTexture(config.width, config.height);
 
-                if (prayTexA != 0) GL.DeleteTexture(prayTexA);
-                prayTexA = TextureUtil.CreateFloatTexture(config.width, config.height);
-                if (prayTexB != 0) GL.DeleteTexture(prayTexB);
-                prayTexB = TextureUtil.CreateFloatTexture(config.width, config.height);
+                if (blueTexA != 0) GL.DeleteTexture(blueTexA);
+                blueTexA = TextureUtil.CreateFloatTexture(config.width, config.height);
+                if (blueTexB != 0) GL.DeleteTexture(blueTexB);
+                blueTexB = TextureUtil.CreateFloatTexture(config.width, config.height);
 
-                if (predTexA != 0) GL.DeleteTexture(predTexA);
-                predTexA = TextureUtil.CreateFloatTexture(config.width, config.height);
-                if (predTexB != 0) GL.DeleteTexture(predTexB);
-                predTexB = TextureUtil.CreateFloatTexture(config.width, config.height);
+                if (redTexA != 0) GL.DeleteTexture(redTexA);
+                redTexA = TextureUtil.CreateFloatTexture(config.width, config.height);
+                if (redTexB != 0) GL.DeleteTexture(redTexB);
+                redTexB = TextureUtil.CreateFloatTexture(config.width, config.height);
 
-                fboA = TextureUtil.CreateFboForTextures(plantsTexA, prayTexA, predTexA);
+                fboA = TextureUtil.CreateFboForTextures(greenTexA, blueTexA, redTexA);
                 GL.ClearColor(0f, 0f, 0f, 0f);
                 GL.Clear(ClearBufferMask.ColorBufferBit);
-                fboB = TextureUtil.CreateFboForTextures(plantsTexB, prayTexB, predTexB);
+                fboB = TextureUtil.CreateFboForTextures(greenTexB, blueTexB, redTexB);
                 GL.ClearColor(0f, 0f, 0f, 0f);
                 GL.Clear(ClearBufferMask.ColorBufferBit);
             }

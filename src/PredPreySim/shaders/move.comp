@@ -21,6 +21,10 @@ struct Agent
     float age;
     int state;
     int nnOffset;
+    int meals;
+    int deaths;
+    float energySpent;
+    int pad;
 };
 
 layout(std430, binding = 0) buffer ConfigBuffer {
@@ -176,10 +180,11 @@ void update_one(uint idx)
         float[] res = evaluate_network(inp, agent.nnOffset);
 
         agent.angle += 0.2 * res[0];
+        agent.angle = mod(agent.angle + M_PI, 2*M_PI) - M_PI;
         float velocity = 0.5 * (res[1] + 1);
         agent.position += vec2(velocity*cos(agent.angle),velocity*sin(agent.angle));
 
-        agent.energy -= (0.2 * velocity * velocity + 0.05);
+        agent.energy -= (0.6 * velocity * velocity + 0.05);
         if (agent.energy < 0)
             agent.state = 1;
 

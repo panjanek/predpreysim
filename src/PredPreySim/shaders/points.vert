@@ -9,6 +9,10 @@ struct Agent
     float age;
     int state;
     int nnOffset;
+    int meals;
+    int deaths;
+    float energySpent;
+    int pad;
 };
 
 layout(std430, binding = 1) buffer AgentsBuffer {

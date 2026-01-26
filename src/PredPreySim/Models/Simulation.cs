@@ -36,7 +36,7 @@ namespace PredPreySim.Models
             shaderConfig = new ShaderConfig();
             agents = new Agent[shaderConfig.agentsCount];
             nn = new Network_15_8_2();
-            InitRandomly(0.4, 0.1);
+            InitRandomly(0.6, 0.1);
             kernel = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decay);
         }
 

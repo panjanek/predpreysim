@@ -8,7 +8,7 @@ using OpenTK.Mathematics;
 
 namespace PredPreySim.Models
 {
-    [StructLayout(LayoutKind.Explicit, Size = 32)]
+    [StructLayout(LayoutKind.Explicit, Size = 48)]
     public struct Agent
     {
         [FieldOffset(0)]
@@ -31,5 +31,17 @@ namespace PredPreySim.Models
 
         [FieldOffset(28)]
         public int nnOffset;
+
+        [FieldOffset(32)]
+        public int meals;
+
+        [FieldOffset(36)]
+        public int deaths;
+
+        [FieldOffset(40)]
+        public float energySpent;
+
+        [FieldOffset(44)]
+        public int pad;
     }
 }

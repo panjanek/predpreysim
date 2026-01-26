@@ -19,11 +19,11 @@ namespace PredPreySim.Gpu
 
         private int dispProgram;
 
-        private int plantsImageLocation;
+        private int greenImageLocation;
 
-        private int prayImageLocation;
+        private int blueImageLocation;
 
-        private int predImageLocation;
+        private int redImageLocation;
 
         private int dispTexSizeLocation;
 
@@ -45,12 +45,12 @@ namespace PredPreySim.Gpu
             if (pointsProjLocation == -1) throw new Exception("Uniform 'projection' not found. Shader optimized it out?");
 
             dispProgram = ShaderUtil.CompileAndLinkRenderShader("display.vert", "display.frag");
-            plantsImageLocation = GL.GetUniformLocation(dispProgram, "uPlantsImage");
-            if (plantsImageLocation == -1) throw new Exception("Uniform 'uPlantsImage' not found. Shader optimized it out?");
-            prayImageLocation = GL.GetUniformLocation(dispProgram, "uPrayImage");
-            if (prayImageLocation == -1) throw new Exception("Uniform 'uPrayImage' not found. Shader optimized it out?");
-            predImageLocation = GL.GetUniformLocation(dispProgram, "uPredImage");
-            if (predImageLocation == -1) throw new Exception("Uniform 'uPredImage' not found. Shader optimized it out?");
+            greenImageLocation = GL.GetUniformLocation(dispProgram, "uGreenImage");
+            if (greenImageLocation == -1) throw new Exception("Uniform 'uGreenImage' not found. Shader optimized it out?");
+            blueImageLocation = GL.GetUniformLocation(dispProgram, "uBlueImage");
+            if (blueImageLocation == -1) throw new Exception("Uniform 'uBlueImage' not found. Shader optimized it out?");
+            redImageLocation = GL.GetUniformLocation(dispProgram, "uRedImage");
+            if (redImageLocation == -1) throw new Exception("Uniform 'uRedImage' not found. Shader optimized it out?");
             dispProjLocation = GL.GetUniformLocation(dispProgram, "projection");
             if (dispProjLocation == -1) throw new Exception("Uniform 'projection' not found. Shader optimized it out?");
             dispTexSizeLocation = GL.GetUniformLocation(dispProgram, "texSize");
@@ -75,13 +75,13 @@ namespace PredPreySim.Gpu
             GL.UseProgram(dispProgram);
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, plantTex);
-            GL.Uniform1(plantsImageLocation, 0);
+            GL.Uniform1(greenImageLocation, 0);
             GL.ActiveTexture(TextureUnit.Texture1);
             GL.BindTexture(TextureTarget.Texture2D, prayTex);
-            GL.Uniform1(prayImageLocation, 1);
+            GL.Uniform1(blueImageLocation, 1);
             GL.ActiveTexture(TextureUnit.Texture2);
             GL.BindTexture(TextureTarget.Texture2D, predTex);
-            GL.Uniform1(predImageLocation, 2);
+            GL.Uniform1(redImageLocation, 2);
             GL.Uniform2(dispTexSizeLocation, new Vector2(simulation.shaderConfig.width, simulation.shaderConfig.height));
             GL.UniformMatrix4(dispProjLocation, false, ref projectionMatrix);
             GL.Uniform2(dispMinLocation, worldMin);

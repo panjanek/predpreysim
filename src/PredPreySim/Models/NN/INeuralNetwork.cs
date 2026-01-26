@@ -10,6 +10,8 @@ namespace PredPreySim.Models.NN
     {
         int Size { get; }
 
-        void Init(float[] network, int offset, int seed);
+        void Init(float[] network, int offset, Random rnd);
+
+        void Mutate(float[] network, int offset, Random rnd);
     }
 }

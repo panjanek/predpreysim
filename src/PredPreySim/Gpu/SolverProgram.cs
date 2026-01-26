@@ -189,6 +189,13 @@ namespace PredPreySim.Gpu
             }
         }
 
+        public void DownloadAgents(Agent[] agents)
+        {
+            GL.BindBuffer(BufferTarget.ShaderStorageBuffer, agentsBuffer);
+            GL.GetBufferSubData(BufferTarget.ShaderStorageBuffer, IntPtr.Zero, agents.Length * Marshal.SizeOf<Agent>(), agents);
+            GL.BindBuffer(BufferTarget.ShaderStorageBuffer, 0);
+        }
+
         private void PrepareBuffers(ShaderConfig config, int networkLen)
         {
             if (currentAgentsCount != config.agentsCount)

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using OpenTK.Mathematics;
 using PredPreySim.Models.NN;
 using PredPreySim.Utils;
@@ -22,30 +23,102 @@ namespace PredPreySim.Models
 
         public float decay = 0.98f;
 
+        public float initialEnergy = 300;
+
+        public int step;
+
+        private INeuralNetwork nn;
+
+        private Random rnd = new Random(1);
+
         public Simulation()
         {
             shaderConfig = new ShaderConfig();
             agents = new Agent[shaderConfig.agentsCount];
-            InitRandomly();
+            nn = new Network_15_8_2();
+            InitRandomly(0.4, 0.1);
             kernel = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decay);
         }
 
-        private void InitRandomly()
+        private void InitRandomly(double plants, double predators)
         {
-            INeuralNetwork nn = new Network_15_8_2();
-            network = new float[nn.Size * 3];
-            nn.Init(network, 0 * nn.Size, 00);
-            nn.Init(network, 1 * nn.Size, 01);
-            nn.Init(network, 2 * nn.Size, 02);
-
-            var rnd = new Random(1);
+            int networksCount = 0;
             for(int i=0; i<agents.Length; i++)
             {
+                var r = rnd.NextDouble();
+
                 agents[i] = new Agent();
-                agents[i].type = i % 3;
+                agents[i].type = r < plants ? 0 : (r < (1 - predators) ? 1 : 2);
+                agents[i].energy = initialEnergy;
                 agents[i].angle = (float)(2 * Math.PI * rnd.NextDouble());
                 agents[i].position = new Vector2((float)(shaderConfig.width * rnd.NextDouble()), (float)(shaderConfig.height * rnd.NextDouble()));
-                agents[i].nnOffset = agents[i].type * nn.Size;
+
+                if (agents[i].type > 0)
+                    networksCount++;
+            }
+
+            network = new float[nn.Size * networksCount];
+            int offset = 0;
+            for (int i = 0; i < agents.Length; i++)
+                if (agents[i].type > 0)
+                {
+                    nn.Init(network, offset, rnd);
+                    agents[i].nnOffset = offset;
+                    offset += nn.Size;
+                }
+        }
+
+        public void ChangeEpoch()
+        {
+            
+            var blue = agents.Where(a => a.type == 1).OrderByDescending(a=>a.energy).ToList();
+            var minBlueEnergy = blue.Min(a => a.energy);
+            var maxBlueEnergy = blue.Max(a => a.energy);
+            var aliveBlue = blue.Count(a => a.state == 0);
+
+            var red = agents.Where(a => a.type == 2).OrderByDescending(a => a.energy).ToList();
+            var minRedEnergy = red.Min(a => a.energy);
+            var maxRedEnergy = red.Max(a => a.energy);
+            var aliveRed = red.Count(a => a.state == 0);
+            
+
+
+            var ranking = agents.Select((a, i) => new { index = i, agent = a, score = a.energy - a.state * 1000000 }).ToList();
+
+            var allBlueCount = agents.Count(a => a.type == 1);
+            var topBlue = ranking.Where(x => x.agent.type == 1).OrderByDescending(x => x.score).Take(allBlueCount / 10).Select(x=>x.index).ToList();
+            var downBlue = ranking.Where(x => x.agent.type == 1).OrderBy(x => x.score).Take(allBlueCount / 2).Select(x => x.index).ToList();
+            if (topBlue.Intersect(downBlue).Count() > 0)
+                throw new Exception("!");
+
+            Breed(topBlue, downBlue);
+
+            var allRedCount = agents.Count(a => a.type == 2);
+            var topRed = ranking.Where(x => x.agent.type == 2).OrderByDescending(x => x.score).Take(allRedCount / 10).Select(x => x.index).ToList();
+            var downRed = ranking.Where(x => x.agent.type == 2).OrderBy(x => x.score).Take(allRedCount / 2).Select(x => x.index).ToList();
+            if (topRed.Intersect(downRed).Count() > 0)
+                throw new Exception("!");
+
+            Breed(topRed, downRed);
+        }
+
+        private void Breed(List<int> parents, List<int> spaces)
+        {
+            int p = 0;
+            foreach(var childIdx in spaces)
+            {
+                var parentIdx = parents[p % parents.Count];
+                p++;
+
+                agents[childIdx].state = 0;
+                agents[childIdx].age = 0;
+                agents[childIdx].energy = initialEnergy;
+                agents[childIdx].position = agents[parentIdx].position + new Vector2((float)rnd.NextDouble() * 10 - 5, (float)rnd.NextDouble() * 10 - 5);
+                agents[childIdx].angle = (float)(2 * Math.PI * rnd.NextDouble());
+
+                Array.Copy(network, agents[parentIdx].nnOffset, network, agents[childIdx].nnOffset, nn.Size);
+                if (rnd.NextDouble() < 0.5)
+                    nn.Mutate(network, agents[childIdx].nnOffset, rnd);
             }
         }
     }

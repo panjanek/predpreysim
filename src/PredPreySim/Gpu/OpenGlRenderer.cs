@@ -167,9 +167,19 @@ namespace PredPreySim.Gpu
                 solverProgram.Run(ref app.simulation.shaderConfig, app.simulation.kernel);
             }
 
+            app.simulation.step++;
+            if (app.simulation.step % 3000 == 0)
+            {
+                DownloadAgents();
+                app.simulation.ChangeEpoch();
+                UploadAgents();
+            }
+
             glControl.Invalidate();
         }
 
         public void UploadAgents() => solverProgram.UploadAgents(app.simulation.shaderConfig, app.simulation.agents, app.simulation.network);
+
+        public void DownloadAgents() => solverProgram.DownloadAgents(app.simulation.agents);
     }
 }

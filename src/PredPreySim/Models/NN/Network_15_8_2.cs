@@ -10,9 +10,8 @@ namespace PredPreySim.Models.NN
     {
         public int Size => 146;
 
-        public void Init(float[] network, int offset, int seed)
+        public void Init(float[] network, int offset, Random rnd)
         {
-            var rnd = new Random(seed);
             for (int i = 0; i < 120; i++)
                 network[offset + i] = (float)(rnd.NextDouble() * 2 - 1);
             for (int i = 120; i < 128; i++)
@@ -20,6 +19,15 @@ namespace PredPreySim.Models.NN
             for (int i = 128; i < 144; i++)
                 network[offset + i] = (float)(rnd.NextDouble() * 2 - 1);
             for (int i = 144; i < 146; i++)
+                network[offset + i] = (float)(rnd.NextDouble() * 1 - 0.5);
+        }
+
+        public void Mutate(float[] network, int offset, Random rnd)
+        {
+            int i = rnd.Next(Size);
+            if ((i >= 0 && i < 120) || (i >= 128 && i < 144))
+                network[offset + i] = (float)(rnd.NextDouble() * 2 - 1);
+            else
                 network[offset + i] = (float)(rnd.NextDouble() * 1 - 0.5);
         }
     }

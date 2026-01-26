@@ -176,8 +176,12 @@ void update_one(uint idx)
         float[] res = evaluate_network(inp, agent.nnOffset);
 
         agent.angle += 0.2 * res[0];
-        float velocity = clamp(res[1], 0.0, 1.0);
+        float velocity = 0.5 * (res[1] + 1);
         agent.position += vec2(velocity*cos(agent.angle),velocity*sin(agent.angle));
+
+        agent.energy -= (0.2 * velocity * velocity + 0.05);
+        if (agent.energy < 0)
+            agent.state = 1;
 
         //float random01 = get_random_float_01(agent, 100037);
         //float velocity = 0.5;

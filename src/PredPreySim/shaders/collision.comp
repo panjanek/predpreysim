@@ -61,15 +61,41 @@ float get_random_float_01(Agent agent, uint seed)
 void update_one(uint idx)
 {
     Agent agent = agents[idx];
+
+    if (agent.state == 1)
+        return;
+
     ivec2 pixelPos = ivec2(uint(agent.position.x), uint(agent.position.y));
     if (agent.type == 0)
     {
-        vec4 prey = imageLoad(inBlue, pixelPos);
-        if (prey.r == 1)
+        vec4 blue = imageLoad(inBlue, pixelPos);
+        if (blue.r == 1)
         {
             agent.state = 1;
             agent.age = -100;
             agent.position = vec2(config.width * get_random_float_01(agent, 100037), config.height * get_random_float_01(agent, 20347));
+        }
+    }
+    else if (agent.type == 1)
+    {
+         vec4 green = imageLoad(inGreen, pixelPos);
+         if (green.r == 1)
+         {
+             agent.energy += 100;
+         }
+
+         vec4 red = imageLoad(inRed, pixelPos);
+         if (red.r == 1)
+         {
+             agent.state = 1;
+         }
+    }
+    else if (agent.type == 2)
+    {
+        vec4 blue = imageLoad(inBlue, pixelPos);
+        if (blue.r == 1)
+        {
+            agent.energy += 100;
         }
     }
 

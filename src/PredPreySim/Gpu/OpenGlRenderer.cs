@@ -143,7 +143,12 @@ namespace PredPreySim.Gpu
             GL.ClearColor(0f, 0f, 0f, 1f);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            displayProgram.Draw(app.simulation, GetProjectionMatrix(), solverProgram.AgentsBuffer, solverProgram.PlantsTex, solverProgram.PrayTex, solverProgram.PredTex);
+            float halfW = glControl.Width / zoom * 0.5f;
+            float halfH = glControl.Height / zoom * 0.5f;
+            Vector2 min = center - new Vector2(halfW, halfH);
+            Vector2 max = center + new Vector2(halfW, halfH);
+
+            displayProgram.Draw(app.simulation, GetProjectionMatrix(), solverProgram.AgentsBuffer, solverProgram.PlantsTex, solverProgram.PrayTex, solverProgram.PredTex, min, max);
 
             glControl.SwapBuffers();
             frameCounter++;

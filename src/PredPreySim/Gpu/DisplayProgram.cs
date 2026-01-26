@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Compute.OpenCL;
+using OpenTK.GLControl;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using PredPreySim.Models;
@@ -28,6 +29,10 @@ namespace PredPreySim.Gpu
 
         private int dispProjLocation;
 
+        private int dispMinLocation;
+
+        private int dispMaxLocation;
+
         private int dummyVao;
 
         private Vector2 offset = new Vector2(0, 0);
@@ -51,11 +56,16 @@ namespace PredPreySim.Gpu
             dispTexSizeLocation = GL.GetUniformLocation(dispProgram, "texSize");
             if (dispTexSizeLocation == -1) throw new Exception("Uniform 'texSize' not found. Shader optimized it out?");
 
+            dispMinLocation = GL.GetUniformLocation(dispProgram, "worldMin");
+            if (dispMinLocation == -1) throw new Exception("Uniform 'worldMin' not found. Shader optimized it out?");
+            dispMaxLocation = GL.GetUniformLocation(dispProgram, "worldMax");
+            if (dispMaxLocation == -1) throw new Exception("Uniform 'worldMax' not found. Shader optimized it out?");
+
             GL.GenVertexArrays(1, out dummyVao);
             GL.BindVertexArray(dummyVao);
         }
 
-        public void Draw(Simulation simulation, Matrix4 projectionMatrix, int agentsBuffer, int plantTex, int prayTex, int predTex)
+        public void Draw(Simulation simulation, Matrix4 projectionMatrix, int agentsBuffer, int plantTex, int prayTex, int predTex, Vector2 worldMin, Vector2 worldMax)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
@@ -74,6 +84,8 @@ namespace PredPreySim.Gpu
             GL.Uniform1(predImageLocation, 2);
             GL.Uniform2(dispTexSizeLocation, new Vector2(simulation.shaderConfig.width, simulation.shaderConfig.height));
             GL.UniformMatrix4(dispProjLocation, false, ref projectionMatrix);
+            GL.Uniform2(dispMinLocation, worldMin);
+            GL.Uniform2(dispMaxLocation, worldMax);
             GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
 
 

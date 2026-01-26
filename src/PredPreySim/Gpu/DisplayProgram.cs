@@ -65,7 +65,7 @@ namespace PredPreySim.Gpu
             GL.BindVertexArray(dummyVao);
         }
 
-        public void Draw(Simulation simulation, Matrix4 projectionMatrix, int agentsBuffer, int plantTex, int prayTex, int predTex, Vector2 worldMin, Vector2 worldMax)
+        public void Draw(Simulation simulation, Matrix4 projectionMatrix, int agentsBuffer, int greenTex, int blueTex, int redTex, Vector2 worldMin, Vector2 worldMax)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
@@ -74,13 +74,13 @@ namespace PredPreySim.Gpu
             GL.Disable(EnableCap.Blend);
             GL.UseProgram(dispProgram);
             GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.Texture2D, plantTex);
+            GL.BindTexture(TextureTarget.Texture2D, greenTex);
             GL.Uniform1(greenImageLocation, 0);
             GL.ActiveTexture(TextureUnit.Texture1);
-            GL.BindTexture(TextureTarget.Texture2D, prayTex);
+            GL.BindTexture(TextureTarget.Texture2D, blueTex);
             GL.Uniform1(blueImageLocation, 1);
             GL.ActiveTexture(TextureUnit.Texture2);
-            GL.BindTexture(TextureTarget.Texture2D, predTex);
+            GL.BindTexture(TextureTarget.Texture2D, redTex);
             GL.Uniform1(redImageLocation, 2);
             GL.Uniform2(dispTexSizeLocation, new Vector2(simulation.shaderConfig.width, simulation.shaderConfig.height));
             GL.UniformMatrix4(dispProjLocation, false, ref projectionMatrix);

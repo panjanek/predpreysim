@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PredPreySim.Utils;
 
 namespace PredPreySim.Models.NN
 {
@@ -25,10 +26,8 @@ namespace PredPreySim.Models.NN
         public void Mutate(float[] network, int offset, Random rnd)
         {
             int i = rnd.Next(Size);
-            if ((i >= 0 && i < 120) || (i >= 128 && i < 144))
-                network[offset + i] = (float)(rnd.NextDouble() * 2 - 1);
-            else
-                network[offset + i] = (float)(rnd.NextDouble() * 1 - 0.5);
+            double delta = MathUtil.NextGaussian(rnd, 0.0, 0.05);
+            network[offset + i] += (float)delta;
         }
     }
 }

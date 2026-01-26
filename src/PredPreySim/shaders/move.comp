@@ -184,14 +184,11 @@ void update_one(uint idx)
         float velocity = 0.5 * (res[1] + 1);
         agent.position += vec2(velocity*cos(agent.angle),velocity*sin(agent.angle));
 
-        agent.energy -= (0.6 * velocity * velocity + 0.05);
-        if (agent.energy < 0)
-            agent.state = 1;
+        float energyConsumed = (0.6 * velocity * velocity + 0.05);
 
-        //float random01 = get_random_float_01(agent, 100037);
-        //float velocity = 0.5;
-        //agent.angle += (0.5-random01) * 0.1;
-        //agent.position += vec2(velocity*cos(agent.angle),velocity*sin(agent.angle));
+        agent.energy -= energyConsumed;
+        agent.energySpent += energyConsumed;
+
     }
     
     torus(agent.position);

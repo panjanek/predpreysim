@@ -72,18 +72,22 @@ namespace PredPreySim.Models
         {
             
             var blue = agents.Where(a => a.type == 1).OrderByDescending(a=>a.energy).ToList();
-            var minBlueEnergy = blue.Min(a => a.energy);
-            var maxBlueEnergy = blue.Max(a => a.energy);
-            var aliveBlue = blue.Count(a => a.state == 0);
+            var minBlueMeals = blue.Min(a => a.meals);
+            var maxBlueMeals = blue.Max(a => a.meals);
 
             var red = agents.Where(a => a.type == 2).OrderByDescending(a => a.energy).ToList();
-            var minRedEnergy = red.Min(a => a.energy);
-            var maxRedEnergy = red.Max(a => a.energy);
-            var aliveRed = red.Count(a => a.state == 0);
+            var minRedMeals = red.Min(a => a.meals);
+            var maxRedMeals = red.Max(a => a.meals);
+
             
 
 
-            var ranking = agents.Select((a, i) => new { index = i, agent = a, score = a.energy - a.state * 1000000 }).ToList();
+            var ranking = agents.Select((a, i) => new { index = i, agent = a, score = a.meals * 2 - a.deaths * 5 - a.energySpent * 0.01 }).ToList();
+
+            var minBlueScore = ranking.Where(x => x.agent.type == 1).Min(a => a.score);
+            var maxBlueScore = ranking.Where(x => x.agent.type == 1).Max(a => a.score);
+            var minRedScore = ranking.Where(x => x.agent.type == 2).Min(a => a.score);
+            var maxRedScore = ranking.Where(x => x.agent.type == 2).Max(a => a.score);
 
             var allBlueCount = agents.Count(a => a.type == 1);
             var topBlue = ranking.Where(x => x.agent.type == 1).OrderByDescending(x => x.score).Take(allBlueCount / 10).Select(x=>x.index).ToList();
@@ -112,6 +116,9 @@ namespace PredPreySim.Models
 
                 agents[childIdx].state = 0;
                 agents[childIdx].age = 0;
+                agents[childIdx].meals = 0;
+                agents[childIdx].deaths = 0;
+                agents[childIdx].energySpent = 0;
                 agents[childIdx].energy = initialEnergy;
                 agents[childIdx].position = agents[parentIdx].position + new Vector2((float)rnd.NextDouble() * 10 - 5, (float)rnd.NextDouble() * 10 - 5);
                 agents[childIdx].angle = (float)(2 * Math.PI * rnd.NextDouble());

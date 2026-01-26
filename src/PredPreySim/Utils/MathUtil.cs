@@ -24,5 +24,19 @@ namespace PredPreySim.Utils
 
             return result;
         }
+
+        public static double NextGaussian(Random rng, double mean = 0.0, double stdDev = 1.0)
+        {
+            // Uniform(0,1] random doubles
+            double u1 = 1.0 - rng.NextDouble();
+            double u2 = 1.0 - rng.NextDouble();
+
+            // Standard normal (0,1)
+            double randStdNormal =
+                Math.Sqrt(-2.0 * Math.Log(u1)) *
+                Math.Cos(2.0 * Math.PI * u2);
+
+            return mean + stdDev * randStdNormal;
+        }
     }
 }

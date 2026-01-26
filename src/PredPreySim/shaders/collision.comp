@@ -86,12 +86,16 @@ void update_one(uint idx)
          if (green.r == 1)
          {
              agent.energy += 100;
+             agent.meals++;
          }
 
          vec4 red = imageLoad(inRed, pixelPos);
          if (red.r == 1)
          {
-             agent.state = 1;
+             agent.deaths++;
+             agent.energy = 0;
+             agent.age = 0;
+             agent.position = vec2(config.width * get_random_float_01(agent, 100037), config.height * get_random_float_01(agent, 20347));
          }
     }
     else if (agent.type == 2)
@@ -100,6 +104,7 @@ void update_one(uint idx)
         if (blue.r == 1)
         {
             agent.energy += 100;
+            agent.meals++;
         }
     }
 

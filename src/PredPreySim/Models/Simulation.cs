@@ -34,9 +34,9 @@ namespace PredPreySim.Models
         {
             INeuralNetwork nn = new Network_15_8_2();
             network = new float[nn.Size * 3];
-            nn.Init(network, 0 * nn.Size, 0);
-            nn.Init(network, 1 * nn.Size, 1);
-            nn.Init(network, 2 * nn.Size, 2);
+            nn.Init(network, 0 * nn.Size, 00);
+            nn.Init(network, 1 * nn.Size, 01);
+            nn.Init(network, 2 * nn.Size, 02);
 
             var rnd = new Random(1);
             for(int i=0; i<agents.Length; i++)

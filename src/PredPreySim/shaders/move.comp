@@ -39,6 +39,7 @@ layout(std430, binding = 5) buffer NetworkBuffer {
     float network[];
 };
 
+const float M_PI        = 3.14159265358979323846;
 
 void torus(inout vec2 pos)
 {
@@ -89,61 +90,72 @@ float get_random_float_01(Agent agent, uint seed)
      return random01;
 }
 
-float sense_green(Agent agent, float sensorAngle, float sensorDist, int sensorSize)
+vec3 sense(Agent agent, float sensorAngle, float sensorDist, int sensorSize)
 {
     float sensingAngle = agent.angle + sensorAngle;
     vec2 sensingDir = vec2(cos(sensingAngle),sin(sensingAngle));
     vec2 sensingCenter = agent.position + sensingDir * sensorDist;
     ivec2 center = ivec2(int(sensingCenter.x),int(sensingCenter.y));
-    float sum = 0;
+    vec3 sum = vec3(0,0,0);
     for(int offsetX=-sensorSize; offsetX <= sensorSize; offsetX++)
         for(int offsetY=-sensorSize; offsetY <= sensorSize; offsetY++)
         {
             ivec2 sensePixel = center + ivec2(offsetX, offsetY);
             itorus(sensePixel);
-            sum += imageLoad(inGreen, sensePixel).r;
+            sum.r += imageLoad(inRed, sensePixel).r;
+            sum.g += imageLoad(inGreen, sensePixel).r;
+            sum.b += imageLoad(inBlue, sensePixel).r;
         }
 
     uint r = 2*sensorSize+1;
     return sum / (r*r);
 }
 
-float sense_blue(Agent agent, float sensorAngle, float sensorDist, int sensorSize)
+float[15] prepare_input(Agent agent)
 {
-    float sensingAngle = agent.angle + sensorAngle;
-    vec2 sensingDir = vec2(cos(sensingAngle),sin(sensingAngle));
-    vec2 sensingCenter = agent.position + sensingDir * sensorDist;
-    ivec2 center = ivec2(int(sensingCenter.x),int(sensingCenter.y));
-    float sum = 0;
-    for(int offsetX=-sensorSize; offsetX <= sensorSize; offsetX++)
-        for(int offsetY=-sensorSize; offsetY <= sensorSize; offsetY++)
-        {
-            ivec2 sensePixel = center + ivec2(offsetX, offsetY);
-            itorus(sensePixel);
-            sum += imageLoad(inBlue, sensePixel).r;
-        }
+    float inp[15];
+    float angles[5] = float[] ( -0.15*M_PI , 0, +0.15*M_PI, -0.75*M_PI, +0.75*M_PI );
+    for(int a=0; a<5; a++)
+    {
+        vec3 sensor = sense(agent, angles[a], 3, 1);
+        for(int c=0; c<3; c++)
+            inp[a*3+c] = sensor[c];
+    }
 
-    uint r = 2*sensorSize+1;
-    return sum / (r*r);
+    return inp;
 }
 
-float sense_red(Agent agent, float sensorAngle, float sensorDist, int sensorSize)
+float activate(float x)
 {
-    float sensingAngle = agent.angle + sensorAngle;
-    vec2 sensingDir = vec2(cos(sensingAngle),sin(sensingAngle));
-    vec2 sensingCenter = agent.position + sensingDir * sensorDist;
-    ivec2 center = ivec2(int(sensingCenter.x),int(sensingCenter.y));
-    float sum = 0;
-    for(int offsetX=-sensorSize; offsetX <= sensorSize; offsetX++)
-        for(int offsetY=-sensorSize; offsetY <= sensorSize; offsetY++)
-        {
-            ivec2 sensePixel = center + ivec2(offsetX, offsetY);
-            itorus(sensePixel);
-            sum += imageLoad(inRed, sensePixel).r;
-        }
+    return tanh(x);
+}
 
-    uint r = 2*sensorSize+1;
-    return sum / (r*r);
+float[2] evaluate_network(float inp[15], int offset)
+{
+    // Hidden layer
+    float hidden[8];
+    for (int h = 0; h < 8; ++h)
+    {
+        float sum = network[offset+120+h];
+        for (int i = 0; i < 15; ++i)
+            sum += inp[i] * network[offset+h*15+i];
+
+        hidden[h] = activate(sum);
+    }
+
+    // Output layer
+    float result[2];
+    for (int o = 0; o < 2; ++o)
+    {
+        float sum = network[offset+144+o];
+        for (int h = 0; h < 8; ++h)
+            sum += hidden[h] * network[offset+128+o*8+h];
+
+        result[o] = activate(sum);
+    }
+
+
+    return result;
 }
 
 void update_one(uint idx)
@@ -160,10 +172,17 @@ void update_one(uint idx)
 
     if (agent.type > 0)
     {
-        float random01 = get_random_float_01(agent, 100037);
-        float velocity = 0.5;
-        agent.angle += (0.5-random01) * 0.1;
+        float[] inp = prepare_input(agent);
+        float[] res = evaluate_network(inp, agent.nnOffset);
+
+        agent.angle += 0.2 * res[0];
+        float velocity = clamp(res[1], 0.0, 1.0);
         agent.position += vec2(velocity*cos(agent.angle),velocity*sin(agent.angle));
+
+        //float random01 = get_random_float_01(agent, 100037);
+        //float velocity = 0.5;
+        //agent.angle += (0.5-random01) * 0.1;
+        //agent.position += vec2(velocity*cos(agent.angle),velocity*sin(agent.angle));
     }
     
     torus(agent.position);

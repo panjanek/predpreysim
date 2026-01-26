@@ -7,9 +7,9 @@ uniform sampler2D inRed;
 uniform vec2 uTexelSize;         // (1.0/width, 1.0/height)
 uniform float uKernel[25];
 
-layout(location = 0) out vec4 outPlants;
-layout(location = 1) out vec4 outPray;
-layout(location = 2) out vec4 outPred;
+layout(location = 0) out vec4 outGreen;
+layout(location = 1) out vec4 outBlue;
+layout(location = 2) out vec4 outRed;
 
 vec4 blur(sampler2D tex, vec2 uv)
 {
@@ -53,7 +53,7 @@ vec4 blur(sampler2D tex, vec2 uv)
 void main()
 {
     vec2 uv = gl_FragCoord.xy * uTexelSize;
-    outPlants = blur(inGreen, uv);
-    outPray = blur(inBlue, uv);
-    outPred = blur(inRed, uv);
+    outGreen = blur(inGreen, uv);
+    outBlue = blur(inBlue, uv);
+    outRed = blur(inRed, uv);
 }

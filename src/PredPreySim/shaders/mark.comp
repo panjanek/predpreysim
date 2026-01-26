@@ -31,9 +31,9 @@ layout(std430, binding = 1) buffer AgentsBuffer {
     Agent agents[];
 };
 
-layout(rgba32f, binding = 2) uniform image2D outPlants;
-layout(rgba32f, binding = 3) uniform image2D outPray;
-layout(rgba32f, binding = 4) uniform image2D outPred;
+layout(rgba32f, binding = 2) uniform image2D outGreen;
+layout(rgba32f, binding = 3) uniform image2D outBlue;
+layout(rgba32f, binding = 4) uniform image2D outRed;
 
 void update_one(uint idx)
 {
@@ -43,11 +43,11 @@ void update_one(uint idx)
 
     ivec2 pixelPos = ivec2(uint(agent.position.x), uint(agent.position.y));
     if (agent.type == 0)
-        imageStore(outPlants, pixelPos, vec4(1,1,1,1)); 
+        imageStore(outGreen, pixelPos, vec4(1,1,1,1)); 
     else if (agent.type == 1)
-        imageStore(outPray, pixelPos, vec4(1,1,1,1));
+        imageStore(outBlue, pixelPos, vec4(1,1,1,1));
     else if (agent.type == 2)
-        imageStore(outPred, pixelPos, vec4(1,1,1,1));
+        imageStore(outRed, pixelPos, vec4(1,1,1,1));
 }
 
 void main()

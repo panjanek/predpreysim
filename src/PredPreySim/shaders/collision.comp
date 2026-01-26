@@ -31,9 +31,9 @@ layout(std430, binding = 1) buffer AgentsBuffer {
     Agent agents[];
 };
 
-layout(rgba32f, binding = 2) uniform image2D inPlants;
-layout(rgba32f, binding = 3) uniform image2D inPray;
-layout(rgba32f, binding = 4) uniform image2D inPred;
+layout(rgba32f, binding = 2) uniform image2D inGreen;
+layout(rgba32f, binding = 3) uniform image2D inBlue;
+layout(rgba32f, binding = 4) uniform image2D inRed;
 
 uint hash(uint state)
 {
@@ -64,7 +64,7 @@ void update_one(uint idx)
     ivec2 pixelPos = ivec2(uint(agent.position.x), uint(agent.position.y));
     if (agent.type == 0)
     {
-        vec4 prey = imageLoad(inPray, pixelPos);
+        vec4 prey = imageLoad(inBlue, pixelPos);
         if (prey.r == 1)
         {
             agent.state = 1;

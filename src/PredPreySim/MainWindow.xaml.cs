@@ -14,9 +14,11 @@ using Application = System.Windows.Application;
 
 namespace PredPreySim
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
+    //TODO:
+    // - fitnes graph
+    // - select and track
+    // - age contribute to fitness
+    // - memory
     public partial class MainWindow : Window
     {
         private bool uiPending;
@@ -29,6 +31,7 @@ namespace PredPreySim
         public MainWindow()
         {
             InitializeComponent();
+            Application.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
         }
 
         private void parent_Loaded(object sender, RoutedEventArgs e)

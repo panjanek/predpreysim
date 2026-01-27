@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PredPreySim.Gpu;
+using PredPreySim.Gui;
 
 namespace PredPreySim.Models
 {
@@ -15,6 +16,8 @@ namespace PredPreySim.Models
 
         public OpenGlRenderer renderer;
 
+        public ConfigWindow configWindow;
+
         public AppContext(MainWindow mainWindow)
         {
             this.mainWindow = mainWindow;
@@ -22,6 +25,9 @@ namespace PredPreySim.Models
             renderer = new OpenGlRenderer(mainWindow.placeholder, this);
             renderer.UploadAgents();
             renderer.ResetOrigin();
+            configWindow = new ConfigWindow(this);
+            configWindow.Show();
+            configWindow.Activate();
         }
     }
 }

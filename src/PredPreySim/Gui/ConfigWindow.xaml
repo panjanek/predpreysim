@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PredPreySim.Gui"
         mc:Ignorable="d"
         Title="PredPreySim details" 
-        Width="380"
+        Width="800"
         Height="400"  
         ResizeMode="CanMinimize"
         WindowStartupLocation="CenterOwner"
@@ -52,6 +52,7 @@
 
             <!-- Window Content -->
             <Grid>
+                <local:FunctionGraph x:Name="statsGraph" Grid.Row="0" Grid.Column="0"/>
             </Grid>
         </DockPanel>
     </Border>

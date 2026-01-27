@@ -11,7 +11,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using PredPreySim.Models;
 using AppContext = PredPreySim.Models.AppContext;
+using Brush = System.Windows.Media.Brush;
+using Brushes = System.Windows.Media.Brushes;
 
 namespace PredPreySim.Gui
 {
@@ -28,6 +31,15 @@ namespace PredPreySim.Gui
             customTitleBar.MouseLeftButtonDown += (s, e) => { if (e.ButtonState == MouseButtonState.Pressed) DragMove(); };
             minimizeButton.Click += (s, e) => WindowState = WindowState.Minimized;
             Closing += (s, e) => { e.Cancel = true; WindowState = WindowState.Minimized; };
+        }
+
+        public void DrawStats(List<Stats> stats)
+        {
+            statsGraph.Draw(stats, new List<StatsSeries>()
+            {
+                new StatsSeries() { brush = Brushes.Blue,  variable = s=>s.topBlueFitness },
+                new StatsSeries() { brush = Brushes.Red, variable = s=>s.topRedFitness }
+            });
         }
     }
 }

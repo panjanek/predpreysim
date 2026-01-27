@@ -31,6 +31,8 @@ namespace PredPreySim.Models
 
         private Random rnd = new Random(1);
 
+        public List<Stats> stats;
+
         public Simulation()
         {
             shaderConfig = new ShaderConfig();
@@ -38,6 +40,7 @@ namespace PredPreySim.Models
             nn = new Network_15_8_2();
             InitRandomly(0.6, 0.1);
             kernel = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decay);
+            stats = new List<Stats>();
         }
 
         private void InitRandomly(double plants, double predators)
@@ -82,28 +85,37 @@ namespace PredPreySim.Models
             
 
 
-            var ranking = agents.Select((a, i) => new { index = i, agent = a, score = a.meals * 2 - a.deaths * 5 - a.energySpent * 0.01 }).ToList();
+            var ranking = agents.Select((a, i) => new { index = i, agent = a, fitness = a.meals * 2 - a.deaths * 5 - a.energySpent * 0.01 }).ToList();
 
-            var minBlueScore = ranking.Where(x => x.agent.type == 1).Min(a => a.score);
-            var maxBlueScore = ranking.Where(x => x.agent.type == 1).Max(a => a.score);
-            var minRedScore = ranking.Where(x => x.agent.type == 2).Min(a => a.score);
-            var maxRedScore = ranking.Where(x => x.agent.type == 2).Max(a => a.score);
+            var minBlueScore = ranking.Where(x => x.agent.type == 1).Min(a => a.fitness);
+            var maxBlueScore = ranking.Where(x => x.agent.type == 1).Max(a => a.fitness);
+            var minRedScore = ranking.Where(x => x.agent.type == 2).Min(a => a.fitness);
+            var maxRedScore = ranking.Where(x => x.agent.type == 2).Max(a => a.fitness);
 
             var allBlueCount = agents.Count(a => a.type == 1);
-            var topBlue = ranking.Where(x => x.agent.type == 1).OrderByDescending(x => x.score).Take(allBlueCount / 10).Select(x=>x.index).ToList();
-            var downBlue = ranking.Where(x => x.agent.type == 1).OrderBy(x => x.score).Take(allBlueCount / 2).Select(x => x.index).ToList();
-            if (topBlue.Intersect(downBlue).Count() > 0)
+            var topBlue = ranking.Where(x => x.agent.type == 1).OrderByDescending(x => x.fitness).Take(allBlueCount / 10).ToList();
+            var topBlueIds = topBlue.Select(x=>x.index).ToList();
+            var downBlueIds = ranking.Where(x => x.agent.type == 1).OrderBy(x => x.fitness).Take(allBlueCount / 2).Select(x => x.index).ToList();
+            if (topBlueIds.Intersect(downBlueIds).Count() > 0)
                 throw new Exception("!");
 
-            Breed(topBlue, downBlue);
+            Breed(topBlueIds, downBlueIds);
 
             var allRedCount = agents.Count(a => a.type == 2);
-            var topRed = ranking.Where(x => x.agent.type == 2).OrderByDescending(x => x.score).Take(allRedCount / 10).Select(x => x.index).ToList();
-            var downRed = ranking.Where(x => x.agent.type == 2).OrderBy(x => x.score).Take(allRedCount / 2).Select(x => x.index).ToList();
-            if (topRed.Intersect(downRed).Count() > 0)
+            var topRed = ranking.Where(x => x.agent.type == 2).OrderByDescending(x => x.fitness).Take(allRedCount / 10).ToList();
+            var topRedIds = topRed.Select(x => x.index).ToList();
+            var downRedIds = ranking.Where(x => x.agent.type == 2).OrderBy(x => x.fitness).Take(allRedCount / 2).Select(x => x.index).ToList();
+            if (topRedIds.Intersect(downRedIds).Count() > 0)
                 throw new Exception("!");
 
-            Breed(topRed, downRed);
+            Breed(topRedIds, downRedIds);
+
+            stats.Add(new Stats()
+            {
+                time = shaderConfig.t,
+                topBlueFitness = topBlue.Average(x=>x.fitness),
+                topRedFitness = topRed.Average(x=>x.fitness),
+            });
         }
 
         private void Breed(List<int> parents, List<int> spaces)

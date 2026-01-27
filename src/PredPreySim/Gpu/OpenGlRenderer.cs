@@ -172,6 +172,7 @@ namespace PredPreySim.Gpu
             {
                 DownloadAgents();
                 app.simulation.ChangeEpoch();
+                app.DrawStats();
                 UploadAgents();
             }
 

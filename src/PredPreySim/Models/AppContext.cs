@@ -29,5 +29,13 @@ namespace PredPreySim.Models
             configWindow.Show();
             configWindow.Activate();
         }
+
+        public void DrawStats()
+        {
+            if (simulation.stats.Count > 2)
+            {
+                WpfUtil.DispatchRender(configWindow.Dispatcher, () => configWindow.DrawStats(simulation.stats));
+            }
+        }
     }
 }

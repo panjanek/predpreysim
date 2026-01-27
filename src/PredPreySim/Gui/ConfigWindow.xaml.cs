@@ -37,8 +37,49 @@ namespace PredPreySim.Gui
         {
             statsGraph.Draw(stats, new List<StatsSeries>()
             {
-                new StatsSeries() { brush = Brushes.Blue,  variable = s=>s.topBlueFitness },
-                new StatsSeries() { brush = Brushes.Red, variable = s=>s.topRedFitness }
+                new StatsSeries() { 
+                    name = "blue fitness",
+                    line = Brushes.Blue, 
+                    thickness = 2,
+                    dot = Brushes.Blue,
+                    radius = 5,
+                    selector = s=>s.topBlueFitness 
+                },
+                new StatsSeries() {
+                    name = "blue meals",
+                    line = Brushes.Blue,
+                    style = LineStyle.Dotted,
+                    thickness = 2,
+                    dot = Brushes.Blue,
+                    radius = 3,
+                    selector = s=>s.topBlueMeals
+                },
+                new StatsSeries() {
+                    name = "blue deaths",
+                    line = Brushes.Blue,
+                    style = LineStyle.Dashed,
+                    thickness = 1,
+                    dot = Brushes.Blue,
+                    radius = 3,
+                    selector = s=>s.topBlueDeaths
+                },
+                new StatsSeries() {
+                    name = "red fitness",
+                    line = Brushes.Red,
+                    thickness = 2,
+                    dot = Brushes.Red,
+                    radius = 3,
+                    selector = s=>s.topRedFitness
+                },
+                new StatsSeries() {
+                    name = "red meals",
+                    line = Brushes.Red,
+                    style = LineStyle.Dotted,
+                    thickness = 2,
+                    dot = Brushes.Red,
+                    radius = 3,
+                    selector = s=>s.topRedMeals
+                },
             });
         }
     }

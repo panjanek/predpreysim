@@ -14,13 +14,6 @@ using Color = System.Windows.Media.Color;
 
 namespace PredPreySim.Gui
 {
-    public class StatsSeries
-    {
-        public Brush brush;
-
-        public Func<Stats, double> variable;
-    }
-
     public class FunctionGraph : Canvas
     {
         public void Draw(List<Stats> stats, List<StatsSeries> series)
@@ -40,8 +33,8 @@ namespace PredPreySim.Gui
 
                 foreach (var serie in series)
                 {
-                    double minY = toDraw.Select(s => serie.variable(s)).Min();
-                    double maxY = toDraw.Select(s => serie.variable(s)).Max();
+                    double minY = toDraw.Select(s => serie.selector(s)).Min();
+                    double maxY = toDraw.Select(s => serie.selector(s)).Max();
 
                     var dy = maxY - minY;
                     maxY += dy * 0.1;
@@ -49,26 +42,31 @@ namespace PredPreySim.Gui
                     dy = maxY - minY;
                     double scaleX = width / (toDraw.Count-1);
                     double scaleY = dy > 0.01 ? height / dy : height / 0.01;
-                    for (int i = 0; i < toDraw.Count-1; i++)
+                    for (int i = 0; i < toDraw.Count; i++)
                     {
                         var s1 = toDraw[i];
                         var x1 = i * scaleX;
-                        var y1 = serie.variable(s1);
-                        var s2 = toDraw[i + 1];
-                        var x2 = (i + 1) * scaleX;
-                        var y2 = serie.variable(s2);
-                        Line l = new Line();
-                        l.Stroke = serie.brush;
-                        l.StrokeThickness = 1;
-                        l.X1 = x1;
-                        l.Y1 = height - (y1 - minY) * scaleY;
-                        l.X2 = x2;
-                        l.Y2 = height - (y2 - minY) * scaleY;
-                        l.ToolTip = y1.ToString("0.000", CultureInfo.InvariantCulture);
-                        Children.Add(l);
+                        var y1 = serie.selector(s1);
+                        var dot = CanvasUtil.AddEllipse(this, x1- serie.radius/2, height - (y1 - minY) * scaleY- serie.radius/2, serie.radius, serie.radius, 0, Brushes.Transparent, serie.dot, null, 1);
+                        dot.ToolTip = serie.name + ": " + y1.ToString("0.000", CultureInfo.InvariantCulture);
+                        if (i < toDraw.Count - 1)
+                        {
+                            var s2 = toDraw[i + 1];
+                            var x2 = (i + 1) * scaleX;
+                            var y2 = serie.selector(s2);
+                            var line = CanvasUtil.AddLine(this, x1, height - (y1 - minY) * scaleY, x2, height - (y2 - minY) * scaleY, serie.thickness, serie.line, null, 2);
+                            if (serie.style == LineStyle.Dashed)
+                                line.StrokeDashArray = new DoubleCollection { 8, 4 };
+                            else if (serie.style == LineStyle.Dotted)
+                            {
+                                line.StrokeDashArray = new DoubleCollection { 0, 2 };
+                                line.StrokeDashCap = PenLineCap.Round;
+                            }
+                        }
                     }
 
-                    var b = serie.brush as SolidColorBrush;
+                    /*
+                    var b = serie.line as SolidColorBrush;
                     var axisY = height + minY * scaleY;
                     Line axis = new Line();
                     axis.Stroke = new SolidColorBrush(Color.FromArgb(128, b.Color.R, b.Color.G, b.Color.B));
@@ -77,7 +75,7 @@ namespace PredPreySim.Gui
                     axis.Y1 = axisY;
                     axis.X2 = width;
                     axis.Y2 = axisY;
-                    Children.Add(axis);
+                    Children.Add(axis);*/
                 }
             }
             catch (Exception ex)
@@ -85,5 +83,29 @@ namespace PredPreySim.Gui
                 Console.WriteLine(ex.Message);
             }
         }
+    }
+
+    public class StatsSeries
+    {
+        public string name;
+
+        public Brush line;
+
+        public Brush dot;
+
+        public double thickness;
+
+        public double radius;
+
+        public LineStyle style;
+
+        public Func<Stats, double> selector;  
+    }
+
+    public enum LineStyle : int
+    {
+        Normal = 0,
+        Dotted = 1,
+        Dashed = 2
     }
 }

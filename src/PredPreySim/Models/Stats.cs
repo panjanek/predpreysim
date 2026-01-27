@@ -13,5 +13,13 @@ namespace PredPreySim.Models
         public double topBlueFitness;
 
         public double topRedFitness;
+
+        public double topBlueMeals;
+
+        public double topBlueDeaths;
+
+        public double topRedMeals;
+
+        public double topRedDeaths;
     }
 }

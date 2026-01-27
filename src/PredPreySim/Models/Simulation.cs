@@ -115,6 +115,10 @@ namespace PredPreySim.Models
                 time = shaderConfig.t,
                 topBlueFitness = topBlue.Average(x=>x.fitness),
                 topRedFitness = topRed.Average(x=>x.fitness),
+                topBlueMeals = topBlue.Average(x => x.agent.meals),
+                topRedMeals = topRed.Average(x => x.agent.meals),
+                topBlueDeaths = topBlue.Average(x => x.agent.deaths),
+                topRedDeaths = topRed.Average(x => x.agent.deaths),
             });
         }
 

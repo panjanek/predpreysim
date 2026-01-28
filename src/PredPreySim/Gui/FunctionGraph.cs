@@ -20,6 +20,14 @@ namespace PredPreySim.Gui
 
         private List<StatsSeries> series;
 
+        private TextBlock text;
+
+        private Ellipse circle;
+
+        private double selectedTime;
+
+        private StatsSeries selectedSerie;
+
         public void Draw(List<Stats> stats)
         {
             this.stats = stats;
@@ -37,20 +45,29 @@ namespace PredPreySim.Gui
             if (series == null || series.Count == 0 || stats == null || stats.Count < 2)
                 return;
 
+            if (text == null || circle == null)
+            {
+                text = CanvasUtil.AddTextBlock(this, 5, 5, 14, Brushes.Black, Brushes.White);
+                text.Visibility = System.Windows.Visibility.Collapsed;
+                circle = CanvasUtil.AddEllipse(this, 0, 0, 10, 10, 2, Brushes.White, Brushes.Transparent);
+                circle.Visibility = System.Windows.Visibility.Collapsed;
+            }
+
             try
             {
                 var toDraw = stats.OrderBy(s => s.time).ToList();
                 if (toDraw.Count > 500)
                     toDraw = toDraw.Skip(toDraw.Count - 500).ToList();
 
-
                 var width = ActualWidth;
                 var height = ActualHeight;
                 Children.Clear();
+                Children.Add(text);
+                Children.Add(circle);
                 Background = Brushes.Black;
                 ClipToBounds = true;
 
-                double dotRadius = 5;
+                double dotSize = 6;
                 foreach (var serie in series)
                 {
                     double minY = toDraw.Select(s => serie.Selector(s)).Min();
@@ -67,8 +84,31 @@ namespace PredPreySim.Gui
                         var s1 = toDraw[i];
                         var x1 = i * scaleX;
                         var y1 = serie.Selector(s1);
-                        var dot = CanvasUtil.AddEllipse(this, x1- dotRadius/2, height - (y1 - minY) * scaleY- dotRadius/2, dotRadius, dotRadius, 0, Brushes.Transparent, serie.Style.Stroke, null, 1);
-                        dot.ToolTip = serie.Name + ": " + y1.ToString("0.00000", CultureInfo.InvariantCulture);
+                        var dot = CanvasUtil.AddEllipse(this, x1- dotSize/2, height - (y1 - minY) * scaleY- dotSize/2, dotSize, dotSize, 0, Brushes.Transparent, serie.Style.Stroke, null, 1);
+
+                        if (selectedSerie == serie && selectedTime == s1.time)
+                        {
+                            circle.SetValue(Canvas.LeftProperty, x1 - 5);
+                            circle.SetValue(Canvas.TopProperty, height - (y1 - minY) * scaleY - 5);
+                            circle.Visibility = System.Windows.Visibility.Visible;
+                        }
+
+                        string info = serie.Name + ": " + y1.ToString("0.00000", CultureInfo.InvariantCulture);
+                        var time = toDraw[i].time;
+                        var currentSerie = serie;
+                        dot.MouseDown += (s, e) =>
+                        {
+                            text.Text = info;
+                            text.Foreground = serie.Style.Stroke;
+                            text.Visibility = System.Windows.Visibility.Visible;
+                            selectedTime = time;
+                            selectedSerie = currentSerie;
+                            circle.SetValue(Canvas.LeftProperty, x1 - 5);
+                            circle.SetValue(Canvas.TopProperty, height - (y1 - minY) * scaleY - 5);
+                            circle.Visibility = System.Windows.Visibility.Visible;
+                            e.Handled = true;
+                        };
+
                         if (i < toDraw.Count - 1)
                         {
                             var s2 = toDraw[i + 1];
@@ -77,6 +117,9 @@ namespace PredPreySim.Gui
                             var line = CanvasUtil.AddStyledLine(this, x1, height - (y1 - minY) * scaleY, x2, height - (y2 - minY) * scaleY, serie.Style, null, 2);
                         }
                     }
+
+
+                    
 
                     /*
                     var b = serie.line as SolidColorBrush;

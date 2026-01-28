@@ -93,7 +93,8 @@ namespace PredPreySim
                 double fps = frames / timespan.TotalSeconds;
                 Title = $"Predator Pray Sim. " +
                         $"fps:{fps.ToString("0.0")} "+
-                        $"t:{app.simulation.shaderConfig.t.ToString("0.0")} ";
+                        $"step:{app.simulation.step} "+
+                        $"gen:{app.simulation.generation} ";
 
                 lastCheckFrameCount = app.renderer.FrameCounter;
                 lastCheckTime = now;

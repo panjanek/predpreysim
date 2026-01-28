@@ -44,5 +44,11 @@ namespace PredPreySim.Models.NN
                 network[offset + h*15 + i] += (float)delta;
             }
         }
+
+        public void Cross(float[] network, int parent1Offset, int parent2Offset, int childOffset, Random rnd)
+        {
+            for (int i = 0; i < Size; i++)
+                network[childOffset + i] = rnd.NextDouble() < 0.5 ? network[parent1Offset + i] : network[parent2Offset + i];
+        }
     }
 }

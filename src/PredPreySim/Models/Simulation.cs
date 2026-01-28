@@ -27,6 +27,8 @@ namespace PredPreySim.Models
 
         public int step;
 
+        public int generation;
+
         private INeuralNetwork nn;
 
         private Random rnd = new Random(1);
@@ -73,6 +75,7 @@ namespace PredPreySim.Models
 
         public void ChangeEpoch()
         {
+            generation++;
             var ranking = agents.Select((a, i) => new { index = i, agent = a, fitness = a.Fitness() }).Where(a=>a.agent.type > 0).ToList();
 
             var allBlueCount = agents.Count(a => a.type == 1);
@@ -95,6 +98,7 @@ namespace PredPreySim.Models
 
             Breed(topRedIds, downRedIds);
 
+            // record stats
             stats.Add(new Stats()
             {
                 time = shaderConfig.t,
@@ -118,34 +122,49 @@ namespace PredPreySim.Models
                 topBlueAvgAge = topBlue.Average(x => x.agent.age * 1.0),
                 topRedAvgAge = topRed.Average(x => x.agent.age * 1.0),
             });
+
+            //highlight best
+            var bestBlueIdx = topBlue.First().index;
+            var bestRedIdx = topRed.First().index;
+            for(int i=0; i<agents.Length; i++)
+            {
+                agents[i].flag = (i == bestBlueIdx || i == bestRedIdx) ? 1 : 0;
+            }
+
         }
 
         private void Breed(List<int> parents, List<int> spaces)
         {
-            int p = 0;
             foreach(var childIdx in spaces)
             {
-                var parentIdx = parents[p % parents.Count];
-                p++;
-
+                var parent1Idx = parents[rnd.Next(parents.Count)];
                 agents[childIdx].state = 0;
                 agents[childIdx].age = 0;
                 agents[childIdx].meals = 0;
                 agents[childIdx].deaths = 0;
                 agents[childIdx].energySpent = 0;
                 agents[childIdx].energy = initialEnergy;
-                agents[childIdx].position = agents[parentIdx].position + new Vector2((float)rnd.NextDouble() * 10 - 5, (float)rnd.NextDouble() * 10 - 5);
+                agents[childIdx].position = agents[parent1Idx].position + new Vector2((float)rnd.NextDouble() * 10 - 5, (float)rnd.NextDouble() * 10 - 5);
                 agents[childIdx].angle = (float)(2 * Math.PI * rnd.NextDouble());
 
-                Array.Copy(network, agents[parentIdx].nnOffset, network, agents[childIdx].nnOffset, nn.Size);
-
-                double mutationAmplification = 2.5;
-                if (rnd.NextDouble() < 0.5) //50% - mutate slightly
-                    nn.Mutate(network, agents[childIdx].nnOffset, rnd, 0.01 * mutationAmplification, 0.05 * mutationAmplification);
-                if (rnd.NextDouble() < 0.2) //20% - mutate mildly
-                    nn.Mutate(network, agents[childIdx].nnOffset, rnd, 0.05 * mutationAmplification, 0.15 * mutationAmplification);
-                if (rnd.NextDouble() < 0.1) //5% - mutate strong all inputs of one hidden neuron
-                    nn.MutateAllIncomming(network, agents[childIdx].nnOffset, rnd, 0.3 * mutationAmplification);
+                if (rnd.NextDouble() < 0.75)
+                {
+                    //mutation
+                    Array.Copy(network, agents[parent1Idx].nnOffset, network, agents[childIdx].nnOffset, nn.Size);
+                    double mutationAmplification = 2;
+                    if (rnd.NextDouble() < 0.5) //50% - mutate slightly
+                        nn.Mutate(network, agents[childIdx].nnOffset, rnd, 0.01 * mutationAmplification, 0.05 * mutationAmplification);
+                    if (rnd.NextDouble() < 0.2) //20% - mutate mildly
+                        nn.Mutate(network, agents[childIdx].nnOffset, rnd, 0.05 * mutationAmplification, 0.15 * mutationAmplification);
+                    if (rnd.NextDouble() < 0.1) //5% - mutate strong all inputs of one hidden neuron
+                        nn.MutateAllIncomming(network, agents[childIdx].nnOffset, rnd, 0.3 * mutationAmplification);
+                }
+                else
+                {
+                    //crossing
+                    var parent2Idx = parents[rnd.Next(parents.Count)];
+                    nn.Cross(network, agents[parent1Idx].nnOffset, agents[parent2Idx].nnOffset, agents[childIdx].nnOffset, rnd);
+                }
             }
         }
     }

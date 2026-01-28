@@ -42,7 +42,7 @@ namespace PredPreySim.Models
         public float energySpent;
 
         [FieldOffset(44)]
-        public int pad;
+        public int flag;
 
         public double Fitness()
         {

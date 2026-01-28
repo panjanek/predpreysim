@@ -24,7 +24,7 @@ struct Agent
     int meals;
     int deaths;
     float energySpent;
-    int pad;
+    int flag;
 };
 
 layout(std430, binding = 0) buffer ConfigBuffer {

@@ -61,7 +61,7 @@
                 </Grid.RowDefinitions>
 
                 <local:FunctionGraph x:Name="statsGraph" Grid.Row="0" Grid.Column="0"/>
-                <ListBox Name="seriesList" Grid.Row="0" Grid.Column="1" SelectionMode="Single">
+                <ListBox Name="seriesList" Grid.Row="0" Grid.Column="1" SelectionMode="Single" Background="Black">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="IsSelected" Value="False"/>
@@ -72,8 +72,17 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Click="SeriesCheckBox_Click"
-                              Content="{Binding Name}" />
+                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Click="SeriesCheckBox_Click" Content="{Binding Name}" Width="100" Foreground="White" />
+                                <Line X1="0"
+                                      Y1="0"
+                                      X2="60"
+                                      Y2="0"
+                                      Margin="8,0,0,0"
+                                      VerticalAlignment="Center"
+                                      Stroke="{Binding Series.Style.Stroke}"
+                                      StrokeThickness="{Binding Series.Style.StrokeThickness}"
+                                      StrokeDashArray="{Binding Series.Style.StrokeDashArray}"
+                                      StrokeDashCap ="{Binding Series.Style.LineCap}"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

@@ -121,6 +121,8 @@ namespace PredPreySim.Models
 
                 topBlueAvgAge = topBlue.Average(x => x.agent.age * 1.0),
                 topRedAvgAge = topRed.Average(x => x.agent.age * 1.0),
+
+                plantsCount = agents.Where(a => a.type == 0 && a.state == 0).Count()
             });
 
             //highlight best
@@ -147,21 +149,25 @@ namespace PredPreySim.Models
                 agents[childIdx].position = agents[parent1Idx].position + new Vector2((float)rnd.NextDouble() * 10 - 5, (float)rnd.NextDouble() * 10 - 5);
                 agents[childIdx].angle = (float)(2 * Math.PI * rnd.NextDouble());
 
-                if (rnd.NextDouble() < 0.75)
+                var decision1 = rnd.NextDouble();
+                if (decision1 < 0.25) // 25% copy without changing
                 {
-                    //mutation
+                    Array.Copy(network, agents[parent1Idx].nnOffset, network, agents[childIdx].nnOffset, nn.Size);
+                }
+                else if (decision1 < 0.9) // 65% mutate
+                {
                     Array.Copy(network, agents[parent1Idx].nnOffset, network, agents[childIdx].nnOffset, nn.Size);
                     double mutationAmplification = 2;
-                    if (rnd.NextDouble() < 0.5) //50% - mutate slightly
+                    double decision2 = rnd.NextDouble();
+                    if (decision2 < 0.6) //60% - mutate slightly
                         nn.Mutate(network, agents[childIdx].nnOffset, rnd, 0.01 * mutationAmplification, 0.05 * mutationAmplification);
-                    if (rnd.NextDouble() < 0.2) //20% - mutate mildly
+                    else if (decision2 < 0.95) //35% - mutate mildly
                         nn.Mutate(network, agents[childIdx].nnOffset, rnd, 0.05 * mutationAmplification, 0.15 * mutationAmplification);
-                    if (rnd.NextDouble() < 0.1) //5% - mutate strong all inputs of one hidden neuron
+                    else //5% - mutate strong all inputs of one hidden neuron
                         nn.MutateAllIncomming(network, agents[childIdx].nnOffset, rnd, 0.3 * mutationAmplification);
                 }
-                else
+                else // 10% cross-over
                 {
-                    //crossing
                     var parent2Idx = parents[rnd.Next(parents.Count)];
                     nn.Cross(network, agents[parent1Idx].nnOffset, agents[parent2Idx].nnOffset, agents[childIdx].nnOffset, rnd);
                 }

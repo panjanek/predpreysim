@@ -90,11 +90,16 @@ namespace PredPreySim
             double frames = app.renderer.FrameCounter - lastCheckFrameCount;
             if (timespan.TotalSeconds >= 0.0001)
             {
+                var bestBlue = app.simulation.stats.Count == 0 ? 0 : 100 * app.simulation.stats.Max(s => s.topBlueMealsPerAge);
+                var bestRed = app.simulation.stats.Count == 0 ? 0 : 100 * app.simulation.stats.Max(s => s.topRedMealsPerAge);
+
                 double fps = frames / timespan.TotalSeconds;
                 Title = $"Predator Pray Sim. " +
-                        $"fps:{fps.ToString("0.0")} "+
-                        $"step:{app.simulation.step} "+
-                        $"gen:{app.simulation.generation} ";
+                        $"fps:{fps.ToString("0.0")} " +
+                        $"step:{app.simulation.step} " +
+                        $"gen:{app.simulation.generation} " +
+                        $"blue: {bestBlue.ToString("0.00")} " +
+                        $"red: {bestRed.ToString("0.00")} ";
 
                 lastCheckFrameCount = app.renderer.FrameCounter;
                 lastCheckTime = now;

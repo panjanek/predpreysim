@@ -127,6 +127,12 @@ namespace PredPreySim.Gui
                     Style = new SeriesStyle() { StrokeThickness = 3, Stroke = Brushes.Magenta },
                     IsSelected = true
                 },
+                new StatsSeries() {
+                    Name = "active plants",
+                    Selector = s=>s.plantsCount,
+                    Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Green },
+                    IsSelected = true
+                },
             };
 
             Loaded += ConfigWindow_Loaded;

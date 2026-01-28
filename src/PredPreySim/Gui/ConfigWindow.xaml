@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PredPreySim.Gui"
         mc:Ignorable="d"
         Title="PredPreySim details" 
-        Width="800"
+        Width="1200"
         Height="400"  
         ResizeMode="CanMinimize"
         WindowStartupLocation="CenterOwner"

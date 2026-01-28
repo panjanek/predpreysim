@@ -56,8 +56,8 @@ namespace PredPreySim.Gui
             try
             {
                 var toDraw = stats.OrderBy(s => s.time).ToList();
-                if (toDraw.Count > 500)
-                    toDraw = toDraw.Skip(toDraw.Count - 500).ToList();
+                if (toDraw.Count > 2000)
+                    toDraw = toDraw.Skip(toDraw.Count - 2000).ToList();
 
                 var width = ActualWidth;
                 var height = ActualHeight;

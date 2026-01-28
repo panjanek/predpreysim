@@ -6,7 +6,7 @@ struct Agent
     float angle;
     uint type;
     float energy;
-    int age;
+    uint age;
     int state;
     int nnOffset;
     int meals;

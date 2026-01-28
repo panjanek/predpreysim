@@ -24,7 +24,7 @@ namespace PredPreySim.Models
         public float energy;
 
         [FieldOffset(20)]
-        public int age;
+        public uint age;
 
         [FieldOffset(24)]
         public int state;

@@ -37,11 +37,23 @@ namespace PredPreySim.Models.NN
 
         public void MutateAllIncomming(float[] network, int offset, Random rnd, double stdDev)
         {
-            int h = rnd.Next(8);
-            for(int i=0; i<15; i++)
+            int h = rnd.Next(8 + 2);
+            if (h < 8) //1st layer
             {
-                double delta = MathUtil.NextGaussian(rnd, 0.0, stdDev);
-                network[offset + h*15 + i] += (float)delta;
+                for (int i = 0; i < 15; i++)
+                {
+                    double delta = MathUtil.NextGaussian(rnd, 0.0, stdDev);
+                    network[offset + h * 15 + i] += (float)delta;
+                }
+            }
+            else //2nd layer
+            {
+                var o = h - 8;
+                for (int i = 0; i < 8; i++)
+                {
+                    double delta = MathUtil.NextGaussian(rnd, 0.0, stdDev);
+                    network[offset + 128 + o*8 + i] += (float)delta;
+                }
             }
         }
 

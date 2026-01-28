@@ -10,16 +10,28 @@ namespace PredPreySim.Models
     {
         public double time;
 
-        public double topBlueFitness;
+        public double topBlueAvgFitness;
 
-        public double topRedFitness;
+        public double topRedAvgFitness;
 
-        public double topBlueMeals;
+        public double topBlueAvgMeals;
 
-        public double topBlueDeaths;
+        public double topBlueAvgDeaths;
 
-        public double topRedMeals;
+        public double topRedAvgMeals;
 
-        public double topRedDeaths;
+        public double topRedAvgDeaths;
+
+        public double topBlueMedFitness;
+
+        public double topRedMedFitness;
+
+        public double topBlueMedMeals;
+
+        public double topBlueMedDeaths;
+
+        public double topRedMedMeals;
+
+        public double topRedMedDeaths;
     }
 }

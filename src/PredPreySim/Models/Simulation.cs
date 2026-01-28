@@ -113,12 +113,19 @@ namespace PredPreySim.Models
             stats.Add(new Stats()
             {
                 time = shaderConfig.t,
-                topBlueFitness = topBlue.Average(x=>x.fitness),
-                topRedFitness = topRed.Average(x=>x.fitness),
-                topBlueMeals = topBlue.Average(x => x.agent.meals),
-                topRedMeals = topRed.Average(x => x.agent.meals),
-                topBlueDeaths = topBlue.Average(x => x.agent.deaths),
-                topRedDeaths = topRed.Average(x => x.agent.deaths),
+                topBlueAvgFitness = topBlue.Average(x=>x.fitness),
+                topRedAvgFitness = topRed.Average(x=>x.fitness),
+                topBlueAvgMeals = topBlue.Average(x => x.agent.meals),
+                topRedAvgMeals = topRed.Average(x => x.agent.meals),
+                topBlueAvgDeaths = topBlue.Average(x => x.agent.deaths),
+                topRedAvgDeaths = topRed.Average(x => x.agent.deaths),
+
+                topBlueMedFitness = topBlue.Median(x => x.fitness),
+                topRedMedFitness = topRed.Median(x => x.fitness),
+                topBlueMedMeals = topBlue.Median(x => x.agent.meals),
+                topRedMedMeals = topRed.Median(x => x.agent.meals),
+                topBlueMedDeaths = topBlue.Median(x => x.agent.deaths),
+                topRedMedDeaths = topRed.Median(x => x.agent.deaths),
             });
         }
 

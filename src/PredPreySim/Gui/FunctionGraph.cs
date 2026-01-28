@@ -16,8 +16,27 @@ namespace PredPreySim.Gui
 {
     public class FunctionGraph : Canvas
     {
-        public void Draw(List<Stats> stats, List<StatsSeries> series)
+        private List<Stats> stats;
+
+        private List<StatsSeries> series;
+
+        public void Draw(List<Stats> stats)
         {
+            this.stats = stats;
+            InternalDraw();
+        }
+
+        public void UpdateSeries(List<StatsSeries> series)
+        {
+            this.series = series;
+            InternalDraw();
+        }
+
+        public void InternalDraw()
+        {
+            if (series == null || series.Count == 0 || stats == null || stats.Count < 2)
+                return;
+
             try
             {
                 var toDraw = stats.OrderBy(s => s.time).ToList();

@@ -15,9 +15,10 @@ using Application = System.Windows.Application;
 namespace PredPreySim
 {
     //TODO:
-    // - fitnes graph
+    // - improve graphs
     // - select and track
-    // - age contribute to fitness
+    // - show best performers
+    // - age contribute to fitness!
     // - memory
     public partial class MainWindow : Window
     {

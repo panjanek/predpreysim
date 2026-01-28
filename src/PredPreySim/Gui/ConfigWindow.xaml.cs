@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,6 +25,10 @@ namespace PredPreySim.Gui
     public partial class ConfigWindow : Window
     {
         private AppContext app;
+
+        private List<StatsSeries> series;
+
+        private ObservableCollection<SeriesOptionItem> seriesCollection;
         public ConfigWindow(AppContext app)
         {
             this.app = app;
@@ -31,19 +36,15 @@ namespace PredPreySim.Gui
             customTitleBar.MouseLeftButtonDown += (s, e) => { if (e.ButtonState == MouseButtonState.Pressed) DragMove(); };
             minimizeButton.Click += (s, e) => WindowState = WindowState.Minimized;
             Closing += (s, e) => { e.Cancel = true; WindowState = WindowState.Minimized; };
-        }
-
-        public void DrawStats(List<Stats> stats)
-        {
-            statsGraph.Draw(stats, new List<StatsSeries>()
+            series = new List<StatsSeries>()
             {
-                new StatsSeries() { 
+                new StatsSeries() {
                     name = "blue fitness",
-                    line = Brushes.Blue, 
+                    line = Brushes.Blue,
                     thickness = 2,
                     dot = Brushes.Blue,
                     radius = 5,
-                    selector = s=>s.topBlueFitness 
+                    selector = s=>s.topBlueAvgFitness
                 },
                 new StatsSeries() {
                     name = "blue meals",
@@ -52,7 +53,7 @@ namespace PredPreySim.Gui
                     thickness = 2,
                     dot = Brushes.Blue,
                     radius = 3,
-                    selector = s=>s.topBlueMeals
+                    selector = s=>s.topBlueAvgMeals
                 },
                 new StatsSeries() {
                     name = "blue deaths",
@@ -61,7 +62,7 @@ namespace PredPreySim.Gui
                     thickness = 1,
                     dot = Brushes.Blue,
                     radius = 3,
-                    selector = s=>s.topBlueDeaths
+                    selector = s=>s.topBlueAvgDeaths
                 },
                 new StatsSeries() {
                     name = "red fitness",
@@ -69,7 +70,7 @@ namespace PredPreySim.Gui
                     thickness = 2,
                     dot = Brushes.Red,
                     radius = 3,
-                    selector = s=>s.topRedFitness
+                    selector = s=>s.topRedAvgFitness
                 },
                 new StatsSeries() {
                     name = "red meals",
@@ -78,9 +79,46 @@ namespace PredPreySim.Gui
                     thickness = 2,
                     dot = Brushes.Red,
                     radius = 3,
-                    selector = s=>s.topRedMeals
+                    selector = s=>s.topRedAvgMeals
                 },
-            });
+            };
+
+            Loaded += ConfigWindow_Loaded;
         }
+
+        private void ConfigWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            seriesCollection = new ObservableCollection<SeriesOptionItem>();
+            foreach (var serie in series)
+            {
+                seriesCollection.Add(new SeriesOptionItem() { IsSelected = true, Name = serie.name, Series = serie });
+            }
+
+            seriesList.ItemsSource = seriesCollection;
+        }
+
+        public void DrawStats(List<Stats> stats)
+        {
+            statsGraph.UpdateSeries(GetVisibleSeries());
+            statsGraph.Draw(stats);
+        }
+
+        public List<StatsSeries> GetVisibleSeries()
+        {
+            if (seriesCollection == null || seriesCollection.Count == 0)
+                return series;
+            else
+                return seriesCollection.Where(c => c.IsSelected).Select(c => c.Series).ToList();
+
+        }
+
+        private void SeriesCheckBox_Click(object sender, RoutedEventArgs e) => statsGraph.UpdateSeries(GetVisibleSeries());
+    }
+
+    public class SeriesOptionItem
+    {
+        public string Name { get; set; }
+        public bool IsSelected { get; set; }
+        public StatsSeries Series { get; set; }
     }
 }

@@ -73,7 +73,7 @@ namespace PredPreySim.Models
 
         public void ChangeEpoch()
         {
-            var ranking = agents.Select((a, i) => new { index = i, agent = a, fitness = a.meals * 2 - a.deaths * 5 - a.energySpent * 0.01 }).Where(a=>a.agent.type > 0).ToList();
+            var ranking = agents.Select((a, i) => new { index = i, agent = a, fitness = a.Fitness() }).Where(a=>a.agent.type > 0).ToList();
 
             var allBlueCount = agents.Count(a => a.type == 1);
             var allBlue = ranking.Where(x => x.agent.type == 1);
@@ -138,12 +138,14 @@ namespace PredPreySim.Models
                 agents[childIdx].angle = (float)(2 * Math.PI * rnd.NextDouble());
 
                 Array.Copy(network, agents[parentIdx].nnOffset, network, agents[childIdx].nnOffset, nn.Size);
+
+                double mutationAmplification = 2.5;
                 if (rnd.NextDouble() < 0.5) //50% - mutate slightly
-                    nn.Mutate(network, agents[childIdx].nnOffset, rnd, 0.01, 0.05);
+                    nn.Mutate(network, agents[childIdx].nnOffset, rnd, 0.01 * mutationAmplification, 0.05 * mutationAmplification);
                 if (rnd.NextDouble() < 0.2) //20% - mutate mildly
-                    nn.Mutate(network, agents[childIdx].nnOffset, rnd, 0.05, 0.15);
-                if (rnd.NextDouble() < 0.05) //5% - mutate strong all inputs of one hidden neuron
-                    nn.MutateAllIncomming(network, agents[childIdx].nnOffset, rnd, 0.3);
+                    nn.Mutate(network, agents[childIdx].nnOffset, rnd, 0.05 * mutationAmplification, 0.15 * mutationAmplification);
+                if (rnd.NextDouble() < 0.1) //5% - mutate strong all inputs of one hidden neuron
+                    nn.MutateAllIncomming(network, agents[childIdx].nnOffset, rnd, 0.3 * mutationAmplification);
             }
         }
     }

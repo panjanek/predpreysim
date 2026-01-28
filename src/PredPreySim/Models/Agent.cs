@@ -43,5 +43,11 @@ namespace PredPreySim.Models
 
         [FieldOffset(44)]
         public int pad;
+
+        public double Fitness()
+        {
+            var value = meals * 2 - deaths * 5 - energySpent * 0.01;
+            return value * Math.Exp(-age / 10000);
+        }
     }
 }

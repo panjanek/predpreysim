@@ -39,47 +39,29 @@ namespace PredPreySim.Gui
             series = new List<StatsSeries>()
             {
                 new StatsSeries() {
-                    name = "blue fitness",
-                    line = Brushes.Blue,
-                    thickness = 2,
-                    dot = Brushes.Blue,
-                    radius = 5,
-                    selector = s=>s.topBlueAvgFitness
+                    Name = "blue fitness",
+                    Selector = s=>s.topBlueAvgFitness,
+                    Style = new SeriesStyle() { StrokeThickness = 3, Stroke = Brushes.Blue }
                 },
                 new StatsSeries() {
-                    name = "blue meals",
-                    line = Brushes.Blue,
-                    style = LineStyle.Dotted,
-                    thickness = 2,
-                    dot = Brushes.Blue,
-                    radius = 3,
-                    selector = s=>s.topBlueAvgMeals
+                    Name = "blue meals",
+                    Selector = s=>s.topBlueAvgMeals,
+                    Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Blue, StrokeDashArray = new DoubleCollection() { 0, 3 }, LineCap = PenLineCap.Round }
                 },
                 new StatsSeries() {
-                    name = "blue deaths",
-                    line = Brushes.Blue,
-                    style = LineStyle.Dashed,
-                    thickness = 1,
-                    dot = Brushes.Blue,
-                    radius = 3,
-                    selector = s=>s.topBlueAvgDeaths
+                    Name = "blue deaths",
+                    Selector = s=>s.topBlueAvgDeaths,
+                    Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Blue, StrokeDashArray = new DoubleCollection() { 3, 6 } }
                 },
                 new StatsSeries() {
-                    name = "red fitness",
-                    line = Brushes.Red,
-                    thickness = 2,
-                    dot = Brushes.Red,
-                    radius = 3,
-                    selector = s=>s.topRedAvgFitness
+                    Name = "red fitness",
+                    Selector = s=>s.topRedAvgFitness,
+                    Style = new SeriesStyle() { StrokeThickness = 3, Stroke = Brushes.Red }
                 },
                 new StatsSeries() {
-                    name = "red meals",
-                    line = Brushes.Red,
-                    style = LineStyle.Dotted,
-                    thickness = 2,
-                    dot = Brushes.Red,
-                    radius = 3,
-                    selector = s=>s.topRedAvgMeals
+                    Name = "red meals",
+                    Selector = s=>s.topRedAvgMeals,
+                    Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Red, StrokeDashArray = new DoubleCollection() { 0, 3 }, LineCap = PenLineCap.Round  }
                 },
             };
 
@@ -91,7 +73,7 @@ namespace PredPreySim.Gui
             seriesCollection = new ObservableCollection<SeriesOptionItem>();
             foreach (var serie in series)
             {
-                seriesCollection.Add(new SeriesOptionItem() { IsSelected = true, Name = serie.name, Series = serie });
+                seriesCollection.Add(new SeriesOptionItem() { IsSelected = true, Name = serie.Name, Series = serie });
             }
 
             seriesList.ItemsSource = seriesCollection;
@@ -105,7 +87,7 @@ namespace PredPreySim.Gui
 
         public List<StatsSeries> GetVisibleSeries()
         {
-            if (seriesCollection == null || seriesCollection.Count == 0)
+            if (seriesCollection == null || seriesCollection.Count(c => c.IsSelected) == 0)
                 return series;
             else
                 return seriesCollection.Where(c => c.IsSelected).Select(c => c.Series).ToList();

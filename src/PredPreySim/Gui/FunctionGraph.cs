@@ -50,10 +50,11 @@ namespace PredPreySim.Gui
                 Background = Brushes.Black;
                 ClipToBounds = true;
 
+                double dotRadius = 5;
                 foreach (var serie in series)
                 {
-                    double minY = toDraw.Select(s => serie.selector(s)).Min();
-                    double maxY = toDraw.Select(s => serie.selector(s)).Max();
+                    double minY = toDraw.Select(s => serie.Selector(s)).Min();
+                    double maxY = toDraw.Select(s => serie.Selector(s)).Max();
 
                     var dy = maxY - minY;
                     maxY += dy * 0.1;
@@ -65,22 +66,15 @@ namespace PredPreySim.Gui
                     {
                         var s1 = toDraw[i];
                         var x1 = i * scaleX;
-                        var y1 = serie.selector(s1);
-                        var dot = CanvasUtil.AddEllipse(this, x1- serie.radius/2, height - (y1 - minY) * scaleY- serie.radius/2, serie.radius, serie.radius, 0, Brushes.Transparent, serie.dot, null, 1);
-                        dot.ToolTip = serie.name + ": " + y1.ToString("0.000", CultureInfo.InvariantCulture);
+                        var y1 = serie.Selector(s1);
+                        var dot = CanvasUtil.AddEllipse(this, x1- dotRadius/2, height - (y1 - minY) * scaleY- dotRadius/2, dotRadius, dotRadius, 0, Brushes.Transparent, serie.Style.Stroke, null, 1);
+                        dot.ToolTip = serie.Name + ": " + y1.ToString("0.000", CultureInfo.InvariantCulture);
                         if (i < toDraw.Count - 1)
                         {
                             var s2 = toDraw[i + 1];
                             var x2 = (i + 1) * scaleX;
-                            var y2 = serie.selector(s2);
-                            var line = CanvasUtil.AddLine(this, x1, height - (y1 - minY) * scaleY, x2, height - (y2 - minY) * scaleY, serie.thickness, serie.line, null, 2);
-                            if (serie.style == LineStyle.Dashed)
-                                line.StrokeDashArray = new DoubleCollection { 8, 4 };
-                            else if (serie.style == LineStyle.Dotted)
-                            {
-                                line.StrokeDashArray = new DoubleCollection { 0, 2 };
-                                line.StrokeDashCap = PenLineCap.Round;
-                            }
+                            var y2 = serie.Selector(s2);
+                            var line = CanvasUtil.AddStyledLine(this, x1, height - (y1 - minY) * scaleY, x2, height - (y2 - minY) * scaleY, serie.Style, null, 2);
                         }
                     }
 
@@ -106,25 +100,18 @@ namespace PredPreySim.Gui
 
     public class StatsSeries
     {
-        public string name;
+        public string Name { get; set; }
 
-        public Brush line;
+        public SeriesStyle Style { get; set; }
 
-        public Brush dot;
-
-        public double thickness;
-
-        public double radius;
-
-        public LineStyle style;
-
-        public Func<Stats, double> selector;  
+        public Func<Stats, double> Selector { get; set; }
     }
 
-    public enum LineStyle : int
+    public class SeriesStyle
     {
-        Normal = 0,
-        Dotted = 1,
-        Dashed = 2
+        public Brush Stroke { get; set; }
+        public double StrokeThickness { get; set; }
+        public DoubleCollection StrokeDashArray { get; set; }
+        public PenLineCap LineCap { get; set; }
     }
 }

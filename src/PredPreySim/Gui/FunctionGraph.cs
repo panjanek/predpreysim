@@ -61,14 +61,14 @@ namespace PredPreySim.Gui
                     minY -= dy * 0.1;
                     dy = maxY - minY;
                     double scaleX = width / (toDraw.Count-1);
-                    double scaleY = dy > 0.01 ? height / dy : height / 0.01;
+                    double scaleY = dy > 0.0000001 ? height / dy : height / 0.0000001;
                     for (int i = 0; i < toDraw.Count; i++)
                     {
                         var s1 = toDraw[i];
                         var x1 = i * scaleX;
                         var y1 = serie.Selector(s1);
                         var dot = CanvasUtil.AddEllipse(this, x1- dotRadius/2, height - (y1 - minY) * scaleY- dotRadius/2, dotRadius, dotRadius, 0, Brushes.Transparent, serie.Style.Stroke, null, 1);
-                        dot.ToolTip = serie.Name + ": " + y1.ToString("0.000", CultureInfo.InvariantCulture);
+                        dot.ToolTip = serie.Name + ": " + y1.ToString("0.00000", CultureInfo.InvariantCulture);
                         if (i < toDraw.Count - 1)
                         {
                             var s2 = toDraw[i + 1];
@@ -101,6 +101,8 @@ namespace PredPreySim.Gui
     public class StatsSeries
     {
         public string Name { get; set; }
+
+        public bool IsSelected { get; set; }
 
         public SeriesStyle Style { get; set; }
 

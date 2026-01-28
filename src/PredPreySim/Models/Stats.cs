@@ -33,5 +33,13 @@ namespace PredPreySim.Models
         public double topRedMedMeals;
 
         public double topRedMedDeaths;
+
+        public double topRedAvgAge;
+
+        public double topBlueAvgAge;
+
+        public double topRedMealsPerAge;
+
+        public double topBlueMealsPerAge;
     }
 }

@@ -23,11 +23,26 @@ namespace PredPreySim.Models.NN
                 network[offset + i] = (float)(rnd.NextDouble() * 1 - 0.5);
         }
 
-        public void Mutate(float[] network, int offset, Random rnd)
+        public void Mutate(float[] network, int offset, Random rnd, double changedWeightsRatio, double stdDev)
         {
-            int i = rnd.Next(Size);
-            double delta = MathUtil.NextGaussian(rnd, 0.0, 0.05);
-            network[offset + i] += (float)delta;
+            for (int i = 0; i < Size; i++)
+            {
+                if (rnd.NextDouble() <= changedWeightsRatio)
+                {
+                    double delta = MathUtil.NextGaussian(rnd, 0.0, stdDev);
+                    network[offset + i] += (float)delta;
+                }
+            }
+        }
+
+        public void MutateAllIncomming(float[] network, int offset, Random rnd, double stdDev)
+        {
+            int h = rnd.Next(8);
+            for(int i=0; i<15; i++)
+            {
+                double delta = MathUtil.NextGaussian(rnd, 0.0, stdDev);
+                network[offset + h*15 + i] += (float)delta;
+            }
         }
     }
 }

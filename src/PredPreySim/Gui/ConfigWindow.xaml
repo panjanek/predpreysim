@@ -79,10 +79,10 @@
                                       Y2="0"
                                       Margin="8,0,0,0"
                                       VerticalAlignment="Center"
-                                      Stroke="{Binding Series.Style.Stroke}"
-                                      StrokeThickness="{Binding Series.Style.StrokeThickness}"
-                                      StrokeDashArray="{Binding Series.Style.StrokeDashArray}"
-                                      StrokeDashCap ="{Binding Series.Style.LineCap}"/>
+                                      Stroke="{Binding Style.Stroke}"
+                                      StrokeThickness="{Binding Style.StrokeThickness}"
+                                      StrokeDashArray="{Binding Style.StrokeDashArray}"
+                                      StrokeDashCap ="{Binding Style.LineCap}"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

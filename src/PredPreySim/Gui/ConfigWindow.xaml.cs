@@ -28,7 +28,7 @@ namespace PredPreySim.Gui
 
         private List<StatsSeries> series;
 
-        private ObservableCollection<SeriesOptionItem> seriesCollection;
+        private ObservableCollection<StatsSeries> seriesCollection;
         public ConfigWindow(AppContext app)
         {
             this.app = app;
@@ -36,32 +36,96 @@ namespace PredPreySim.Gui
             customTitleBar.MouseLeftButtonDown += (s, e) => { if (e.ButtonState == MouseButtonState.Pressed) DragMove(); };
             minimizeButton.Click += (s, e) => WindowState = WindowState.Minimized;
             Closing += (s, e) => { e.Cancel = true; WindowState = WindowState.Minimized; };
-            series = new List<StatsSeries>()
+            seriesCollection = new ObservableCollection<StatsSeries>()
             {
+                // -------------------------------------------- AVG -------------------------------------------
                 new StatsSeries() {
-                    Name = "blue fitness",
+                    Name = "blue avg fitness",
                     Selector = s=>s.topBlueAvgFitness,
-                    Style = new SeriesStyle() { StrokeThickness = 3, Stroke = Brushes.Blue }
+                    Style = new SeriesStyle() { StrokeThickness = 3, Stroke = Brushes.Blue },
+                    IsSelected = true
                 },
                 new StatsSeries() {
-                    Name = "blue meals",
+                    Name = "blue avg meals",
                     Selector = s=>s.topBlueAvgMeals,
-                    Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Blue, StrokeDashArray = new DoubleCollection() { 0, 3 }, LineCap = PenLineCap.Round }
+                    Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Blue, StrokeDashArray = new DoubleCollection() { 0, 3 }, LineCap = PenLineCap.Round },
+                    IsSelected = true
                 },
                 new StatsSeries() {
-                    Name = "blue deaths",
+                    Name = "blue avg deaths",
                     Selector = s=>s.topBlueAvgDeaths,
-                    Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Blue, StrokeDashArray = new DoubleCollection() { 3, 6 } }
+                    Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Blue, StrokeDashArray = new DoubleCollection() { 3, 6 } },
+                    IsSelected = true
                 },
                 new StatsSeries() {
-                    Name = "red fitness",
+                    Name = "red avg fitness",
                     Selector = s=>s.topRedAvgFitness,
-                    Style = new SeriesStyle() { StrokeThickness = 3, Stroke = Brushes.Red }
+                    Style = new SeriesStyle() { StrokeThickness = 3, Stroke = Brushes.Red },
+                    IsSelected = true
                 },
                 new StatsSeries() {
-                    Name = "red meals",
+                    Name = "red avg meals",
                     Selector = s=>s.topRedAvgMeals,
-                    Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Red, StrokeDashArray = new DoubleCollection() { 0, 3 }, LineCap = PenLineCap.Round  }
+                    Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Red, StrokeDashArray = new DoubleCollection() { 0, 3 }, LineCap = PenLineCap.Round  },
+                    IsSelected = true
+                },
+
+                // -------------------------------------------------- MEDIAN ------------------------------------
+                new StatsSeries() {
+                    Name = "blue med fitness",
+                    Selector = s=>s.topBlueMedFitness,
+                    Style = new SeriesStyle() { StrokeThickness = 3, Stroke = Brushes.Blue },
+                    IsSelected = true
+                },
+                new StatsSeries() {
+                    Name = "blue med meals",
+                    Selector = s=>s.topBlueMedMeals,
+                    Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Blue, StrokeDashArray = new DoubleCollection() { 0, 3 }, LineCap = PenLineCap.Round },
+                    IsSelected = true
+                },
+                new StatsSeries() {
+                    Name = "blue med deaths",
+                    Selector = s=>s.topBlueMedDeaths,
+                    Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Blue, StrokeDashArray = new DoubleCollection() { 3, 6 } },
+                    IsSelected = true
+                },
+                new StatsSeries() {
+                    Name = "red med fitness",
+                    Selector = s=>s.topRedMedFitness,
+                    Style = new SeriesStyle() { StrokeThickness = 3, Stroke = Brushes.Red },
+                    IsSelected = true
+                },
+                new StatsSeries() {
+                    Name = "red med meals",
+                    Selector = s=>s.topRedMedMeals,
+                    Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Red, StrokeDashArray = new DoubleCollection() { 0, 3 }, LineCap = PenLineCap.Round  },
+                    IsSelected = true
+                },
+
+                // -------------------------------------------------- OTHER ------------------------------------
+                new StatsSeries() {
+                    Name = "blue avg age",
+                    Selector = s=>s.topBlueAvgAge,
+                    Style = new SeriesStyle() { StrokeThickness = 1, Stroke = Brushes.Cyan },
+                    IsSelected = true
+                },
+                new StatsSeries() {
+                    Name = "red avg age",
+                    Selector = s=>s.topRedAvgAge,
+                    Style = new SeriesStyle() { StrokeThickness = 1, Stroke = Brushes.Magenta },
+                    IsSelected = true
+                },
+                new StatsSeries() {
+                    Name = "blue meals/age",
+                    Selector = s=>s.topBlueMealsPerAge,
+                    Style = new SeriesStyle() { StrokeThickness = 3, Stroke = Brushes.Cyan },
+                    IsSelected = true
+                },
+                new StatsSeries() {
+                    Name = "red meals/age",
+                    Selector = s=>s.topRedMealsPerAge,
+                    Style = new SeriesStyle() { StrokeThickness = 3, Stroke = Brushes.Magenta },
+                    IsSelected = true
                 },
             };
 
@@ -70,12 +134,6 @@ namespace PredPreySim.Gui
 
         private void ConfigWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            seriesCollection = new ObservableCollection<SeriesOptionItem>();
-            foreach (var serie in series)
-            {
-                seriesCollection.Add(new SeriesOptionItem() { IsSelected = true, Name = serie.Name, Series = serie });
-            }
-
             seriesList.ItemsSource = seriesCollection;
         }
 
@@ -90,17 +148,10 @@ namespace PredPreySim.Gui
             if (seriesCollection == null || seriesCollection.Count(c => c.IsSelected) == 0)
                 return series;
             else
-                return seriesCollection.Where(c => c.IsSelected).Select(c => c.Series).ToList();
+                return seriesCollection.Where(c => c.IsSelected).Select(c => c).ToList();
 
         }
 
         private void SeriesCheckBox_Click(object sender, RoutedEventArgs e) => statsGraph.UpdateSeries(GetVisibleSeries());
-    }
-
-    public class SeriesOptionItem
-    {
-        public string Name { get; set; }
-        public bool IsSelected { get; set; }
-        public StatsSeries Series { get; set; }
     }
 }

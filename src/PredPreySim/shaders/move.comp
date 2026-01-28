@@ -18,7 +18,7 @@ struct Agent
     float angle;
     uint type;
     float energy;
-    float age;
+    int age;
     int state;
     int nnOffset;
     int meals;
@@ -166,7 +166,7 @@ void update_one(uint idx)
 {
     Agent agent = agents[idx];
 
-    agent.age += config.dt;
+    agent.age += 1;
     if (agent.type == 0 && agent.state == 1 && agent.age > 0)
         agent.state = 0;
        

@@ -18,7 +18,7 @@ struct Agent
     float angle;
     uint type;
     float energy;
-    float age;
+    int age;
     int state;
     int nnOffset;
     int meals;
@@ -76,7 +76,7 @@ void update_one(uint idx)
         if (blue.r == 1)
         {
             agent.state = 1;
-            agent.age = -100;
+            agent.age = -1000;
             agent.position = vec2(config.width * get_random_float_01(agent, 100037), config.height * get_random_float_01(agent, 20347));
         }
     }
@@ -94,7 +94,7 @@ void update_one(uint idx)
          {
              agent.deaths++;
              agent.energy = 0;
-             agent.age = 0;
+             //agent.age = 0;
              agent.position = vec2(config.width * get_random_float_01(agent, 100037), config.height * get_random_float_01(agent, 20347));
          }
     }

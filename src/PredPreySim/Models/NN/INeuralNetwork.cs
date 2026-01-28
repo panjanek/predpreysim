@@ -12,6 +12,8 @@ namespace PredPreySim.Models.NN
 
         void Init(float[] network, int offset, Random rnd);
 
-        void Mutate(float[] network, int offset, Random rnd);
+        void Mutate(float[] network, int offset, Random rnd, double changedWeightsRatio, double stdDev);
+
+        void MutateAllIncomming(float[] network, int offset, Random rnd, double stdDev);
     }
 }

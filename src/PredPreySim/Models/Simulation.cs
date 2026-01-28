@@ -73,27 +73,11 @@ namespace PredPreySim.Models
 
         public void ChangeEpoch()
         {
-            
-            var blue = agents.Where(a => a.type == 1).OrderByDescending(a=>a.energy).ToList();
-            var minBlueMeals = blue.Min(a => a.meals);
-            var maxBlueMeals = blue.Max(a => a.meals);
-
-            var red = agents.Where(a => a.type == 2).OrderByDescending(a => a.energy).ToList();
-            var minRedMeals = red.Min(a => a.meals);
-            var maxRedMeals = red.Max(a => a.meals);
-
-            
-
-
-            var ranking = agents.Select((a, i) => new { index = i, agent = a, fitness = a.meals * 2 - a.deaths * 5 - a.energySpent * 0.01 }).ToList();
-
-            var minBlueScore = ranking.Where(x => x.agent.type == 1).Min(a => a.fitness);
-            var maxBlueScore = ranking.Where(x => x.agent.type == 1).Max(a => a.fitness);
-            var minRedScore = ranking.Where(x => x.agent.type == 2).Min(a => a.fitness);
-            var maxRedScore = ranking.Where(x => x.agent.type == 2).Max(a => a.fitness);
+            var ranking = agents.Select((a, i) => new { index = i, agent = a, fitness = a.meals * 2 - a.deaths * 5 - a.energySpent * 0.01 }).Where(a=>a.agent.type > 0).ToList();
 
             var allBlueCount = agents.Count(a => a.type == 1);
-            var topBlue = ranking.Where(x => x.agent.type == 1).OrderByDescending(x => x.fitness).Take(allBlueCount / 10).ToList();
+            var allBlue = ranking.Where(x => x.agent.type == 1);
+            var topBlue = allBlue.OrderByDescending(x => x.fitness).Take(allBlueCount / 10).ToList();
             var topBlueIds = topBlue.Select(x=>x.index).ToList();
             var downBlueIds = ranking.Where(x => x.agent.type == 1).OrderBy(x => x.fitness).Take(allBlueCount / 2).Select(x => x.index).ToList();
             if (topBlueIds.Intersect(downBlueIds).Count() > 0)
@@ -102,7 +86,8 @@ namespace PredPreySim.Models
             Breed(topBlueIds, downBlueIds);
 
             var allRedCount = agents.Count(a => a.type == 2);
-            var topRed = ranking.Where(x => x.agent.type == 2).OrderByDescending(x => x.fitness).Take(allRedCount / 10).ToList();
+            var allRed = ranking.Where(x => x.agent.type == 2);
+            var topRed = allRed.OrderByDescending(x => x.fitness).Take(allRedCount / 10).ToList();
             var topRedIds = topRed.Select(x => x.index).ToList();
             var downRedIds = ranking.Where(x => x.agent.type == 2).OrderBy(x => x.fitness).Take(allRedCount / 2).Select(x => x.index).ToList();
             if (topRedIds.Intersect(downRedIds).Count() > 0)
@@ -113,8 +98,8 @@ namespace PredPreySim.Models
             stats.Add(new Stats()
             {
                 time = shaderConfig.t,
-                topBlueAvgFitness = topBlue.Average(x=>x.fitness),
-                topRedAvgFitness = topRed.Average(x=>x.fitness),
+                topBlueAvgFitness = topBlue.Average(x => x.fitness),
+                topRedAvgFitness = topRed.Average(x => x.fitness),
                 topBlueAvgMeals = topBlue.Average(x => x.agent.meals),
                 topRedAvgMeals = topRed.Average(x => x.agent.meals),
                 topBlueAvgDeaths = topBlue.Average(x => x.agent.deaths),
@@ -126,6 +111,12 @@ namespace PredPreySim.Models
                 topRedMedMeals = topRed.Median(x => x.agent.meals),
                 topBlueMedDeaths = topBlue.Median(x => x.agent.deaths),
                 topRedMedDeaths = topRed.Median(x => x.agent.deaths),
+
+                topBlueMealsPerAge = topBlue.Average(x => x.agent.age == 0 ? 0 : 1.0 * x.agent.meals / x.agent.age),
+                topRedMealsPerAge = topRed.Average(x => x.agent.age == 0 ? 0 : 1.0 * x.agent.meals / x.agent.age),
+
+                topBlueAvgAge = topBlue.Average(x => x.agent.age * 1.0),
+                topRedAvgAge = topRed.Average(x => x.agent.age * 1.0),
             });
         }
 
@@ -147,8 +138,12 @@ namespace PredPreySim.Models
                 agents[childIdx].angle = (float)(2 * Math.PI * rnd.NextDouble());
 
                 Array.Copy(network, agents[parentIdx].nnOffset, network, agents[childIdx].nnOffset, nn.Size);
-                if (rnd.NextDouble() < 0.5)
-                    nn.Mutate(network, agents[childIdx].nnOffset, rnd);
+                if (rnd.NextDouble() < 0.5) //50% - mutate slightly
+                    nn.Mutate(network, agents[childIdx].nnOffset, rnd, 0.01, 0.05);
+                if (rnd.NextDouble() < 0.2) //20% - mutate mildly
+                    nn.Mutate(network, agents[childIdx].nnOffset, rnd, 0.05, 0.15);
+                if (rnd.NextDouble() < 0.05) //5% - mutate strong all inputs of one hidden neuron
+                    nn.MutateAllIncomming(network, agents[childIdx].nnOffset, rnd, 0.3);
             }
         }
     }

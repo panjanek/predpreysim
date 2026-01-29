@@ -133,6 +133,12 @@ namespace PredPreySim.Gui
                     Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Green },
                     IsSelected = true
                 },
+                new StatsSeries() {
+                    Name = "blue deaths",
+                    Selector = s=>s.blueDeaths,
+                    Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Yellow },
+                    IsSelected = true
+                },
             };
 
             Loaded += ConfigWindow_Loaded;

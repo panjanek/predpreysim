@@ -65,7 +65,11 @@ namespace PredPreySim.Gpu
 
         private int blurTexelSizeLocation;
 
-        private int blurKernelLocation;
+        private int blurKernelRedLocation;
+
+        private int blurKernelGreenLocation;
+
+        private int blurKernelBlueLocation;
 
         private int fboA;
 
@@ -91,15 +95,19 @@ namespace PredPreySim.Gpu
             if (blurInRedLocation == -1) throw new Exception("Uniform 'inRed' not found. Shader optimized it out?");
             blurTexelSizeLocation = GL.GetUniformLocation(blurProgram, "uTexelSize");
             if (blurTexelSizeLocation == -1) throw new Exception("Uniform 'uTexelSize' not found. Shader optimized it out?");
-            blurKernelLocation = GL.GetUniformLocation(blurProgram, "uKernel");
-            if (blurKernelLocation == -1) throw new Exception("Uniform 'uKernel' not found. Shader optimized it out?");
+            blurKernelRedLocation = GL.GetUniformLocation(blurProgram, "uKernelRed");
+            if (blurKernelRedLocation == -1) throw new Exception("Uniform 'uKernelRed' not found. Shader optimized it out?");
+            blurKernelGreenLocation = GL.GetUniformLocation(blurProgram, "uKernelGreen");
+            if (blurKernelGreenLocation == -1) throw new Exception("Uniform 'uKernelGreen' not found. Shader optimized it out?");
+            blurKernelBlueLocation = GL.GetUniformLocation(blurProgram, "uKernelBlue");
+            if (blurKernelBlueLocation == -1) throw new Exception("Uniform 'uKernelBlue' not found. Shader optimized it out?");
 
             (vao, vbo) = PolygonUtil.CreateQuad();
 
             GL.GetInteger((OpenTK.Graphics.OpenGL.GetIndexedPName)All.MaxComputeWorkGroupCount, 0, out maxGroupsX);
         }
 
-        public void Run(ref ShaderConfig config, float[] kernel)
+        public void Run(ref ShaderConfig config, float[] kernelRed, float[] kernelGreen, float[] kernelBlue)
         {
             lock (this)
             {
@@ -156,7 +164,9 @@ namespace PredPreySim.Gpu
                 GL.BindTexture(TextureTarget.Texture2D, redTexA);
                 GL.Uniform1(blurInRedLocation, 2);
                 GL.Uniform2(blurTexelSizeLocation, 1.0f / config.width, 1.0f / config.height);
-                GL.Uniform1(blurKernelLocation, 25, kernel);
+                GL.Uniform1(blurKernelRedLocation, 25, kernelRed);
+                GL.Uniform1(blurKernelGreenLocation, 25, kernelGreen);
+                GL.Uniform1(blurKernelBlueLocation, 25, kernelBlue);
                 PolygonUtil.RenderTriangles(vao);
 
                 // Swap

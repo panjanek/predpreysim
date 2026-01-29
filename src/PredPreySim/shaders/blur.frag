@@ -5,16 +5,18 @@ uniform sampler2D inBlue;
 uniform sampler2D inRed;
 
 uniform vec2 uTexelSize;         // (1.0/width, 1.0/height)
-uniform float uKernel[25];
+uniform float uKernelRed[25];
+uniform float uKernelBlue[25];
+uniform float uKernelGreen[25];
 
 layout(location = 0) out vec4 outGreen;
 layout(location = 1) out vec4 outBlue;
 layout(location = 2) out vec4 outRed;
 
-vec4 blur(sampler2D tex, vec2 uv)
+vec4 blur(sampler2D tex, vec2 uv, float kernel[25])
 {
     vec4 sum = vec4(0,0,0,0);
-    float norm = 0;
+    //float norm = 0;
     int k = 0;
     for (int j = -2; j <= 2; j++)
     {
@@ -36,8 +38,8 @@ vec4 blur(sampler2D tex, vec2 uv)
                 src.y -= 1.0;
 
             vec4 current = texture(tex, src);
-            norm += uKernel[k];
-            sum += current * uKernel[k++];
+            //norm += kernel[k];
+            sum += current * kernel[k++];
         }
     }
 
@@ -53,7 +55,7 @@ vec4 blur(sampler2D tex, vec2 uv)
 void main()
 {
     vec2 uv = gl_FragCoord.xy * uTexelSize;
-    outGreen = blur(inGreen, uv);
-    outBlue = blur(inBlue, uv);
-    outRed = blur(inRed, uv);
+    outGreen = blur(inGreen, uv, uKernelGreen);
+    outBlue = blur(inBlue, uv, uKernelBlue);
+    outRed = blur(inRed, uv, uKernelRed);
 }

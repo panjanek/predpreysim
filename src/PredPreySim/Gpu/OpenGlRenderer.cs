@@ -164,7 +164,7 @@ namespace PredPreySim.Gpu
             if (!Paused)
             {
                 app.simulation.shaderConfig.t += app.simulation.shaderConfig.dt;
-                solverProgram.Run(ref app.simulation.shaderConfig, app.simulation.kernel);
+                solverProgram.Run(ref app.simulation.shaderConfig, app.simulation.kernelRed, app.simulation.kernelGreen, app.simulation.kernelBlue);
             }
 
             app.simulation.step++;

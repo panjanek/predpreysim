@@ -19,9 +19,17 @@ namespace PredPreySim.Models
 
         public float[] network;
 
-        public float[] kernel;
+        public float[] kernelRed;
 
-        public float decay = 0.99f;
+        public float[] kernelGreen;
+
+        public float[] kernelBlue;
+
+        public float decayRed = 0.99f;
+
+        public float decayGreen = 0.99f;
+
+        public float decayBlue = 0.997f;
 
         public float initialEnergy = 300;
 
@@ -41,7 +49,9 @@ namespace PredPreySim.Models
             agents = new Agent[shaderConfig.agentsCount];
             nn = new NeuralNetwork(15, 8, 2);
             InitRandomly(0.6, 0.1);
-            kernel = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decay);
+            kernelRed = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decayRed);
+            kernelGreen = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decayGreen);
+            kernelBlue = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decayBlue);
             stats = new List<Stats>();
         }
 
@@ -122,7 +132,8 @@ namespace PredPreySim.Models
                 topBlueAvgAge = topBlue.Average(x => x.agent.age * 1.0),
                 topRedAvgAge = topRed.Average(x => x.agent.age * 1.0),
 
-                plantsCount = agents.Where(a => a.type == 0 && a.state == 0).Count()
+                plantsCount = agents.Where(a => a.type == 0 && a.state == 0).Count(),
+                blueDeaths = allBlue.Sum(a=>a.agent.deaths * 1.0) / allBlue.Count()
             });
 
             //highlight best

@@ -43,5 +43,7 @@ namespace PredPreySim.Models
         public double topBlueMealsPerAge;
 
         public double plantsCount;
+
+        public double blueDeaths;
     }
 }

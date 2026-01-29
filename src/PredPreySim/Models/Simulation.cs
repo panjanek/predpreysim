@@ -152,11 +152,11 @@ namespace PredPreySim.Models
                 agents[childIdx].angle = (float)(2 * Math.PI * rnd.NextDouble());
 
                 var decision1 = rnd.NextDouble();
-                if (decision1 < 0.25) // 25% of times: copy without changing
+                if (decision1 < 0.15) // 15% of times: copy without changing
                 {
                     Array.Copy(network, agents[parent1Idx].nnOffset, network, agents[childIdx].nnOffset, nn.Size);
                 }
-                else if (decision1 < 0.9) // 65% of times: mutate, single parent
+                else if (decision1 < 0.9) // 75% of times: mutate, single parent
                 {
                     Array.Copy(network, agents[parent1Idx].nnOffset, network, agents[childIdx].nnOffset, nn.Size);
                     double mutationAmplification = 2; //for tuning

@@ -134,12 +134,12 @@ float[15] prepare_input(Agent agent)
     }
     else //predator
     {
-        float angles[5] = float[] ( -0.15*M_PI , 0, +0.15*M_PI, -0.75*M_PI, +0.75*M_PI );
+        float angles[5] = float[] ( -0.075*M_PI , 0, +0.075*M_PI, -0.5*M_PI, +0.5*M_PI );
         for(int a=0; a<5; a++)
         {
-            vec3 sensor = sense(agent, angles[a], 3, 1);
-            inp[a*3+0] = sensor.r * 0.2;
-            inp[a*3+1] = sensor.g * 0.1;
+            vec3 sensor = sense(agent, angles[a], 4, 1);
+            inp[a*3+0] = sensor.r * 0.1;
+            inp[a*3+1] = sensor.g * 0.05;
             inp[a*3+2] = sensor.b;
         }
     }

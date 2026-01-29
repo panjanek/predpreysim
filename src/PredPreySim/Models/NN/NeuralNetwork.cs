@@ -7,19 +7,32 @@ using PredPreySim.Utils;
 
 namespace PredPreySim.Models.NN
 {
-    public class Network_15_8_2 : INeuralNetwork
+    public class NeuralNetwork : INeuralNetwork
     {
-        public int Size => 146;
+        public int Size => inputs * hidden + hidden + hidden * outputs + outputs;
+
+        private int inputs;
+
+        private int hidden;
+
+        private int outputs;
+        public NeuralNetwork(int inputs, int hidden, int outputs)
+        {
+            this.inputs = inputs;
+            this.hidden = hidden;
+            this.outputs = outputs;
+        }
 
         public void Init(float[] network, int offset, Random rnd)
         {
-            for (int i = 0; i < 120; i++)
+            for (int i = 0; i < inputs * hidden; i++) //weights 1
                 network[offset + i] = (float)(rnd.NextDouble() * 2 - 1);
-            for (int i = 120; i < 128; i++)
+            for (int i = inputs * hidden; i < inputs * hidden + hidden; i++) //biases 1
                 network[offset + i] = (float)(rnd.NextDouble() * 1 - 0.5);
-            for (int i = 128; i < 144; i++)
+            int offs2 = hidden * inputs + hidden;
+            for (int i = offs2; i < offs2 + hidden * outputs; i++)  //weights 2
                 network[offset + i] = (float)(rnd.NextDouble() * 2 - 1);
-            for (int i = 144; i < 146; i++)
+            for (int i = offs2 + hidden * outputs; i < Size; i++)
                 network[offset + i] = (float)(rnd.NextDouble() * 1 - 0.5);
         }
 
@@ -37,22 +50,23 @@ namespace PredPreySim.Models.NN
 
         public void MutateAllIncomming(float[] network, int offset, Random rnd, double stdDev)
         {
-            int h = rnd.Next(8 + 2);
-            if (h < 8) //1st layer
+            int h = rnd.Next(hidden + outputs);
+            if (h < hidden) //1st layer
             {
-                for (int i = 0; i < 15; i++)
+                for (int i = 0; i < inputs; i++)
                 {
                     double delta = MathUtil.NextGaussian(rnd, 0.0, stdDev);
-                    network[offset + h * 15 + i] += (float)delta;
+                    network[offset + h * inputs + i] += (float)delta;
                 }
             }
             else //2nd layer
             {
-                var o = h - 8;
-                for (int i = 0; i < 8; i++)
+                var o = h - hidden;
+                int offs2 = hidden * inputs + hidden;
+                for (int i = 0; i < hidden; i++)
                 {
                     double delta = MathUtil.NextGaussian(rnd, 0.0, stdDev);
-                    network[offset + 128 + o*8 + i] += (float)delta;
+                    network[offset + offs2 + o*hidden + i] += (float)delta;
                 }
             }
         }

@@ -43,31 +43,31 @@ namespace PredPreySim.Gui
                     Name = "blue avg fitness",
                     Selector = s=>s.topBlueAvgFitness,
                     Style = new SeriesStyle() { StrokeThickness = 3, Stroke = Brushes.Blue },
-                    IsSelected = true
+                    IsSelected = false
                 },
                 new StatsSeries() {
                     Name = "blue avg meals",
                     Selector = s=>s.topBlueAvgMeals,
                     Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Blue, StrokeDashArray = new DoubleCollection() { 0, 3 }, LineCap = PenLineCap.Round },
-                    IsSelected = true
+                    IsSelected = false
                 },
                 new StatsSeries() {
                     Name = "blue avg deaths",
                     Selector = s=>s.topBlueAvgDeaths,
                     Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Blue, StrokeDashArray = new DoubleCollection() { 3, 6 } },
-                    IsSelected = true
+                    IsSelected = false
                 },
                 new StatsSeries() {
                     Name = "red avg fitness",
                     Selector = s=>s.topRedAvgFitness,
                     Style = new SeriesStyle() { StrokeThickness = 3, Stroke = Brushes.Red },
-                    IsSelected = true
+                    IsSelected = false
                 },
                 new StatsSeries() {
                     Name = "red avg meals",
                     Selector = s=>s.topRedAvgMeals,
                     Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Red, StrokeDashArray = new DoubleCollection() { 0, 3 }, LineCap = PenLineCap.Round  },
-                    IsSelected = true
+                    IsSelected = false
                 },
 
                 // -------------------------------------------------- MEDIAN ------------------------------------
@@ -75,31 +75,31 @@ namespace PredPreySim.Gui
                     Name = "blue med fitness",
                     Selector = s=>s.topBlueMedFitness,
                     Style = new SeriesStyle() { StrokeThickness = 3, Stroke = Brushes.Blue },
-                    IsSelected = true
+                    IsSelected = false
                 },
                 new StatsSeries() {
                     Name = "blue med meals",
                     Selector = s=>s.topBlueMedMeals,
                     Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Blue, StrokeDashArray = new DoubleCollection() { 0, 3 }, LineCap = PenLineCap.Round },
-                    IsSelected = true
+                    IsSelected = false
                 },
                 new StatsSeries() {
                     Name = "blue med deaths",
                     Selector = s=>s.topBlueMedDeaths,
                     Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Blue, StrokeDashArray = new DoubleCollection() { 3, 6 } },
-                    IsSelected = true
+                    IsSelected = false
                 },
                 new StatsSeries() {
                     Name = "red med fitness",
                     Selector = s=>s.topRedMedFitness,
                     Style = new SeriesStyle() { StrokeThickness = 3, Stroke = Brushes.Red },
-                    IsSelected = true
+                    IsSelected = false
                 },
                 new StatsSeries() {
                     Name = "red med meals",
                     Selector = s=>s.topRedMedMeals,
                     Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Red, StrokeDashArray = new DoubleCollection() { 0, 3 }, LineCap = PenLineCap.Round  },
-                    IsSelected = true
+                    IsSelected = false
                 },
 
                 // -------------------------------------------------- OTHER ------------------------------------
@@ -107,13 +107,13 @@ namespace PredPreySim.Gui
                     Name = "blue avg age",
                     Selector = s=>s.topBlueAvgAge,
                     Style = new SeriesStyle() { StrokeThickness = 1, Stroke = Brushes.Cyan },
-                    IsSelected = true
+                    IsSelected = false
                 },
                 new StatsSeries() {
                     Name = "red avg age",
                     Selector = s=>s.topRedAvgAge,
                     Style = new SeriesStyle() { StrokeThickness = 1, Stroke = Brushes.Magenta },
-                    IsSelected = true
+                    IsSelected = false
                 },
                 new StatsSeries() {
                     Name = "blue meals/age",

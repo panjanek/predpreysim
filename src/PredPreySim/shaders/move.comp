@@ -128,8 +128,6 @@ float[15] prepare_input(Agent agent)
             inp[a*3+0] = sensor.r;
             inp[a*3+1] = sensor.g;
             inp[a*3+2] = sensor.b;
-            //for(int c=0; c<3; c++)
-            //    inp[a*3+c] = sensor[c];
         }
     }
     else //predator
@@ -200,7 +198,8 @@ void update_one(uint idx)
 
         agent.angle += 0.2 * res[0];
         agent.angle = mod(agent.angle + M_PI, 2*M_PI) - M_PI;
-        float velocity = 0.5 * (res[1] + 1);
+        float maxVelocity = agent.type == 1 ? 0.2 : 0.4;
+        float velocity = maxVelocity * (res[1] + 1);
         agent.position += vec2(velocity*cos(agent.angle),velocity*sin(agent.angle));
 
         float energyConsumed = (0.6 * velocity * velocity + 0.05);

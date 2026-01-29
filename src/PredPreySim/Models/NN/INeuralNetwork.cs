@@ -16,6 +16,6 @@ namespace PredPreySim.Models.NN
 
         void MutateAllIncomming(float[] network, int offset, Random rnd, double stdDev);
 
-        void Cross(float[] network, int parent1Offset, int parent2Offset, int childOffset, Random rnd);
+        void CrossOver(float[] network, int parent1Offset, int parent2Offset, int childOffset, Random rnd);
     }
 }

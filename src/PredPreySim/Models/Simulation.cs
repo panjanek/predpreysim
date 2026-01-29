@@ -80,9 +80,9 @@ namespace PredPreySim.Models
 
             var allBlueCount = agents.Count(a => a.type == 1);
             var allBlue = ranking.Where(x => x.agent.type == 1);
-            var topBlue = allBlue.OrderByDescending(x => x.fitness).Take(allBlueCount / 10).ToList();
+            var topBlue = allBlue.OrderByDescending(x => x.fitness).Take(allBlueCount / 10).ToList(); //these will breed
             var topBlueIds = topBlue.Select(x=>x.index).ToList();
-            var downBlueIds = ranking.Where(x => x.agent.type == 1).OrderBy(x => x.fitness).Take(allBlueCount / 2).Select(x => x.index).ToList();
+            var downBlueIds = allBlue.OrderBy(x => x.fitness).Take(allBlueCount / 2).Select(x => x.index).ToList(); //this will be replaced with newly created agents
             if (topBlueIds.Intersect(downBlueIds).Count() > 0)
                 throw new Exception("!");
 
@@ -90,9 +90,9 @@ namespace PredPreySim.Models
 
             var allRedCount = agents.Count(a => a.type == 2);
             var allRed = ranking.Where(x => x.agent.type == 2);
-            var topRed = allRed.OrderByDescending(x => x.fitness).Take(allRedCount / 10).ToList();
+            var topRed = allRed.OrderByDescending(x => x.fitness).Take(allRedCount / 10).ToList(); //these will breed
             var topRedIds = topRed.Select(x => x.index).ToList();
-            var downRedIds = ranking.Where(x => x.agent.type == 2).OrderBy(x => x.fitness).Take(allRedCount / 2).Select(x => x.index).ToList();
+            var downRedIds = allRed.OrderBy(x => x.fitness).Take(allRedCount / 2).Select(x => x.index).ToList(); //this will be replaced with newly created agents
             if (topRedIds.Intersect(downRedIds).Count() > 0)
                 throw new Exception("!");
 
@@ -135,11 +135,13 @@ namespace PredPreySim.Models
 
         }
 
+        // Take agents from "parents" indexes in agents array and breed. Overwrite agents from "spaces" indexes with newly created. 
         private void Breed(List<int> parents, List<int> spaces)
         {
             foreach(var childIdx in spaces)
             {
                 var parent1Idx = parents[rnd.Next(parents.Count)];
+
                 agents[childIdx].state = 0;
                 agents[childIdx].age = 0;
                 agents[childIdx].meals = 0;
@@ -150,14 +152,14 @@ namespace PredPreySim.Models
                 agents[childIdx].angle = (float)(2 * Math.PI * rnd.NextDouble());
 
                 var decision1 = rnd.NextDouble();
-                if (decision1 < 0.25) // 25% copy without changing
+                if (decision1 < 0.25) // 25% of times: copy without changing
                 {
                     Array.Copy(network, agents[parent1Idx].nnOffset, network, agents[childIdx].nnOffset, nn.Size);
                 }
-                else if (decision1 < 0.9) // 65% mutate
+                else if (decision1 < 0.9) // 65% of times: mutate, single parent
                 {
                     Array.Copy(network, agents[parent1Idx].nnOffset, network, agents[childIdx].nnOffset, nn.Size);
-                    double mutationAmplification = 2;
+                    double mutationAmplification = 2; //for tuning
                     double decision2 = rnd.NextDouble();
                     if (decision2 < 0.6) //60% - mutate slightly
                         nn.Mutate(network, agents[childIdx].nnOffset, rnd, 0.01 * mutationAmplification, 0.05 * mutationAmplification);
@@ -166,10 +168,14 @@ namespace PredPreySim.Models
                     else //5% - mutate strong all inputs of one hidden neuron
                         nn.MutateAllIncomming(network, agents[childIdx].nnOffset, rnd, 0.3 * mutationAmplification);
                 }
-                else // 10% cross-over
+                else // 10% of times: cross-over, two parents
                 {
-                    var parent2Idx = parents[rnd.Next(parents.Count)];
-                    nn.Cross(network, agents[parent1Idx].nnOffset, agents[parent2Idx].nnOffset, agents[childIdx].nnOffset, rnd);
+                    //var parent2Idx = parents[rnd.Next(parents.Count)];
+                    int parent2Idx;
+                    do
+                        parent2Idx = parents[rnd.Next(parents.Count)];
+                    while (parent2Idx == parent1Idx);
+                    nn.CrossOver(network, agents[parent1Idx].nnOffset, agents[parent2Idx].nnOffset, agents[childIdx].nnOffset, rnd);
                 }
             }
         }

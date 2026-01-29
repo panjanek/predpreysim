@@ -47,7 +47,7 @@ namespace PredPreySim.Models
         public double Fitness()
         {
             var value = type == 1 ? meals * 2 - deaths * 5 - energySpent * 0.01
-                                  : meals * 8 - energySpent * 0.02;
+                                  : meals * 15 - energySpent * 0.02;
             return value * Math.Exp(-age / 10000.0);
         }
     }

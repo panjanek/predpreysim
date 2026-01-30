@@ -13,5 +13,9 @@ namespace PredPreySim.Models.NN
         public int hidden;
 
         public int outputs;
+
+        public int[] memoryInputs;
+
+        public int[] memoryOutputs;
     }
 }

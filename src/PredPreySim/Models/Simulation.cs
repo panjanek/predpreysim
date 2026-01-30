@@ -45,11 +45,14 @@ namespace PredPreySim.Models
 
         public List<Stats> stats;
 
+        public NetworkConfig networkConfig;
+
         public Simulation()
         {
             shaderConfig = new ShaderConfig();
             agents = new Agent[shaderConfig.agentsCount];
-            nn = new NeuralNetwork(16, 8, 3);
+            networkConfig = new NetworkConfig() { inputs = 16, hidden = 8, outputs = 3, memoryInputs = [15], memoryOutputs = [2] };
+            nn = new NeuralNetwork(networkConfig);
             InitRandomly(0.6, 0.1);
             kernelRed = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decayRed);
             kernelGreen = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decayGreen);

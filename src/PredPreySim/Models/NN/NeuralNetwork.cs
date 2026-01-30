@@ -16,11 +16,51 @@ namespace PredPreySim.Models.NN
         private int hidden;
 
         private int outputs;
-        public NeuralNetwork(int inputs, int hidden, int outputs)
+
+        private int[] memoryInputs;
+
+        private int[] memoryOutputs;
+
+        bool[] isMemory;
+
+        public NeuralNetwork(NetworkConfig config)
         {
-            this.inputs = inputs;
-            this.hidden = hidden;
-            this.outputs = outputs;
+            this.inputs = config.inputs;
+            this.hidden = config.hidden;
+            this.outputs = config.outputs;
+            this.memoryInputs = config.memoryInputs;    // indexes of inputs that serve memory
+            this.memoryOutputs = config.memoryOutputs;  // indexes of outputs that serve memory
+            isMemory = new bool[Size];
+            for (int i = 0; i < Size; i++)
+                isMemory[i] = IsMemoryWeight(i);
+        }
+
+        private bool IsMemoryWeight(int localIndex)
+        {
+            if (memoryInputs == null || memoryInputs.Length == 0 || memoryOutputs == null || memoryOutputs.Length == 0)
+                return false;
+
+            // check if this is weight from memory input to some hidden layer neuron
+            foreach (var inputIdx in memoryInputs)
+            {
+                for (int h = 0; h < hidden; h++)
+                    if (localIndex == h * inputs + inputIdx)
+                        return true;
+            }
+
+            // check if this is weight from hidden layer to memory output
+            int offs2 = hidden * inputs + hidden;
+            foreach (var outputIdx in memoryOutputs)
+            {
+                for (int h = 0; h < hidden; h++)
+                    if (localIndex == offs2 + outputIdx * hidden + h)
+                        return true;
+
+                if (localIndex == offs2 + outputs * hidden + outputIdx) // memory output neuron bias
+                    return true;
+            }
+
+            return false;
         }
 
         public void Init(float[] network, int offset, Random rnd)
@@ -42,13 +82,17 @@ namespace PredPreySim.Models.NN
             int offs2 = hidden * inputs + hidden;
             for (int i = 0; i < Size; i++)
             {
-                if (rnd.NextDouble() <= changedWeightsRatio)
+                bool isMemoryWeight = isMemory[i];
+                var probabilityMult = isMemoryWeight ? 0.2 : 1.0;
+                if (rnd.NextDouble() <= changedWeightsRatio * probabilityMult)
                 {
-                    double stdMult = 1.0;
+                    double stdMult = isMemoryWeight ? 0.3 : 1.0;  //mutate memory weight with 30% magnitude
                     if (i >= inputs * hidden && i < inputs * hidden + hidden)
-                        stdMult = 0.5; // mutate bias of 1st layer by half amount
+                        stdMult = isMemoryWeight ? 0.3 : 0.5; // if 1st layer bias: 50% magnitude, 30% if memory input bias
+
                     if (i >= offs2 + hidden * outputs)
-                        stdMult = 0.25; // mutate bias of output layer by quarter amount
+                        stdMult = isMemoryWeight ? 0.1 : 0.3; // if 2nd layer bias: 30% magnitude, 10% if memory input bias
+
                     double delta = MathUtil.NextGaussian(rnd, 0.0, stdDev * stdMult);
                     network[offset + i] += (float)delta;
                 }
@@ -63,8 +107,17 @@ namespace PredPreySim.Models.NN
             {
                 for (int i = 0; i < inputs; i++)
                 {
-                    double delta = MathUtil.NextGaussian(rnd, 0.0, stdDev);
-                    network[offset + h * inputs + i] += (float)delta;
+                    int index = h * inputs + i;
+
+                    if (isMemory[index] && rnd.NextDouble() > 0.3) //mutate memory weights less often
+                        continue;
+
+                    double stdMult = 1.0;
+                    if (isMemory[index]) // mutate memory input weight with 30% maginute
+                        stdMult = 0.3;
+
+                    double delta = MathUtil.NextGaussian(rnd, 0.0, stdMult * stdDev);
+                    network[offset + index] += (float)delta;
                 }
 
                 double biasDelta = MathUtil.NextGaussian(rnd, 0.0, stdDev*0.5);
@@ -74,14 +127,27 @@ namespace PredPreySim.Models.NN
             {
                 var o = h - hidden;
                 int offs2 = hidden * inputs + hidden;
-                for (int i = 0; i < hidden; i++)
+                for (int j = 0; j < hidden; j++)
                 {
-                    double delta = MathUtil.NextGaussian(rnd, 0.0, stdDev);
-                    network[offset + offs2 + o*hidden + i] += (float)delta;
+                    int index = offs2 + o * hidden + j;
+
+                    if (isMemory[index] && rnd.NextDouble() > 0.3) //mutate memory weights less often
+                        continue;
+
+                    double stdMult = 1.0;
+                    if (isMemory[index]) // mutate memory input weight with 30% maginute
+                        stdMult = 0.3;
+
+                    double delta = MathUtil.NextGaussian(rnd, 0.0, stdMult * stdDev);
+                    network[offset + index] += (float)delta;
                 }
 
-                double biasDelta = MathUtil.NextGaussian(rnd, 0.0, stdDev * 0.5);
-                network[offset + offs2 + hidden*outputs + o] += (float)biasDelta;
+                int biasIndex = offs2 + hidden * outputs + o;
+                var biasStdMult = 1.0;
+                if (isMemory[biasIndex]) // mutate memory output bias with 20% maginute
+                    biasStdMult = 0.2;
+                double biasDelta = MathUtil.NextGaussian(rnd, 0.0, stdDev * 0.5 * biasStdMult);
+                network[offset + biasIndex] += (float)biasDelta;
             }
         }
 

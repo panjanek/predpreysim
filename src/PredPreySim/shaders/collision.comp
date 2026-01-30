@@ -25,6 +25,8 @@ struct Agent
     int deaths;
     float energySpent;
     int flag;
+    ivec2 currPixel;
+    ivec2 prevPixel;
 };
 
 layout(std430, binding = 0) buffer ConfigBuffer {
@@ -96,6 +98,8 @@ void update_one(uint idx)
              agent.energy = 0;
              //agent.age = 0;
              agent.position = vec2(config.width * get_random_float_01(agent, 100037), config.height * get_random_float_01(agent, 20347));
+             agent.currPixel = ivec2(uint(agent.position.x), uint(agent.position.y));
+             agent.prevPixel = agent.currPixel;
          }
     }
     else if (agent.type == 2)

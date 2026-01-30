@@ -13,6 +13,8 @@ struct Agent
     int deaths;
     float energySpent;
     int flag;
+    ivec2 currPixel;
+    ivec2 prevPixel;
 };
 
 layout(std430, binding = 1) buffer AgentsBuffer {

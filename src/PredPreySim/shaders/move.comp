@@ -25,6 +25,8 @@ struct Agent
     int deaths;
     float energySpent;
     int flag;
+    ivec2 currPixel;
+    ivec2 prevPixel;
 };
 
 layout(std430, binding = 0) buffer ConfigBuffer {
@@ -210,6 +212,13 @@ void update_one(uint idx)
     }
     
     torus(agent.position);
+    ivec2 newPixel = ivec2(uint(agent.position.x), uint(agent.position.y));
+    if (newPixel != agent.currPixel)
+    {
+        agent.prevPixel = agent.currPixel;
+        agent.currPixel = newPixel;
+    } 
+
     agents[idx] = agent;
 
 }

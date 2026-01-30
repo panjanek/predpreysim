@@ -16,7 +16,6 @@ layout(location = 2) out vec4 outRed;
 vec4 blur(sampler2D tex, vec2 uv, float kernel[25])
 {
     vec4 sum = vec4(0,0,0,0);
-    //float norm = 0;
     int k = 0;
     for (int j = -2; j <= 2; j++)
     {
@@ -38,7 +37,6 @@ vec4 blur(sampler2D tex, vec2 uv, float kernel[25])
                 src.y -= 1.0;
 
             vec4 current = texture(tex, src);
-            //norm += kernel[k];
             sum += current * kernel[k++];
         }
     }

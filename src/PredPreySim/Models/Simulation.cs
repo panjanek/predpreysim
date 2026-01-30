@@ -29,7 +29,7 @@ namespace PredPreySim.Models
 
         public float decayGreen = 0.99f;
 
-        public float decayBlue = 0.997f;
+        public float decayBlue = 0.994f;
 
         public float initialEnergy = 300;
 
@@ -66,7 +66,7 @@ namespace PredPreySim.Models
                 agents[i].type = r < plants ? 0 : (r < (1 - predators) ? 1 : 2);
                 agents[i].energy = initialEnergy;
                 agents[i].angle = (float)(2 * Math.PI * rnd.NextDouble());
-                agents[i].position = new Vector2((float)(shaderConfig.width * rnd.NextDouble()), (float)(shaderConfig.height * rnd.NextDouble()));
+                agents[i].SetPosition(new Vector2((float)(shaderConfig.width * rnd.NextDouble()), (float)(shaderConfig.height * rnd.NextDouble())));
 
                 if (agents[i].type > 0)
                     networksCount++;
@@ -159,7 +159,7 @@ namespace PredPreySim.Models
                 agents[childIdx].deaths = 0;
                 agents[childIdx].energySpent = 0;
                 agents[childIdx].energy = initialEnergy;
-                agents[childIdx].position = agents[parent1Idx].position + new Vector2((float)rnd.NextDouble() * 10 - 5, (float)rnd.NextDouble() * 10 - 5);
+                agents[childIdx].SetPosition(agents[parent1Idx].position + new Vector2((float)rnd.NextDouble() * 10 - 5, (float)rnd.NextDouble() * 10 - 5));
                 agents[childIdx].angle = (float)(2 * Math.PI * rnd.NextDouble());
 
                 var decision1 = rnd.NextDouble();

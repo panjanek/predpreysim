@@ -241,12 +241,12 @@ void update_one(uint idx)
         agent.angle = mod(agent.angle + M_PI, 2*M_PI) - M_PI;
 
         //velocity
-        float maxVelocity = agent.type == 1 ? 0.2 : 0.4;
-        float velocity = maxVelocity * (res[1] + 1);
+        float maxVelocity = agent.type == 1 ? 0.3 : 0.5;
+        float velocity = maxVelocity * 0.5 * (res[1] + 1);
         agent.position += vec2(velocity*cos(agent.angle),velocity*sin(agent.angle));
 
         //memory
-        agent.memory0 = mix(agent.memory0, res[2], 0.1);
+        agent.memory0 = mix(agent.memory0, res[2], 0.05);
         agent.memory0 = clamp(agent.memory0, -1.0, 1.0);
 
         float energyConsumed = (0.6 * velocity * velocity + 0.05);

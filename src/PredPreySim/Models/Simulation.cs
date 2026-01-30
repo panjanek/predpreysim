@@ -51,7 +51,7 @@ namespace PredPreySim.Models
         {
             shaderConfig = new ShaderConfig();
             agents = new Agent[shaderConfig.agentsCount];
-            networkConfig = new NetworkConfig() { inputs = 17, hidden = 8, outputs = 4, memoryInputs = [15, 16], memoryOutputs = [2, 3] };
+            networkConfig = new NetworkConfig() { inputs = 19, hidden = 8, outputs = 4, memoryInputs = [17, 18], memoryOutputs = [2, 3] };
             nn = new NeuralNetwork(networkConfig);
             InitRandomly(0.6, 0.1);
             kernelRed = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decayRed);

@@ -121,7 +121,7 @@ vec3 sense(Agent agent, float sensorAngle, float sensorDist, int sensorSize)
     return sum / (r*r);
 }
 
-const int NN_INPUTS = 17;
+const int NN_INPUTS = 19;
 const int NN_HIDDEN = 8;
 const int NN_OUTPUTS = 4;
 
@@ -137,8 +137,11 @@ float[NN_INPUTS] prepare_input(Agent agent)
             vec3 sensor = sense(agent, angles[a], 3, 1);
             inp[a*3+0] = sensor.r;
             inp[a*3+1] = sensor.g;
-            inp[a*3+2] = sensor.b * 0.5;    //other prey, less important for prey
+            inp[a*3+2] = sensor.b * 0.5;    //other prey scent, less important for prey
         }
+
+        inp[15] = inp[2*3+0] - inp[0*3+0];  // difference between forward-right and forward-left predator scent
+        inp[16] = inp[2*3+1] - inp[0*3+1];  // difference between forward-right and forward-left plant scent (??)
     }
     else //predator
     {
@@ -146,14 +149,19 @@ float[NN_INPUTS] prepare_input(Agent agent)
         for(int a=0; a<5; a++)
         {
             vec3 sensor = sense(agent, angles[a], 4, 1);
-            inp[a*3+0] = sensor.r * 0.07;  // other predators not important for predators
-            inp[a*3+1] = sensor.g * 0.15;  // plants: slightly important for predators
+            inp[a*3+0] = sensor.r * 0.07;  // other predator scent - not important for predators
+            inp[a*3+1] = sensor.g * 0.15;  // plants scent - slightly important for predators
             inp[a*3+2] = sensor.b;
         }
+
+         inp[15] = inp[2*3+2] - inp[0*3+2];   // difference between forward-right and forward-left prey scent
+         inp[16] = inp[4*3+2] - inp[3*3+2];   // difference between right and left prey scent
     }
 
-    inp[15] = agent.memory0;
-    inp[16] = agent.memory1;
+    inp[15] = clamp(inp[15], -1.0, 1.0);
+    inp[16] = clamp(inp[16], -1.0, 1.0);
+    inp[17] = agent.memory0;
+    inp[18] = agent.memory1;
     return inp;
 }
 
@@ -217,9 +225,9 @@ void update_one(uint idx)
         agent.position += vec2(velocity*cos(agent.angle),velocity*sin(agent.angle));
 
         //memory
-        agent.memory0 = mix(agent.memory0, res[2], 0.05);
+        agent.memory0 = mix(agent.memory0, res[2], 0.09); //faster memory
         agent.memory0 = clamp(agent.memory0, -1.0, 1.0);
-        agent.memory1 = mix(agent.memory1, res[3], 0.05);
+        agent.memory1 = mix(agent.memory1, res[3], 0.03); //slower memory
         agent.memory1 = clamp(agent.memory1, -1.0, 1.0);
 
         float energyConsumed = (0.6 * velocity * velocity + 0.05);

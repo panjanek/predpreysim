@@ -18,8 +18,13 @@ namespace PredPreySim
     // - improve graphs
     // - select and track
     // - show best performers
-    // - age contribute to fitness!
-    // - memory
+    // - save load
+    // - rescale absolute sensord to -0.5,0.5 or -1,1 (???)
+    // - prey differential sensors: only for pred scent?
+    // - check enegryConsumed and nearPrey metrics
+    // - prey fitness: + agent.age * 0.002
+    // - pred fitness: nearPrey = nearPrey * 0.98 + preyScent * preyScent; then in fitness: + nearPrey * 0.05;
+    // - tune blurring (prey max?)
     public partial class MainWindow : Window
     {
         private bool uiPending;

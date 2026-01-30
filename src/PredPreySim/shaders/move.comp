@@ -141,7 +141,8 @@ float[NN_INPUTS] prepare_input(Agent agent)
         }
 
         inp[15] = inp[2*3+0] - inp[0*3+0];  // difference between forward-right and forward-left predator scent
-        inp[16] = inp[2*3+1] - inp[0*3+1];  // difference between forward-right and forward-left plant scent (??)
+        //inp[16] = inp[2*3+1] - inp[0*3+1];  // difference between forward-right and forward-left plant scent (??)
+        inp[16] = inp[4*3+0] - inp[3*3+0];  // difference between right and left predator scent
     }
     else //predator
     {
@@ -225,9 +226,9 @@ void update_one(uint idx)
         agent.position += vec2(velocity*cos(agent.angle),velocity*sin(agent.angle));
 
         //memory
-        agent.memory0 = mix(agent.memory0, res[2], 0.09); //faster memory
+        agent.memory0 = mix(agent.memory0, res[2], 0.08); //faster memory
         agent.memory0 = clamp(agent.memory0, -1.0, 1.0);
-        agent.memory1 = mix(agent.memory1, res[3], 0.03); //slower memory
+        agent.memory1 = mix(agent.memory1, res[3], 0.02); //slower memory
         agent.memory1 = clamp(agent.memory1, -1.0, 1.0);
 
         float energyConsumed = (0.6 * velocity * velocity + 0.05);

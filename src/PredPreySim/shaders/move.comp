@@ -137,7 +137,7 @@ float[NN_INPUTS] prepare_input(Agent agent)
             vec3 sensor = sense(agent, angles[a], 3, 1);
             inp[a*3+0] = sensor.r;
             inp[a*3+1] = sensor.g;
-            inp[a*3+2] = sensor.b;
+            inp[a*3+2] = sensor.b * 0.5;    //other prey, less important for prey
         }
     }
     else //predator
@@ -146,8 +146,8 @@ float[NN_INPUTS] prepare_input(Agent agent)
         for(int a=0; a<5; a++)
         {
             vec3 sensor = sense(agent, angles[a], 4, 1);
-            inp[a*3+0] = sensor.r * 0.1;
-            inp[a*3+1] = sensor.g * 0.05;
+            inp[a*3+0] = sensor.r * 0.07;  // other predators not important for predators
+            inp[a*3+1] = sensor.g * 0.15;  // plants: slightly important for predators
             inp[a*3+2] = sensor.b;
         }
     }

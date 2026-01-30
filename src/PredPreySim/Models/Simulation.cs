@@ -184,7 +184,7 @@ namespace PredPreySim.Models
                 else if (decision1 < 0.9) // 75% of times: mutate, single parent
                 {
                     Array.Copy(network, agents[parent1Idx].nnOffset, network, agents[childIdx].nnOffset, nn.Size);
-                    double mutationAmplification = 2; //for tuning
+                    double mutationAmplification = 1.5 + 4 * rnd.NextDouble(); //for tuning
                     double decision2 = rnd.NextDouble();
                     if (decision2 < 0.6) //60% - mutate slightly
                         nn.Mutate(network, agents[childIdx].nnOffset, rnd, 0.01 * mutationAmplification, 0.05 * mutationAmplification);
@@ -195,7 +195,6 @@ namespace PredPreySim.Models
                 }
                 else // 10% of times: cross-over, two parents
                 {
-                    //var parent2Idx = parents[rnd.Next(parents.Count)];
                     int parent2Idx;
                     do
                         parent2Idx = parents[rnd.Next(parents.Count)];

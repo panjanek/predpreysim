@@ -53,6 +53,8 @@ void update_one(uint idx)
         imageStore(outBlue, agent.currPixel, vec4(1));
     else if (agent.type == 2)
         imageStore(outRed, agent.currPixel, vec4(1));
+
+
 }
 
 void main()

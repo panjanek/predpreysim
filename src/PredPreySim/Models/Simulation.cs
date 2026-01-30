@@ -35,6 +35,8 @@ namespace PredPreySim.Models
 
         public int step;
 
+        public int generationDuration = 5000;
+
         public int generation;
 
         private INeuralNetwork nn;
@@ -53,6 +55,13 @@ namespace PredPreySim.Models
             kernelGreen = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decayGreen);
             kernelBlue = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decayBlue);
             stats = new List<Stats>();
+        }
+
+        public double GetFitness(Agent agent)
+        {
+            var value = agent.type == 1 ? agent.meals * 2 - agent.deaths * 5 - agent.energySpent * 0.01
+                                        : agent.meals * 15 - agent.energySpent * 0.02;
+            return value * Math.Exp(-agent.age / (2.0 * generationDuration));
         }
 
         private void InitRandomly(double plants, double predators)
@@ -86,7 +95,7 @@ namespace PredPreySim.Models
         public void ChangeEpoch()
         {
             generation++;
-            var ranking = agents.Select((a, i) => new { index = i, agent = a, fitness = a.Fitness() }).Where(a=>a.agent.type > 0).ToList();
+            var ranking = agents.Select((a, i) => new { index = i, agent = a, fitness = GetFitness(a) }).Where(a=>a.agent.type > 0).ToList();
 
             var allBlueCount = agents.Count(a => a.type == 1);
             var allBlue = ranking.Where(x => x.agent.type == 1);

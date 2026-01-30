@@ -62,8 +62,8 @@ namespace PredPreySim.Models
 
         public double GetFitness(Agent agent)
         {
-            var value = agent.type == 1 ? agent.meals * 2 - agent.deaths * 5 - agent.energySpent * 0.01
-                                        : agent.meals * 15 - agent.energySpent * 0.02;
+            var value = agent.type == 1 ? agent.meals * 2 + agent.age * 0.0005 - agent.deaths * 5 - agent.energySpent * 0.0001
+                                        : agent.meals * 15 - agent.energySpent * 0.0001;
             return value * Math.Exp(-agent.age / (2.0 * generationDuration));
         }
 
@@ -145,7 +145,13 @@ namespace PredPreySim.Models
                 topRedAvgAge = topRed.Average(x => x.agent.age * 1.0),
 
                 plantsCount = agents.Where(a => a.type == 0 && a.state == 0).Count(),
-                blueDeaths = allBlue.Sum(a=>a.agent.deaths * 1.0) / allBlue.Count()
+                blueDeaths = allBlue.Sum(a => a.agent.deaths * 1.0) / allBlue.Count(),
+
+                topNearPrey = topRed.Average(x => x.agent.nearPrey),
+                allNearPrey = allRed.Average(x => x.agent.nearPrey),
+
+                topBlueEnergySpent = topBlue.Average(x => x.agent.energySpent),
+                topRedEnergySpent = topRed.Average(x => x.agent.energySpent)
             });
 
             //highlight best
@@ -173,6 +179,7 @@ namespace PredPreySim.Models
                 agents[childIdx].energy = initialEnergy;
                 agents[childIdx].memory0 = 0;
                 agents[childIdx].memory1 = 0;
+                agents[childIdx].nearPrey = 0;
                 agents[childIdx].SetPosition(agents[parent1Idx].position + new Vector2((float)rnd.NextDouble() * 10 - 5, (float)rnd.NextDouble() * 10 - 5));
                 agents[childIdx].angle = (float)(2 * Math.PI * rnd.NextDouble());
 

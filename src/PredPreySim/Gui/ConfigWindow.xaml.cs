@@ -139,6 +139,32 @@ namespace PredPreySim.Gui
                     Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Yellow },
                     IsSelected = true
                 },
+
+                new StatsSeries() {
+                    Name = "top near prey",
+                    Selector = s=>s.topNearPrey,
+                    Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Gray },
+                    IsSelected = true
+                },
+                new StatsSeries() {
+                    Name = "all near prey",
+                    Selector = s=>s.allNearPrey,
+                    Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Gray, StrokeDashArray = new DoubleCollection() { 0, 3 }, LineCap = PenLineCap.Round },
+                    IsSelected = true
+                },
+
+                new StatsSeries() {
+                    Name = "blue energy",
+                    Selector = s=>s.topBlueEnergySpent,
+                    Style = new SeriesStyle() { StrokeThickness = 1, Stroke = Brushes.Blue },
+                    IsSelected = true
+                },
+                new StatsSeries() {
+                    Name = "red energy",
+                    Selector = s=>s.topRedEnergySpent,
+                    Style = new SeriesStyle() { StrokeThickness = 1, Stroke = Brushes.Red },
+                    IsSelected = true
+                },
             };
 
             Loaded += ConfigWindow_Loaded;

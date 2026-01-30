@@ -45,5 +45,13 @@ namespace PredPreySim.Models
         public double plantsCount;
 
         public double blueDeaths;
+
+        public double topNearPrey;
+
+        public double allNearPrey;
+
+        public double topBlueEnergySpent;
+
+        public double topRedEnergySpent;
     }
 }

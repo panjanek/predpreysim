@@ -29,7 +29,7 @@ struct Agent
     ivec2 prevPixel;
     float memory0;
     float memory1;
-    int pad0;
+    float nearPrey;
     int pad1;
 };
 
@@ -100,6 +100,7 @@ void update_one(uint idx)
          {
              agent.deaths++;
              agent.energy = 0;
+             //agent.energySpent = 0;
              //agent.age = 0;
              agent.position = vec2(config.width * get_random_float_01(agent, 100037), config.height * get_random_float_01(agent, 20347));
              agent.currPixel = ivec2(uint(agent.position.x), uint(agent.position.y));

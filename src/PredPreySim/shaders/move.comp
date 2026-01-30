@@ -29,7 +29,7 @@ struct Agent
     ivec2 prevPixel;
     float memory0;
     float memory1;
-    int pad0;
+    float nearPrey;
     int pad1;
 };
 
@@ -231,10 +231,9 @@ void update_one(uint idx)
         agent.memory1 = mix(agent.memory1, res[3], 0.02); //slower memory
         agent.memory1 = clamp(agent.memory1, -1.0, 1.0);
 
-        float energyConsumed = (0.6 * velocity * velocity + 0.05);
+        float energyConsumed = (velocity / maxVelocity) * (velocity / maxVelocity);
         agent.energy -= energyConsumed;
         agent.energySpent += energyConsumed;
-
     }
     
     torus(agent.position);
@@ -243,7 +242,13 @@ void update_one(uint idx)
     {
         agent.prevPixel = agent.currPixel;
         agent.currPixel = newPixel;
-    } 
+    }
+
+    if (agent.type == 2)
+    {
+        float preyScent = imageLoad(inBlue, agent.currPixel).r;
+        agent.nearPrey += preyScent * preyScent;
+    }
 
     agents[idx] = agent;
 

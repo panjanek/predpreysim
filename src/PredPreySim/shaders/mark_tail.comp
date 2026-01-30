@@ -29,7 +29,7 @@ struct Agent
     ivec2 prevPixel;
     float memory0;
     float memory1;
-    int pad0;
+    float nearPrey;
     int pad1;
 };
 

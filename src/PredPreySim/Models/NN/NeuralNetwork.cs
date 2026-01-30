@@ -32,7 +32,7 @@ namespace PredPreySim.Models.NN
             int offs2 = hidden * inputs + hidden;
             for (int i = offs2; i < offs2 + hidden * outputs; i++)  //weights 2
                 network[offset + i] = (float)(rnd.NextDouble() * 2 - 1);
-            for (int i = offs2 + hidden * outputs; i < Size; i++)
+            for (int i = offs2 + hidden * outputs; i < Size; i++) //biases 2
                 network[offset + i] = (float)(rnd.NextDouble() * 1 - 0.5);
         }
 

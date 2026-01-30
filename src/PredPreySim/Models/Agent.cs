@@ -8,7 +8,7 @@ using OpenTK.Mathematics;
 
 namespace PredPreySim.Models
 {
-    [StructLayout(LayoutKind.Explicit, Size = 64)]
+    [StructLayout(LayoutKind.Explicit, Size = 80)]
     public struct Agent
     {
         [FieldOffset(0)]
@@ -49,6 +49,18 @@ namespace PredPreySim.Models
 
         [FieldOffset(56)]
         public Vector2i prevPixel;
+
+        [FieldOffset(64)]
+        public float memory0;
+
+        [FieldOffset(68)]
+        public float memory1;
+
+        [FieldOffset(72)]
+        public float pad0;
+
+        [FieldOffset(76)]
+        public float pad1;
 
         public void SetPosition(Vector2 pos)
         {

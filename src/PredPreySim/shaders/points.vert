@@ -15,6 +15,10 @@ struct Agent
     int flag;
     ivec2 currPixel;
     ivec2 prevPixel;
+    float memory0;
+    float memory1;
+    int pad0;
+    int pad1;
 };
 
 layout(std430, binding = 1) buffer AgentsBuffer {

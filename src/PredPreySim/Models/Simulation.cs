@@ -49,7 +49,7 @@ namespace PredPreySim.Models
         {
             shaderConfig = new ShaderConfig();
             agents = new Agent[shaderConfig.agentsCount];
-            nn = new NeuralNetwork(15, 8, 2);
+            nn = new NeuralNetwork(16, 8, 3);
             InitRandomly(0.6, 0.1);
             kernelRed = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decayRed);
             kernelGreen = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decayGreen);
@@ -168,6 +168,8 @@ namespace PredPreySim.Models
                 agents[childIdx].deaths = 0;
                 agents[childIdx].energySpent = 0;
                 agents[childIdx].energy = initialEnergy;
+                agents[childIdx].memory0 = 0;
+                agents[childIdx].memory1 = 0;
                 agents[childIdx].SetPosition(agents[parent1Idx].position + new Vector2((float)rnd.NextDouble() * 10 - 5, (float)rnd.NextDouble() * 10 - 5));
                 agents[childIdx].angle = (float)(2 * Math.PI * rnd.NextDouble());
 

@@ -27,6 +27,10 @@ struct Agent
     int flag;
     ivec2 currPixel;
     ivec2 prevPixel;
+    float memory0;
+    float memory1;
+    int pad0;
+    int pad1;
 };
 
 layout(std430, binding = 0) buffer ConfigBuffer {
@@ -117,9 +121,13 @@ vec3 sense(Agent agent, float sensorAngle, float sensorDist, int sensorSize)
     return sum / (r*r);
 }
 
-float[15] prepare_input(Agent agent)
+const int NN_INPUTS = 16;
+const int NN_HIDDEN = 8;
+const int NN_OUTPUTS = 3;
+
+float[NN_INPUTS] prepare_input(Agent agent)
 {
-    float inp[15];
+    float inp[NN_INPUTS];
 
     if (agent.type == 1) //prey
     {
@@ -144,7 +152,7 @@ float[15] prepare_input(Agent agent)
         }
     }
 
-
+    inp[15] = agent.memory0;
     return inp;
 }
 
@@ -153,6 +161,7 @@ float activate(float x)
     return tanh(x);
 }
 
+/*
 float[2] evaluate_network(float inp[15], int offset)
 {
     // Hidden layer
@@ -180,6 +189,35 @@ float[2] evaluate_network(float inp[15], int offset)
 
     return result;
 }
+*/
+
+float[NN_OUTPUTS] evaluate_network(float inp[NN_INPUTS], int offset)
+{
+    // Hidden layer
+    float hidden[NN_HIDDEN];
+    for (int h = 0; h < NN_HIDDEN; ++h)
+    {
+        float sum = network[offset+(NN_INPUTS*NN_HIDDEN)+h];
+        for (int i = 0; i < NN_INPUTS; ++i)
+            sum += inp[i] * network[offset+h*NN_INPUTS+i];
+
+        hidden[h] = activate(sum);
+    }
+
+    // Output layer
+    float result[NN_OUTPUTS];
+    for (int o = 0; o < NN_OUTPUTS; ++o)
+    {
+        float sum = network[offset+(NN_INPUTS*NN_HIDDEN + NN_HIDDEN + NN_HIDDEN*NN_OUTPUTS)+o];
+        for (int h = 0; h < NN_HIDDEN; ++h)
+            sum += hidden[h] * network[offset+(NN_INPUTS*NN_HIDDEN + NN_HIDDEN)+o*NN_HIDDEN+h];
+
+        result[o] = activate(sum);
+    }
+
+
+    return result;
+}
 
 void update_one(uint idx)
 {
@@ -198,14 +236,20 @@ void update_one(uint idx)
         float[] inp = prepare_input(agent);
         float[] res = evaluate_network(inp, agent.nnOffset);
 
+        //angle
         agent.angle += 0.2 * res[0];
         agent.angle = mod(agent.angle + M_PI, 2*M_PI) - M_PI;
+
+        //velocity
         float maxVelocity = agent.type == 1 ? 0.2 : 0.4;
         float velocity = maxVelocity * (res[1] + 1);
         agent.position += vec2(velocity*cos(agent.angle),velocity*sin(agent.angle));
 
-        float energyConsumed = (0.6 * velocity * velocity + 0.05);
+        //memory
+        agent.memory0 = mix(agent.memory0, res[2], 0.1);
+        agent.memory0 = clamp(agent.memory0, -1.0, 1.0);
 
+        float energyConsumed = (0.6 * velocity * velocity + 0.05);
         agent.energy -= energyConsumed;
         agent.energySpent += energyConsumed;
 

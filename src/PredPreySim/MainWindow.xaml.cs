@@ -15,15 +15,14 @@ using Application = System.Windows.Application;
 namespace PredPreySim
 {
     //TODO:
-    // - improve graphs
     // - select and track
     // - show best performers
-    // - save load
-    // - rescale absolute sensord to -0.5,0.5 or -1,1 (???)
-    // - prey differential sensors: only for pred scent?
-    // - check enegryConsumed and nearPrey metrics
-    // - prey fitness: + agent.age * 0.002
-    // - pred fitness: nearPrey = nearPrey * 0.98 + preyScent * preyScent; then in fitness: + nearPrey * 0.05;
+    // - rescale absolute sensors to -0.5,0.5 or -1,1 (???)
+    // - longer tail
+    // - energySpent -> 0.001 
+    // - graph norms
+    // - diversity
+    // - tune speeds
     // - tune blurring (prey max?)
     public partial class MainWindow : Window
     {

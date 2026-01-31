@@ -10,6 +10,13 @@ struct ShaderConfig {
     int height;
     float dt;
     float t;
+    int generationDuration;
+    float initialEnergy;
+    float plantEnergy;
+    float killEnergy;
+    int plantRegrowDuration;
+    float pad0;
+    float pad1;
 };
 
 struct Agent
@@ -223,6 +230,7 @@ void update_one(uint idx)
 
         //velocity
         float maxVelocity = agent.type == 1 ? 0.3 : 0.5;
+        //float energyFactor = clamp(agent.energy / config.initialEnergy, 0.5, 1.2); //to use later
         float velocity = maxVelocity * 0.5 * (res[1] + 1);
         agent.position += vec2(velocity*cos(agent.angle),velocity*sin(agent.angle));
 

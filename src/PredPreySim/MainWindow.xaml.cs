@@ -95,16 +95,21 @@ namespace PredPreySim
             double frames = app.renderer.FrameCounter - lastCheckFrameCount;
             if (timespan.TotalSeconds >= 0.0001)
             {
-                var bestBlue = app.simulation.stats.Count == 0 ? 0 : 100 * app.simulation.stats.Max(s => s.topBlueMealsPerAge);
-                var bestRed = app.simulation.stats.Count == 0 ? 0 : 100 * app.simulation.stats.Max(s => s.topRedMealsPerAge);
+                var blueMealsPerAge = app.simulation.stats.Count == 0 ? 0 : 100 * app.simulation.stats.Max(s => s.topBlueMealsPerAge);
+                var redMealsPerAge = app.simulation.stats.Count == 0 ? 0 : 100 * app.simulation.stats.Max(s => s.topRedMealsPerAge);
+
+                var blueFitness = app.simulation.stats.Count == 0 ? 0 : 100 * app.simulation.stats.Max(s => s.topBlueMedFitness);
+                var redFitness = app.simulation.stats.Count == 0 ? 0 : 100 * app.simulation.stats.Max(s => s.topRedMedFitness);
 
                 double fps = frames / timespan.TotalSeconds;
-                Title = $"Predator Pray Sim. " +
+                Title = $"Predator Prey Sim. " +
                         $"fps:{fps.ToString("0.0")} " +
                         $"step:{app.simulation.step} " +
                         $"gen:{app.simulation.generation} " +
-                        $"blue: {bestBlue.ToString("0.00")} " +
-                        $"red: {bestRed.ToString("0.00")} ";
+                        $"blue meals: {blueMealsPerAge.ToString("0.00")} " +
+                        $"red meals: {redMealsPerAge.ToString("0.00")} " +
+                        $"blue fitness: {blueFitness.ToString("0.00")} " +
+                        $"red fitness: {redFitness.ToString("0.00")} ";
 
                 lastCheckFrameCount = app.renderer.FrameCounter;
                 lastCheckTime = now;

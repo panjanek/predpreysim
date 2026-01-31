@@ -10,6 +10,13 @@ struct ShaderConfig {
     int height;
     float dt;
     float t;
+    int generationDuration;
+    float initialEnergy;
+    float plantEnergy;
+    float killEnergy;
+    int plantRegrowDuration;
+    float pad0;
+    float pad1;
 };
 
 struct Agent

@@ -43,13 +43,13 @@ namespace PredPreySim.Gui
                     Name = "blue avg fitness",
                     Selector = s=>s.topBlueAvgFitness,
                     Style = new SeriesStyle() { StrokeThickness = 3, Stroke = Brushes.Blue },
-                    IsSelected = false
+                    IsSelected = true
                 },
                 new StatsSeries() {
                     Name = "blue avg meals",
                     Selector = s=>s.topBlueAvgMeals,
                     Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Blue, StrokeDashArray = new DoubleCollection() { 0, 3 }, LineCap = PenLineCap.Round },
-                    IsSelected = false
+                    IsSelected = true
                 },
                 new StatsSeries() {
                     Name = "blue avg deaths",
@@ -75,13 +75,13 @@ namespace PredPreySim.Gui
                     Name = "blue med fitness",
                     Selector = s=>s.topBlueMedFitness,
                     Style = new SeriesStyle() { StrokeThickness = 3, Stroke = Brushes.Blue },
-                    IsSelected = false
+                    IsSelected = true
                 },
                 new StatsSeries() {
                     Name = "blue med meals",
                     Selector = s=>s.topBlueMedMeals,
                     Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.Blue, StrokeDashArray = new DoubleCollection() { 0, 3 }, LineCap = PenLineCap.Round },
-                    IsSelected = false
+                    IsSelected = true
                 },
                 new StatsSeries() {
                     Name = "blue med deaths",

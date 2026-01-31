@@ -31,11 +31,10 @@ namespace PredPreySim.Models
 
         public float decayBlue = 0.994f;
 
-        public float initialEnergy = 300;
+        
 
         public int step;
 
-        public int generationDuration = 5000;
 
         public int generation;
 
@@ -60,31 +59,16 @@ namespace PredPreySim.Models
             stats = new List<Stats>();
         }
 
-        public double GetFitness(Agent agent)
-        {
-            var value = agent.type == 1 ? // prey
-                                          + agent.meals * 2                      
-                                          + agent.survivalDuration * 0.002 //smaller 0.001 ?
-                                          - agent.deaths * 5 
-                                          - agent.energySpent * 0.0001
-                                        : // predator
-                                          + agent.meals * 10 
-                                          + agent.nearPrey * 0.01 //smaller
-                                          - agent.energySpent * 0.0001;
-
-            return value * Math.Exp(-agent.age / (2.0 * generationDuration));
-        }
-
         private void InitRandomly(double plants, double predators)
         {
             int networksCount = 0;
-            for(int i=0; i<agents.Length; i++)
+            for (int i = 0; i < agents.Length; i++)
             {
                 var r = rnd.NextDouble();
 
                 agents[i] = new Agent();
                 agents[i].type = r < plants ? 0 : (r < (1 - predators) ? 1 : 2);
-                agents[i].energy = initialEnergy;
+                agents[i].energy = shaderConfig.initialEnergy;
                 agents[i].angle = (float)(2 * Math.PI * rnd.NextDouble());
                 agents[i].SetPosition(new Vector2((float)(shaderConfig.width * rnd.NextDouble()), (float)(shaderConfig.height * rnd.NextDouble())));
 
@@ -103,44 +87,86 @@ namespace PredPreySim.Models
                 }
         }
 
+        public double GetRawFitness(Agent agent)
+        {
+            return agent.type == 1  ? // prey
+                                        + agent.meals * 2
+                                        + agent.survivalDuration * 0.002 //smaller 0.001 or 0.0005 ?
+                                        - agent.deaths * 5
+                                        - agent.energySpent * 0.0001
+                                    : // predator
+                                        + agent.meals * 10
+                                        + agent.nearPrey * 0.005 //?
+                                        - agent.energySpent * 0.0001;
+        }
+
+        public double GetFitness(Agent agent)
+        {
+            var raw = GetRawFitness(agent);
+            return raw * Math.Exp(-agent.age / (2.0 * shaderConfig.generationDuration));
+        }
+
+        private (List<int>, List<int>) Selection(List<RankedAgent> ranking, int type)
+        {
+            var all = ranking.Where(x => x.agent.type == type);
+            var allCount = all.Count();
+            int topCount = allCount / 10;
+            int bottomCount = allCount / 2;
+            
+            var top = all.OrderByDescending(x => x.fitness).Take(topCount).ToList(); //these will breed
+            var topIds = top.Select(x => x.index).ToList();
+            var bottom = all.OrderBy(x => x.fitness).Take(bottomCount).ToList(); //this will be replaced with newly created agents
+            var bottomIds = bottom.Select(x => x.index).ToList(); 
+            if (topIds.Intersect(bottomIds).Count() > 0)
+                throw new Exception("!");
+
+            return (topIds, bottomIds);
+        }
+
         public void ChangeEpoch()
         {
             generation++;
             var ranking = agents.Select((a, i) => new RankedAgent() { index = i, agent = a, fitness = GetFitness(a) }).Where(a=>a.agent.type > 0).ToList();
 
-            var allBlueCount = agents.Count(a => a.type == 1);
-            var allBlue = ranking.Where(x => x.agent.type == 1);
-            var topBlue = allBlue.OrderByDescending(x => x.fitness).Take(allBlueCount / 10).ToList(); //these will breed
+
+            /*
             var topBlueIds = topBlue.Select(x=>x.index).ToList();
             var downBlueIds = allBlue.OrderBy(x => x.fitness).Take(allBlueCount / 2).Select(x => x.index).ToList(); //this will be replaced with newly created agents
             if (topBlueIds.Intersect(downBlueIds).Count() > 0)
                 throw new Exception("!");
+            */
+            (var topBlueIds, var bottomBlueIds) = Selection(ranking, 1);
+            Breed(topBlueIds, bottomBlueIds);
 
-            Breed(topBlueIds, downBlueIds);
 
-            var allRedCount = agents.Count(a => a.type == 2);
-            var allRed = ranking.Where(x => x.agent.type == 2);
-            var topRed = allRed.OrderByDescending(x => x.fitness).Take(allRedCount / 10).ToList(); //these will breed
+            /*
             var topRedIds = topRed.Select(x => x.index).ToList();
             var downRedIds = allRed.OrderBy(x => x.fitness).Take(allRedCount / 2).Select(x => x.index).ToList(); //this will be replaced with newly created agents
             if (topRedIds.Intersect(downRedIds).Count() > 0)
                 throw new Exception("!");
-
-            Breed(topRedIds, downRedIds);
+            */
+            (var topRedIds, var bottomRedIds) = Selection(ranking, 2);
+            Breed(topRedIds, bottomRedIds);
 
             // record stats
+            var allBlueCount = agents.Count(a => a.type == 1);
+            var allBlue = ranking.Where(x => x.agent.type == 1);
+            var topBlue = allBlue.OrderByDescending(x => x.fitness).Take(allBlueCount / 10).ToList();
+            var allRedCount = agents.Count(a => a.type == 2);
+            var allRed = ranking.Where(x => x.agent.type == 2);
+            var topRed = allRed.OrderByDescending(x => x.fitness).Take(allRedCount / 10).ToList();
             stats.Add(new Stats()
             {
                 time = shaderConfig.t,
-                topBlueAvgFitness = topBlue.Average(x => x.fitness),
-                topRedAvgFitness = topRed.Average(x => x.fitness),
+                topBlueAvgFitness = topBlue.Average(x => GetRawFitness(x.agent)),
+                topRedAvgFitness = topRed.Average(x => GetRawFitness(x.agent)),
                 topBlueAvgMeals = topBlue.Average(x => x.agent.meals),
                 topRedAvgMeals = topRed.Average(x => x.agent.meals),
                 topBlueAvgDeaths = topBlue.Average(x => x.agent.deaths),
                 topRedAvgDeaths = topRed.Average(x => x.agent.deaths),
 
-                topBlueMedFitness = topBlue.Median(x => x.fitness),
-                topRedMedFitness = topRed.Median(x => x.fitness),
+                topBlueMedFitness = topBlue.Median(x => GetRawFitness(x.agent)),
+                topRedMedFitness = topRed.Median(x => GetRawFitness(x.agent)),
                 topBlueMedMeals = topBlue.Median(x => x.agent.meals),
                 topRedMedMeals = topRed.Median(x => x.agent.meals),
                 topBlueMedDeaths = topBlue.Median(x => x.agent.deaths),
@@ -187,7 +213,7 @@ namespace PredPreySim.Models
                 agents[childIdx].meals = 0;
                 agents[childIdx].deaths = 0;
                 agents[childIdx].energySpent = 0;
-                agents[childIdx].energy = initialEnergy;
+                agents[childIdx].energy = shaderConfig.initialEnergy;
                 agents[childIdx].memory0 = 0;
                 agents[childIdx].memory1 = 0;
                 agents[childIdx].nearPrey = 0;

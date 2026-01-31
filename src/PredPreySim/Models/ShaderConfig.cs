@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PredPreySim.Models
 {
-    [StructLayout(LayoutKind.Explicit, Size = 20)]
+    [StructLayout(LayoutKind.Explicit, Size = 48)]
     public struct ShaderConfig
     {
         public ShaderConfig() { }
@@ -26,5 +26,27 @@ namespace PredPreySim.Models
 
         [FieldOffset(16)]
         public float t;
+
+        [FieldOffset(20)]
+        public int generationDuration = 5000;
+
+        [FieldOffset(24)]
+        public float initialEnergy = 300;
+
+        [FieldOffset(28)]
+        public float plantEnergy = 100;
+
+        [FieldOffset(32)]
+        public float killEnergy = 100;
+
+        [FieldOffset(36)]
+        public int plantRegrowDuration = 1000;
+
+        [FieldOffset(40)]
+        public float pad0;
+
+        [FieldOffset(44)]
+        public float pad1;
+
     }
 }

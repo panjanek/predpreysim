@@ -168,7 +168,7 @@ namespace PredPreySim.Gpu
             }
 
             app.simulation.step++;
-            if (app.simulation.step % app.simulation.generationDuration == 0)
+            if (app.simulation.step % app.simulation.shaderConfig.generationDuration == 0)
             {
                 DownloadAgents();
                 app.simulation.ChangeEpoch();

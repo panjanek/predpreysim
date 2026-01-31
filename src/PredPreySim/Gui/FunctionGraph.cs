@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -31,16 +32,16 @@ namespace PredPreySim.Gui
         public void Draw(List<Stats> stats)
         {
             this.stats = stats;
-            InternalDraw();
+            Redraw();
         }
 
         public void UpdateSeries(List<StatsSeries> series)
         {
             this.series = series;
-            InternalDraw();
+            Redraw();
         }
 
-        public void InternalDraw()
+        public void Redraw()
         {
             if (series == null || series.Count == 0 || stats == null || stats.Count < 2)
                 return;
@@ -55,9 +56,14 @@ namespace PredPreySim.Gui
 
             try
             {
+                var configWindow = Window.GetWindow(this) as ConfigWindow;
+                int historyCount = configWindow?.GraphHistory ?? 100;
+                bool commonScale = configWindow?.GraphCommonScale ?? false;
+
+
                 var toDraw = stats.OrderBy(s => s.time).ToList();
-                if (toDraw.Count > 2000)
-                    toDraw = toDraw.Skip(toDraw.Count - 2000).ToList();
+                if (toDraw.Count > historyCount)
+                    toDraw = toDraw.Skip(toDraw.Count - historyCount).ToList();
 
                 var width = ActualWidth;
                 var height = ActualHeight;
@@ -67,18 +73,26 @@ namespace PredPreySim.Gui
                 Background = Brushes.Black;
                 ClipToBounds = true;
 
+                double minY = series.Min(serie => toDraw.Select(x => serie.Selector(x)).Min());
+                double maxY = series.Max(serie => toDraw.Select(x => serie.Selector(x)).Max());
                 double dotSize = 6;
                 foreach (var serie in series)
                 {
-                    double minY = toDraw.Select(s => serie.Selector(s)).Min();
-                    double maxY = toDraw.Select(s => serie.Selector(s)).Max();
-
+                    if (!commonScale)
+                    {
+                        minY = toDraw.Select(x => serie.Selector(x)).Min();
+                        maxY = toDraw.Select(x => serie.Selector(x)).Max();
+                    }
+                    
                     var dy = maxY - minY;
                     maxY += dy * 0.1;
                     minY -= dy * 0.1;
                     dy = maxY - minY;
-                    double scaleX = width / (toDraw.Count-1);
                     double scaleY = dy > 0.0000001 ? height / dy : height / 0.0000001;
+
+
+                    double scaleX = width / (toDraw.Count-1);
+                    
                     for (int i = 0; i < toDraw.Count; i++)
                     {
                         var s1 = toDraw[i];

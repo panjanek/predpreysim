@@ -54,26 +54,57 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <local:FunctionGraph x:Name="statsGraph" Grid.Row="0" Grid.Column="0"/>
-                <ListBox Name="seriesList" Grid.Row="0" Grid.Column="1" SelectionMode="Single" Background="Black">
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="IsSelected" Value="False"/>
-                            <Setter Property="Focusable" Value="False"/>
-                        </Style>
-                    </ListBox.ItemContainerStyle>
+                <Button Name="saveButton" Grid.Row="0" Grid.Column="0">Save</Button>
+                <Button Name="loadButton" Grid.Row="0" Grid.Column="1">Load</Button>
+                <CheckBox Name="commonScaleCheckbox" Grid.Row="0" Grid.Column="9">Common scale</CheckBox>
+                <ComboBox Name="graphHistoryCombo" Grid.Row="0" Grid.Column="8">
+                    <ComboBoxItem Tag="50">Show 50</ComboBoxItem>
+                    <ComboBoxItem Tag="100" IsSelected="True">Show 100</ComboBoxItem>
+                    <ComboBoxItem Tag="300">Show 300</ComboBoxItem>
+                    <ComboBoxItem Tag="500">Show 500</ComboBoxItem>
+                    <ComboBoxItem Tag="1000">Show 1000</ComboBoxItem>
+                    <ComboBoxItem Tag="2000">Show 2000</ComboBoxItem>
+                </ComboBox>
 
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Click="SeriesCheckBox_Click" Content="{Binding Name}" Width="100" Foreground="White" />
-                                <Line X1="0"
+
+                <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="10"> <!-- graph + series selector -->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="200"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <local:FunctionGraph x:Name="statsGraph" Grid.Row="0" Grid.Column="0"/>
+                    <ListBox Name="seriesList" Grid.Row="0" Grid.Column="1" SelectionMode="Single" Background="Black">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="IsSelected" Value="False"/>
+                                <Setter Property="Focusable" Value="False"/>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Click="SeriesCheckBox_Click" Content="{Binding Name}" Width="100" Foreground="White" />
+                                    <Line X1="0"
                                       Y1="0"
                                       X2="60"
                                       Y2="0"
@@ -83,10 +114,12 @@
                                       StrokeThickness="{Binding Style.StrokeThickness}"
                                       StrokeDashArray="{Binding Style.StrokeDashArray}"
                                       StrokeDashCap ="{Binding Style.LineCap}"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+                
             </Grid>
         </DockPanel>
     </Border>

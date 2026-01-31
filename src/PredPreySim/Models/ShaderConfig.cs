@@ -28,7 +28,7 @@ namespace PredPreySim.Models
         public float t;
 
         [FieldOffset(20)]
-        public int generationDuration = 5000;
+        public int generationDuration = 50;
 
         [FieldOffset(24)]
         public float initialEnergy = 300;

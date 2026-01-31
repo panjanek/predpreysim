@@ -28,6 +28,19 @@ namespace PredPreySim.Gui
 
         private List<StatsSeries> series;
 
+        public bool GraphCommonScale => commonScaleCheckbox.IsChecked == true;
+
+        public int GraphHistory
+        {
+            get
+            {
+                if (graphHistoryCombo.SelectedItem == null)
+                    return 100;
+
+                return int.Parse(WpfUtil.GetTagAsString(graphHistoryCombo.SelectedItem));
+            }
+        }
+
         private ObservableCollection<StatsSeries> seriesCollection;
         public ConfigWindow(AppContext app)
         {
@@ -175,6 +188,8 @@ namespace PredPreySim.Gui
             };
 
             Loaded += ConfigWindow_Loaded;
+            graphHistoryCombo.SelectionChanged += (s, e) => statsGraph.Redraw();
+            commonScaleCheckbox.Click += (s, e) => statsGraph.Redraw();
         }
 
         private void ConfigWindow_Loaded(object sender, RoutedEventArgs e)

@@ -91,9 +91,9 @@ namespace PredPreySim.Models
         {
             return agent.type == 1  ? // prey
                                         + agent.meals * 2
-                                        + agent.survivalDuration * 0.002 //smaller 0.001 or 0.0005 ?
+                                        + agent.survivalDuration * 0.002 // 0.003?
                                         - agent.deaths * 5
-                                        - agent.energySpent * 0.0001
+                                        - agent.energySpent * 0.0001 // 0.001?
                                     : // predator
                                         + agent.meals * 10
                                         + agent.nearPrey * 0.005 //?
@@ -128,23 +128,9 @@ namespace PredPreySim.Models
             generation++;
             var ranking = agents.Select((a, i) => new RankedAgent() { index = i, agent = a, fitness = GetFitness(a) }).Where(a=>a.agent.type > 0).ToList();
 
-
-            /*
-            var topBlueIds = topBlue.Select(x=>x.index).ToList();
-            var downBlueIds = allBlue.OrderBy(x => x.fitness).Take(allBlueCount / 2).Select(x => x.index).ToList(); //this will be replaced with newly created agents
-            if (topBlueIds.Intersect(downBlueIds).Count() > 0)
-                throw new Exception("!");
-            */
             (var topBlueIds, var bottomBlueIds) = Selection(ranking, 1);
             Breed(topBlueIds, bottomBlueIds);
 
-
-            /*
-            var topRedIds = topRed.Select(x => x.index).ToList();
-            var downRedIds = allRed.OrderBy(x => x.fitness).Take(allRedCount / 2).Select(x => x.index).ToList(); //this will be replaced with newly created agents
-            if (topRedIds.Intersect(downRedIds).Count() > 0)
-                throw new Exception("!");
-            */
             (var topRedIds, var bottomRedIds) = Selection(ranking, 2);
             Breed(topRedIds, bottomRedIds);
 

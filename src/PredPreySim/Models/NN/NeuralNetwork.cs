@@ -233,10 +233,21 @@ namespace PredPreySim.Models.NN
             for(int i=0; i<inputs; i++)
             {
                 if (i < 15)
-                    res[i] = (float)rnd.NextDouble();
-                else
+                    res[i] = rnd.NextDouble() < 0.1 ? (float)rnd.NextDouble() : (float)MathUtil.NextBeta(rnd, 1.3, 4);
+                else if (memoryInputs.Contains(i))
                     res[i] = 1 - 2 * (float)rnd.NextDouble();
             }
+
+            if (rnd.NextDouble() < 0.5)
+            {
+                res[15] = res[2 * 3 + 0] - res[0 * 3 + 0];
+                res[16] = res[4 * 3 + 0] - res[3 * 3 + 0];
+            }
+            else
+            {
+                res[15] = res[2 * 3 + 2] - res[0 * 3 + 2];   
+                res[16] = res[4 * 3 + 2] - res[3 * 3 + 2];   
+            }    
 
             return res;
         }

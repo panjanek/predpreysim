@@ -63,7 +63,7 @@ namespace PredPreySim.Models
 
         public static double BehavioralDistance(INeuralNetwork nn, float[] network, int offset1, int offset2)
         {
-            int samplesCount = 10;
+            int samplesCount = 25;
             double totalSum = 0;
             for(int s=0; s< samplesCount; s++)
             {

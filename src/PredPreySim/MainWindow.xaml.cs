@@ -9,6 +9,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using PredPreySim.Utils;
 using AppContext = PredPreySim.Models.AppContext;
 using Application = System.Windows.Application;
 
@@ -49,6 +50,7 @@ namespace PredPreySim
             DispatcherTimer infoTimer = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(1.0) };
             infoTimer.Tick += InfoTimer_Tick;
             infoTimer.Start();
+            DebugUtil.TestBeta();
         }
 
         public void MainWindow_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)

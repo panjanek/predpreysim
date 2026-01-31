@@ -62,8 +62,16 @@ namespace PredPreySim.Models
 
         public double GetFitness(Agent agent)
         {
-            var value = agent.type == 1 ? agent.meals * 2 + agent.survivalDuration * 0.001 - agent.deaths * 5 - agent.energySpent * 0.0001
-                                        : agent.meals * 15 - agent.energySpent * 0.0001;
+            var value = agent.type == 1 ? // prey
+                                          + agent.meals * 2                      
+                                          + agent.survivalDuration * 0.002 //smaller 0.001 ?
+                                          - agent.deaths * 5 
+                                          - agent.energySpent * 0.0001
+                                        : // predator
+                                          + agent.meals * 10 
+                                          + agent.nearPrey * 0.01 //smaller
+                                          - agent.energySpent * 0.0001;
+
             return value * Math.Exp(-agent.age / (2.0 * generationDuration));
         }
 
@@ -98,7 +106,7 @@ namespace PredPreySim.Models
         public void ChangeEpoch()
         {
             generation++;
-            var ranking = agents.Select((a, i) => new { index = i, agent = a, fitness = GetFitness(a) }).Where(a=>a.agent.type > 0).ToList();
+            var ranking = agents.Select((a, i) => new RankedAgent() { index = i, agent = a, fitness = GetFitness(a) }).Where(a=>a.agent.type > 0).ToList();
 
             var allBlueCount = agents.Count(a => a.type == 1);
             var allBlue = ranking.Where(x => x.agent.type == 1);
@@ -153,7 +161,7 @@ namespace PredPreySim.Models
                 topBlueEnergySpent = topBlue.Average(x => x.agent.energySpent),
                 topRedEnergySpent = topRed.Average(x => x.agent.energySpent),
 
-                topAge2 = topBlue.Average(x=>x.agent.survivalDuration)
+                topSurvival = topBlue.Average(x=>x.agent.survivalDuration)
             });
 
             //highlight best

@@ -167,8 +167,8 @@ namespace PredPreySim.Gui
                 },
 
                 new StatsSeries() {
-                    Name = "age2",
-                    Selector = s=>s.topRedEnergySpent,
+                    Name = "top survival dur",
+                    Selector = s=>s.topSurvival,
                     Style = new SeriesStyle() { StrokeThickness = 1, Stroke = Brushes.Pink },
                     IsSelected = true
                 },

@@ -54,6 +54,6 @@ namespace PredPreySim.Models
 
         public double topRedEnergySpent;
 
-        public double topAge2;
+        public double topSurvival;
     }
 }

@@ -14,25 +14,9 @@ namespace PredPreySim.Models
 
         public double topRedAvgFitness;
 
-        public double topBlueAvgMeals;
-
-        public double topBlueAvgDeaths;
-
-        public double topRedAvgMeals;
-
-        public double topRedAvgDeaths;
-
         public double topBlueMedFitness;
 
         public double topRedMedFitness;
-
-        public double topBlueMedMeals;
-
-        public double topBlueMedDeaths;
-
-        public double topRedMedMeals;
-
-        public double topRedMedDeaths;
 
         public double topRedAvgAge;
 
@@ -55,5 +39,13 @@ namespace PredPreySim.Models
         public double topRedEnergySpent;
 
         public double topSurvival;
+
+        public double blueDiversityL2;
+
+        public double blueDiversityBehavioral;
+
+        public double redDiversityL2;
+
+        public double redDiversityBehavioral;
     }
 }

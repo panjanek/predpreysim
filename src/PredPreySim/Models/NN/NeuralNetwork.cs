@@ -192,5 +192,53 @@ namespace PredPreySim.Models.NN
                     network[childOffset + i] = rnd.NextDouble() < 0.5 ? network[parent1Offset + i] : network[parent2Offset + i];
             }
         }
+
+        private float Activate(float x)
+        {
+            return (float)Math.Tanh(x);
+        }
+
+        public float[] Evaluate(float[] network, int offset, float[] inp)
+        {
+            // Hidden layer
+            float[] hid = new float[hidden];
+            for (int h = 0; h < hidden; ++h)
+            {
+                float sum = network[offset + (inputs * hidden) + h];
+                for (int i = 0; i < inputs; ++i)
+                    sum += inp[i] * network[offset + h * inputs + i];
+
+                hid[h] = Activate(sum);
+            }
+
+            // Output layer
+            int offs2 = hidden * inputs + hidden;
+            float[] result = new float[outputs];
+            for (int o = 0; o < outputs; ++o)
+            {
+                float sum = network[offset + (offs2 + hidden * outputs) + o];
+                for (int h = 0; h < hidden; ++h)
+                    sum += hid[h] * network[offset + offs2 + o * hidden + h];
+
+                result[o] = Activate(sum);
+            }
+
+            return result;
+        }
+
+        public float[] GetInputSample(int seed)
+        {
+            var rnd = new Random(seed);
+            var res = new float[inputs];
+            for(int i=0; i<inputs; i++)
+            {
+                if (i < 15)
+                    res[i] = (float)rnd.NextDouble();
+                else
+                    res[i] = 1 - 2 * (float)rnd.NextDouble();
+            }
+
+            return res;
+        }
     }
 }

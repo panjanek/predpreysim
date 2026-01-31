@@ -31,12 +31,6 @@ namespace PredPreySim.Models
             configWindow = new ConfigWindow(this);
             configWindow.Show();
             configWindow.Activate();
-
-            /*
-            var json = SerializationUtil.SerializeToJson(this.simulation); 
-            var sim = SerializationUtil.DeserializeFromJson(json);
-            sim.InitAfterLoad();
-            simulation = sim;*/
         }
 
         public void Load(string fn)

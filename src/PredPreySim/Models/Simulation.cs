@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -41,7 +42,7 @@ namespace PredPreySim.Models
         public NetworkConfig networkConfig = new NetworkConfig() { inputs = 19, hidden = 8, outputs = 4, memoryInputs = [17, 18], memoryOutputs = [2, 3] };
 
         [JsonIgnore]
-        private INeuralNetwork nn;
+        public INeuralNetwork nn;
 
         [JsonIgnore]
         private Random rnd = new Random(1);
@@ -95,13 +96,13 @@ namespace PredPreySim.Models
         {
             return agent.type == 1  ? // prey
                                         + agent.meals * 2
-                                        + agent.survivalDuration * 0.002 // 0.003?
+                                        + agent.survivalDuration * 0.003 // was 0.002
                                         - agent.deaths * 5
-                                        - agent.energySpent * 0.001 // ?
+                                        - agent.energySpent * 0.002 // was 0.001
                                     : // predator
-                                        + agent.meals * 3
-                                        + agent.nearPrey * 0.005 //?
-                                        - agent.energySpent * 0.001; //?
+                                        + agent.meals * 3 //10?
+                                        + agent.nearPrey * 0.005 //0.01?
+                                        - agent.energySpent * 0.002; // was 0.001
         }
 
         public double GetFitness(Agent agent)
@@ -145,22 +146,18 @@ namespace PredPreySim.Models
             var allRedCount = agents.Count(a => a.type == 2);
             var allRed = ranking.Where(x => x.agent.type == 2);
             var topRed = allRed.OrderByDescending(x => x.fitness).Take(allRedCount / 10).ToList();
+            var blueMatrixL2 = new DistanceMatrix(this, topBlueIds, DistanceMatrix.L2Distance);
+            var redMatrixL2 = new DistanceMatrix(this, topRedIds, DistanceMatrix.L2Distance);
+            var blueMatrixBevavioral = new DistanceMatrix(this, topBlueIds, DistanceMatrix.BehavioralDistance);
+            var redMatrixBevavioral = new DistanceMatrix(this, topRedIds, DistanceMatrix.BehavioralDistance);
             stats.Add(new Stats()
             {
                 time = shaderConfig.t,
                 topBlueAvgFitness = topBlue.Average(x => GetRawFitness(x.agent)),
                 topRedAvgFitness = topRed.Average(x => GetRawFitness(x.agent)),
-                topBlueAvgMeals = topBlue.Average(x => x.agent.meals),
-                topRedAvgMeals = topRed.Average(x => x.agent.meals),
-                topBlueAvgDeaths = topBlue.Average(x => x.agent.deaths),
-                topRedAvgDeaths = topRed.Average(x => x.agent.deaths),
 
                 topBlueMedFitness = topBlue.Median(x => GetRawFitness(x.agent)),
                 topRedMedFitness = topRed.Median(x => GetRawFitness(x.agent)),
-                topBlueMedMeals = topBlue.Median(x => x.agent.meals),
-                topRedMedMeals = topRed.Median(x => x.agent.meals),
-                topBlueMedDeaths = topBlue.Median(x => x.agent.deaths),
-                topRedMedDeaths = topRed.Median(x => x.agent.deaths),
 
                 topBlueMealsPerAge = topBlue.Average(x => x.agent.age == 0 ? 0 : 1.0 * x.agent.meals / x.agent.age),
                 topRedMealsPerAge = topRed.Average(x => x.agent.age == 0 ? 0 : 1.0 * x.agent.meals / x.agent.age),
@@ -177,7 +174,12 @@ namespace PredPreySim.Models
                 topBlueEnergySpent = topBlue.Average(x => x.agent.energySpent),
                 topRedEnergySpent = topRed.Average(x => x.agent.energySpent),
 
-                topSurvival = topBlue.Average(x=>x.agent.survivalDuration)
+                topSurvival = topBlue.Average(x => x.agent.survivalDuration),
+
+                blueDiversityL2 = blueMatrixL2.GetDiversity(),
+                redDiversityL2 = redMatrixL2.GetDiversity(),
+                blueDiversityBehavioral = blueMatrixBevavioral.GetDiversity(),
+                redDiversityBehavioral = redMatrixBevavioral.GetDiversity()
             });
 
             //highlight best

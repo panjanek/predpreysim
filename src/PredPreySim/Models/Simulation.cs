@@ -97,11 +97,11 @@ namespace PredPreySim.Models
                                         + agent.meals * 2
                                         + agent.survivalDuration * 0.002 // 0.003?
                                         - agent.deaths * 5
-                                        - agent.energySpent * 0.0001 // 0.001?
+                                        - agent.energySpent * 0.001 // ?
                                     : // predator
-                                        + agent.meals * 10
+                                        + agent.meals * 3
                                         + agent.nearPrey * 0.005 //?
-                                        - agent.energySpent * 0.0001;
+                                        - agent.energySpent * 0.001; //?
         }
 
         public double GetFitness(Agent agent)

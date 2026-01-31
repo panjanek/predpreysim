@@ -62,7 +62,7 @@ namespace PredPreySim.Models
 
         public double GetFitness(Agent agent)
         {
-            var value = agent.type == 1 ? agent.meals * 2 + agent.age * 0.0005 - agent.deaths * 5 - agent.energySpent * 0.0001
+            var value = agent.type == 1 ? agent.meals * 2 + agent.age2 * 0.001 - agent.deaths * 5 - agent.energySpent * 0.0001
                                         : agent.meals * 15 - agent.energySpent * 0.0001;
             return value * Math.Exp(-agent.age / (2.0 * generationDuration));
         }
@@ -151,7 +151,9 @@ namespace PredPreySim.Models
                 allNearPrey = allRed.Average(x => x.agent.nearPrey),
 
                 topBlueEnergySpent = topBlue.Average(x => x.agent.energySpent),
-                topRedEnergySpent = topRed.Average(x => x.agent.energySpent)
+                topRedEnergySpent = topRed.Average(x => x.agent.energySpent),
+
+                topAge2 = topBlue.Average(x=>x.agent.age2)
             });
 
             //highlight best
@@ -173,6 +175,7 @@ namespace PredPreySim.Models
 
                 agents[childIdx].state = 0;
                 agents[childIdx].age = 0;
+                agents[childIdx].age2 = 0;
                 agents[childIdx].meals = 0;
                 agents[childIdx].deaths = 0;
                 agents[childIdx].energySpent = 0;

@@ -165,6 +165,13 @@ namespace PredPreySim.Gui
                     Style = new SeriesStyle() { StrokeThickness = 1, Stroke = Brushes.Red },
                     IsSelected = true
                 },
+
+                new StatsSeries() {
+                    Name = "age2",
+                    Selector = s=>s.topRedEnergySpent,
+                    Style = new SeriesStyle() { StrokeThickness = 1, Stroke = Brushes.Pink },
+                    IsSelected = true
+                },
             };
 
             Loaded += ConfigWindow_Loaded;

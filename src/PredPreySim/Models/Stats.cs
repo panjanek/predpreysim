@@ -53,5 +53,7 @@ namespace PredPreySim.Models
         public double topBlueEnergySpent;
 
         public double topRedEnergySpent;
+
+        public double topAge2;
     }
 }

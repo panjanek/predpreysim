@@ -117,9 +117,12 @@ namespace PredPreySim.Gui
                             text.Visibility = System.Windows.Visibility.Visible;
                             selectedTime = time;
                             selectedSerie = currentSerie;
+                            /*
                             circle.SetValue(Canvas.LeftProperty, x1 - 5);
                             circle.SetValue(Canvas.TopProperty, height - (y1 - minY) * scaleY - 5);
                             circle.Visibility = System.Windows.Visibility.Visible;
+                            */
+                            Redraw();
                             e.Handled = true;
                         };
 

@@ -46,6 +46,7 @@ namespace PredPreySim.Models
             simulation.InitAfterLoad();
             renderer.UploadAgents();
             renderer.ClearTextures();
+            configWindow.DrawStats(simulation.stats);
         }
 
         public void Save(string fn)

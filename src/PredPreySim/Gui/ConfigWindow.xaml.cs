@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using PredPreySim.Models;
 using AppContext = PredPreySim.Models.AppContext;
 using Brush = System.Windows.Media.Brush;
@@ -190,6 +191,40 @@ namespace PredPreySim.Gui
             Loaded += ConfigWindow_Loaded;
             graphHistoryCombo.SelectionChanged += (s, e) => statsGraph.Redraw();
             commonScaleCheckbox.Click += (s, e) => statsGraph.Redraw();
+            saveButton.Click += (s, e) =>
+            {
+                var dialog = new CommonSaveFileDialog { Title = "Save simulation to json file", DefaultExtension = "json" };
+                dialog.Filters.Add(new CommonFileDialogFilter("JSON files", "*.json"));
+                if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+                {
+                    try
+                    {
+                        app.Save(dialog.FileName);
+                        PopupMessage.Show(app.mainWindow, $"Config saved to {dialog.FileName}");
+                    }
+                    catch (Exception)
+                    {
+                        PopupMessage.Show(app.mainWindow, $"Something went wrong");
+                    }
+                }
+            };
+            loadButton.Click += (s, e) =>
+            {
+                var dialog = new CommonOpenFileDialog { Title = "Open simulation json file", DefaultExtension = "json" };
+                dialog.Filters.Add(new CommonFileDialogFilter("JSON files", "*.json"));
+                if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+                {
+                    try
+                    {
+                        app.Load(dialog.FileName);
+                        PopupMessage.Show(app.mainWindow, $"Config loaded from {dialog.FileName}");
+                    }
+                    catch (Exception)
+                    {
+                        PopupMessage.Show(app.mainWindow, $"Something went wrong");
+                    }
+                }
+            };
         }
 
         private void ConfigWindow_Loaded(object sender, RoutedEventArgs e)

@@ -260,5 +260,16 @@ namespace PredPreySim.Gpu
                 GL.Clear(ClearBufferMask.ColorBufferBit);
             }
         }
+
+        public void ClearTextures()
+        {
+            TextureUtil.ClearTexture(greenTexA);
+            TextureUtil.ClearTexture(greenTexB);
+            TextureUtil.ClearTexture(blueTexA);
+            TextureUtil.ClearTexture(blueTexB);
+            TextureUtil.ClearTexture(redTexA);
+            TextureUtil.ClearTexture(redTexB);
+        }
+
     }
 }

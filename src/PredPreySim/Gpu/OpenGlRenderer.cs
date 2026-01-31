@@ -182,5 +182,7 @@ namespace PredPreySim.Gpu
         public void UploadAgents() => solverProgram.UploadAgents(app.simulation.shaderConfig, app.simulation.agents, app.simulation.network);
 
         public void DownloadAgents() => solverProgram.DownloadAgents(app.simulation.agents);
+
+        public void ClearTextures() => solverProgram.ClearTextures();
     }
 }

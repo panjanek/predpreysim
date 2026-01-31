@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -31,32 +32,35 @@ namespace PredPreySim.Models
 
         public float decayBlue = 0.994f;
 
-        
-
         public int step;
-
 
         public int generation;
 
-        private INeuralNetwork nn;
-
-        private Random rnd = new Random(1);
-
         public List<Stats> stats;
 
-        public NetworkConfig networkConfig;
+        public NetworkConfig networkConfig = new NetworkConfig() { inputs = 19, hidden = 8, outputs = 4, memoryInputs = [17, 18], memoryOutputs = [2, 3] };
+
+        [JsonIgnore]
+        private INeuralNetwork nn;
+
+        [JsonIgnore]
+        private Random rnd = new Random(1);
 
         public Simulation()
         {
             shaderConfig = new ShaderConfig();
             agents = new Agent[shaderConfig.agentsCount];
-            networkConfig = new NetworkConfig() { inputs = 19, hidden = 8, outputs = 4, memoryInputs = [17, 18], memoryOutputs = [2, 3] };
             nn = new NeuralNetwork(networkConfig);
             InitRandomly(0.6, 0.1);
             kernelRed = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decayRed);
             kernelGreen = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decayGreen);
             kernelBlue = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decayBlue);
             stats = new List<Stats>();
+        }
+
+        public void InitAfterLoad()
+        {
+            nn = new NeuralNetwork(networkConfig);
         }
 
         private void InitRandomly(double plants, double predators)

@@ -60,7 +60,7 @@ namespace PredPreySim.Models
         public float nearPrey;
 
         [FieldOffset(76)]
-        public uint age2;
+        public uint survivalDuration;
 
         public void SetPosition(Vector2 pos)
         {

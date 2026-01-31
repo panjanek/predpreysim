@@ -18,7 +18,7 @@ struct Agent
     float memory0;
     float memory1;
     float nearPrey;
-    uint age2;
+    uint survivalDuration;
 };
 
 layout(std430, binding = 1) buffer AgentsBuffer {

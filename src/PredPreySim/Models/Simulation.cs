@@ -115,17 +115,20 @@ namespace PredPreySim.Models
         {
             var all = ranking.Where(x => x.agent.type == type);
             var allCount = all.Count();
-            int topCount = allCount / 10;
+            int topCount = allCount / 4;
+            int selectCount = allCount / 10;
             int bottomCount = allCount / 2;
+
+
             
-            var top = all.OrderByDescending(x => x.fitness).Take(topCount).ToList(); //these will breed
-            var topIds = top.Select(x => x.index).ToList();
+            var selected = all.OrderByDescending(x => x.fitness).Take(selectCount).ToList(); //these will breed
+            var selectedIds = selected.Select(x => x.index).ToList();
             var bottom = all.OrderBy(x => x.fitness).Take(bottomCount).ToList(); //this will be replaced with newly created agents
             var bottomIds = bottom.Select(x => x.index).ToList(); 
-            if (topIds.Intersect(bottomIds).Count() > 0)
+            if (selectedIds.Intersect(bottomIds).Count() > 0)
                 throw new Exception("!");
 
-            return (topIds, bottomIds);
+            return (selectedIds, bottomIds);
         }
 
         public void ChangeEpoch()
@@ -133,63 +136,22 @@ namespace PredPreySim.Models
             generation++;
             var ranking = agents.Select((a, i) => new RankedAgent() { index = i, agent = a, fitness = GetFitness(a) }).Where(a=>a.agent.type > 0).ToList();
 
-            (var topBlueIds, var bottomBlueIds) = Selection(ranking, 1);
-            Breed(topBlueIds, bottomBlueIds);
+            (var selectedBlueIds, var bottomBlueIds) = Selection(ranking, 1);
+            Breed(selectedBlueIds, bottomBlueIds);
 
-            (var topRedIds, var bottomRedIds) = Selection(ranking, 2);
-            Breed(topRedIds, bottomRedIds);
+            (var selectedRedIds, var bottomRedIds) = Selection(ranking, 2);
+            Breed(selectedRedIds, bottomRedIds);
 
             // record stats
-            var allBlueCount = agents.Count(a => a.type == 1);
-            var allBlue = ranking.Where(x => x.agent.type == 1);
-            var topBlue = allBlue.OrderByDescending(x => x.fitness).Take(allBlueCount / 10).ToList();
-            var allRedCount = agents.Count(a => a.type == 2);
-            var allRed = ranking.Where(x => x.agent.type == 2);
-            var topRed = allRed.OrderByDescending(x => x.fitness).Take(allRedCount / 10).ToList();
-            var blueMatrixL2 = new DistanceMatrix(this, topBlueIds, DistanceMatrix.L2Distance);
-            var redMatrixL2 = new DistanceMatrix(this, topRedIds, DistanceMatrix.L2Distance);
-            var blueMatrixBevavioral = new DistanceMatrix(this, topBlueIds, DistanceMatrix.BehavioralDistance);
-            var redMatrixBevavioral = new DistanceMatrix(this, topRedIds, DistanceMatrix.BehavioralDistance);
-            stats.Add(new Stats()
-            {
-                time = shaderConfig.t,
-                topBlueAvgFitness = topBlue.Average(x => GetRawFitness(x.agent)),
-                topRedAvgFitness = topRed.Average(x => GetRawFitness(x.agent)),
-
-                topBlueMedFitness = topBlue.Median(x => GetRawFitness(x.agent)),
-                topRedMedFitness = topRed.Median(x => GetRawFitness(x.agent)),
-
-                topBlueMealsPerAge = topBlue.Average(x => x.agent.age == 0 ? 0 : 1.0 * x.agent.meals / x.agent.age),
-                topRedMealsPerAge = topRed.Average(x => x.agent.age == 0 ? 0 : 1.0 * x.agent.meals / x.agent.age),
-
-                topBlueAvgAge = topBlue.Average(x => x.agent.age * 1.0),
-                topRedAvgAge = topRed.Average(x => x.agent.age * 1.0),
-
-                plantsCount = agents.Where(a => a.type == 0 && a.state == 0).Count(),
-                blueDeaths = allBlue.Sum(a => a.agent.deaths * 1.0) / allBlue.Count(),
-
-                topNearPrey = topRed.Average(x => x.agent.nearPrey),
-                allNearPrey = allRed.Average(x => x.agent.nearPrey),
-
-                topBlueEnergySpent = topBlue.Average(x => x.agent.energySpent),
-                topRedEnergySpent = topRed.Average(x => x.agent.energySpent),
-
-                topSurvival = topBlue.Average(x => x.agent.survivalDuration),
-
-                blueDiversityL2 = blueMatrixL2.GetDiversity(),
-                redDiversityL2 = redMatrixL2.GetDiversity(),
-                blueDiversityBehavioral = blueMatrixBevavioral.GetDiversity(),
-                redDiversityBehavioral = redMatrixBevavioral.GetDiversity()
-            });
+            stats.Add(new Stats(this, ranking, selectedBlueIds, selectedRedIds));
 
             //highlight best
-            var bestBlueIdx = topBlue.First().index;
-            var bestRedIdx = topRed.First().index;
+            var bestBlueIdx = selectedBlueIds[0];
+            var bestRedIdx = selectedRedIds[0];
             for(int i=0; i<agents.Length; i++)
             {
                 agents[i].flag = (i == bestBlueIdx || i == bestRedIdx) ? 1 : 0;
             }
-
         }
 
         // Take agents from "parents" indexes in agents array and breed. Overwrite agents from "spaces" indexes with newly created. 

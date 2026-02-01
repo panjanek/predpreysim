@@ -151,10 +151,10 @@ namespace PredPreySim.Models
             generation++;
             var ranking = agents.Select((a, i) => new RankedAgent() { index = i, agent = a, fitness = GetFitness(a) }).Where(a=>a.agent.type > 0).ToList();
 
-            (var selectedBlueIds, var bottomBlueIds) = Selection(ranking, 1, 0.1, 0.1, 0.5, 3);
+            (var selectedBlueIds, var bottomBlueIds) = Selection(ranking, 1, 0.2, 0.1, 0.5, 3);
             Breed(selectedBlueIds, bottomBlueIds);
 
-            (var selectedRedIds, var bottomRedIds) = Selection(ranking, 2, 0.1, 0.1, 0.5, 3);
+            (var selectedRedIds, var bottomRedIds) = Selection(ranking, 2, 0.2, 0.1, 0.5, 3);
             Breed(selectedRedIds, bottomRedIds);
 
             // record stats

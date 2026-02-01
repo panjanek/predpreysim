@@ -48,7 +48,7 @@ namespace PredPreySim.Models
         private Random rnd = new Random(1);
 
         [JsonIgnore]
-        public Func<INeuralNetwork, float[], int, int, double> diversityNorm = DistanceMatrix.L2Distance;
+        public Func<INeuralNetwork, float[], int, int, double> diversityNorm = DistanceMatrix.BehavioralDistance;
 
         public Simulation()
         {
@@ -98,10 +98,10 @@ namespace PredPreySim.Models
         public double GetRawFitness(Agent agent)
         {
             return agent.type == 1  ? // prey
-                                        + agent.meals * 2
-                                        + agent.survivalDuration * 0.003 // was 0.002
-                                        - agent.deaths * 5
-                                        - agent.energySpent * 0.002 // was 0.001
+                                        + agent.meals * 4 //was 2
+                                        + Math.Sqrt(agent.survivalDuration) * 0.2 //was: agent.survivalDuration * 0.003
+                                        - agent.deaths * 3 //was 5
+                                        - agent.energySpent * 0.001 //was 0.002
                                     : // predator
                                         + agent.meals * 3 //10?
                                         + agent.nearPrey * 0.005 //0.01?
@@ -114,27 +114,26 @@ namespace PredPreySim.Models
             return raw * Math.Exp(-agent.age / (2.0 * shaderConfig.generationDuration));
         }
 
-        private (List<int>, List<int>) Selection(List<RankedAgent> ranking, int type)
+        private (List<int>, List<int>) Selection(List<RankedAgent> ranking, int type, double candidateRatio, double selectRatio, double bottomRatio, int diversitySoftening)
         {
             var all = ranking.Where(x => x.agent.type == type);
             var allCount = all.Count();
-            int topCount = allCount / 4;      // first phase: select this many of best agents
-            int selectCount = allCount / 10;  // then select subset of diverse agents amont them - these will breed
-            int bottomCount = allCount / 2;   // this many worse performers will be replaced
+            int candidateCount = (int)Math.Ceiling(allCount * candidateRatio);      // first phase: select this many of best agents
+            int selectCount = (int)Math.Ceiling(allCount * selectRatio);  // then select subset of diverse agents amont them - these will breed
+            int bottomCount = (int)Math.Ceiling(allCount * bottomRatio);   // this many worse performers will be replaced
 
-            var top = all.OrderByDescending(x => x.fitness).Take(topCount).ToList();
-            var distanceMatrix = new DistanceMatrix(this, top.Select(x => x.index).ToList());
-            List<RankedAgent> selected = new List<RankedAgent>();
-            selected.Add(top[0]);
-            top.Remove(top[0]);
+            var candidates = all.OrderByDescending(x => x.fitness).Take(candidateCount).ToList();
+            var distanceMatrix = new DistanceMatrix(this, candidates.Select(x => x.index).ToList());
+            List<RankedAgent> selected = [candidates[0]];
+            candidates.Remove(candidates[0]);
             while (selected.Count < selectCount)
             {
                 var currentIndexes = selected.Select(r => r.index).ToList();
-                var candidates = top.Select(t => new RankedAgentWithDistance() { ranked = t, distance = distanceMatrix.GetMinDistance(t.index, currentIndexes) });
-                var bestCandidates = candidates.OrderByDescending(c => c.distance).Take(3);
+                var candidatesByDiversity = candidates.Select(t => new RankedAgentWithDistance() { ranked = t, distance = distanceMatrix.GetMinDistance(t.index, currentIndexes) });
+                var bestCandidates = candidatesByDiversity.OrderByDescending(c => c.distance).Take(diversitySoftening);
                 var select = bestCandidates.OrderByDescending(c => c.ranked.fitness).First();
                 selected.Add(select.ranked);
-                top.Remove(select.ranked);
+                candidates.Remove(select.ranked);
             }
 
             //selected = all.OrderByDescending(x => x.fitness).Take(selectCount).ToList(); //these will breed
@@ -152,10 +151,10 @@ namespace PredPreySim.Models
             generation++;
             var ranking = agents.Select((a, i) => new RankedAgent() { index = i, agent = a, fitness = GetFitness(a) }).Where(a=>a.agent.type > 0).ToList();
 
-            (var selectedBlueIds, var bottomBlueIds) = Selection(ranking, 1);
+            (var selectedBlueIds, var bottomBlueIds) = Selection(ranking, 1, 0.1, 0.1, 0.5, 3);
             Breed(selectedBlueIds, bottomBlueIds);
 
-            (var selectedRedIds, var bottomRedIds) = Selection(ranking, 2);
+            (var selectedRedIds, var bottomRedIds) = Selection(ranking, 2, 0.1, 0.1, 0.5, 3);
             Breed(selectedRedIds, bottomRedIds);
 
             // record stats

@@ -57,13 +57,13 @@ namespace PredPreySim.Gui
                     Name = "blue avg fitness",
                     Selector = s=>s.topBlueAvgFitness,
                     Style = new SeriesStyle() { StrokeThickness = 3, Stroke = Brushes.Blue },
-                    IsSelected = true
+                    IsSelected = false
                 },
                 new StatsSeries() {
                     Name = "red avg fitness",
                     Selector = s=>s.topRedAvgFitness,
                     Style = new SeriesStyle() { StrokeThickness = 3, Stroke = Brushes.Red },
-                    IsSelected = true
+                    IsSelected = false
                 },
 
                 // -------------------------------------------------- MEDIAN ------------------------------------
@@ -135,13 +135,13 @@ namespace PredPreySim.Gui
                     Name = "blue energy spent",
                     Selector = s=>s.topBlueEnergySpent,
                     Style = new SeriesStyle() { StrokeThickness = 1, Stroke = Brushes.Blue },
-                    IsSelected = true
+                    IsSelected = false
                 },
                 new StatsSeries() {
                     Name = "red energy spent",
                     Selector = s=>s.topRedEnergySpent,
                     Style = new SeriesStyle() { StrokeThickness = 1, Stroke = Brushes.Red },
-                    IsSelected = true
+                    IsSelected = false
                 },
 
                 new StatsSeries() {
@@ -152,26 +152,26 @@ namespace PredPreySim.Gui
                 },
 
                 new StatsSeries() {
-                    Name = "blue L2",
-                    Selector = s=>s.blueDiversityL2,
+                    Name = "blue naiv div",
+                    Selector = s=>s.blueNaiveDiversity,
+                    Style = new SeriesStyle() { StrokeThickness = 1, Stroke = Brushes.DarkBlue, StrokeDashArray = new DoubleCollection() { 0, 3 }, LineCap = PenLineCap.Round },
+                    IsSelected = true
+                },
+                new StatsSeries() {
+                    Name = "blue act div",
+                    Selector = s=>s.blueActualDiversity,
                     Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.DarkBlue, StrokeDashArray = new DoubleCollection() { 0, 3 }, LineCap = PenLineCap.Round },
                     IsSelected = true
                 },
                 new StatsSeries() {
-                    Name = "red L2",
-                    Selector = s=>s.redDiversityL2,
-                    Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.DarkRed, StrokeDashArray = new DoubleCollection() { 0, 3 }, LineCap = PenLineCap.Round },
+                    Name = "red naiv div",
+                    Selector = s=>s.redNaiveDiversity,
+                    Style = new SeriesStyle() { StrokeThickness = 1, Stroke = Brushes.DarkRed, StrokeDashArray = new DoubleCollection() { 2, 4 } },
                     IsSelected = true
                 },
                 new StatsSeries() {
-                    Name = "blue behavioral",
-                    Selector = s=>s.blueDiversityBehavioral,
-                    Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.DarkBlue, StrokeDashArray = new DoubleCollection() { 2, 4 } },
-                    IsSelected = true
-                },
-                new StatsSeries() {
-                    Name = "red behavioral",
-                    Selector = s=>s.redDiversityBehavioral,
+                    Name = "red actual div",
+                    Selector = s=>s.redActualDiversity,
                     Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.DarkRed, StrokeDashArray = new DoubleCollection() { 2, 4 } },
                     IsSelected = true
                 },

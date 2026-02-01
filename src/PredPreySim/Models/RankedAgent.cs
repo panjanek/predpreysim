@@ -14,4 +14,11 @@ namespace PredPreySim.Models
 
         public Agent agent;
     }
+
+    public class RankedAgentWithDistance
+    {
+        public RankedAgent ranked;
+
+        public double distance;
+    }
 }

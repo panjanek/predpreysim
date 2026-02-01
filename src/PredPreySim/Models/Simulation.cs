@@ -47,6 +47,9 @@ namespace PredPreySim.Models
         [JsonIgnore]
         private Random rnd = new Random(1);
 
+        [JsonIgnore]
+        public Func<INeuralNetwork, float[], int, int, double> diversityNorm = DistanceMatrix.L2Distance;
+
         public Simulation()
         {
             shaderConfig = new ShaderConfig();
@@ -115,13 +118,26 @@ namespace PredPreySim.Models
         {
             var all = ranking.Where(x => x.agent.type == type);
             var allCount = all.Count();
-            int topCount = allCount / 4;
-            int selectCount = allCount / 10;
-            int bottomCount = allCount / 2;
+            int topCount = allCount / 4;      // first phase: select this many of best agents
+            int selectCount = allCount / 10;  // then select subset of diverse agents amont them - these will breed
+            int bottomCount = allCount / 2;   // this many worse performers will be replaced
 
+            var top = all.OrderByDescending(x => x.fitness).Take(topCount).ToList();
+            var distanceMatrix = new DistanceMatrix(this, top.Select(x => x.index).ToList());
+            List<RankedAgent> selected = new List<RankedAgent>();
+            selected.Add(top[0]);
+            top.Remove(top[0]);
+            while (selected.Count < selectCount)
+            {
+                var currentIndexes = selected.Select(r => r.index).ToList();
+                var candidates = top.Select(t => new RankedAgentWithDistance() { ranked = t, distance = distanceMatrix.GetMinDistance(t.index, currentIndexes) });
+                var bestCandidates = candidates.OrderByDescending(c => c.distance).Take(3);
+                var select = bestCandidates.OrderByDescending(c => c.ranked.fitness).First();
+                selected.Add(select.ranked);
+                top.Remove(select.ranked);
+            }
 
-            
-            var selected = all.OrderByDescending(x => x.fitness).Take(selectCount).ToList(); //these will breed
+            //selected = all.OrderByDescending(x => x.fitness).Take(selectCount).ToList(); //these will breed
             var selectedIds = selected.Select(x => x.index).ToList();
             var bottom = all.OrderBy(x => x.fitness).Take(bottomCount).ToList(); //this will be replaced with newly created agents
             var bottomIds = bottom.Select(x => x.index).ToList(); 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using PredPreySim.Utils;
@@ -45,18 +46,17 @@ namespace PredPreySim.Models
 
             topSurvival = topBlue.Average(x => x.agent.survivalDuration);
 
-            var blueMatrixL2 = new DistanceMatrix(sim, selectedBlueIds, DistanceMatrix.L2Distance);
-            var redMatrixL2 = new DistanceMatrix(sim, selectedRedIds, DistanceMatrix.L2Distance);
-            var blueMatrixBevavioral = new DistanceMatrix(sim, selectedBlueIds, DistanceMatrix.BehavioralDistance);
-            var redMatrixBevavioral = new DistanceMatrix(sim, selectedRedIds, DistanceMatrix.BehavioralDistance);
-            blueDiversityL2 = blueMatrixL2.GetDiversity();
-            redDiversityL2 = redMatrixL2.GetDiversity();
-            blueDiversityBehavioral = blueMatrixBevavioral.GetDiversity();
-            redDiversityBehavioral = redMatrixBevavioral.GetDiversity();
+            blueNaiveDiversity = GetDiversity(sim, topBlue.Select(r => r.index).ToList());
+            blueActualDiversity = GetDiversity(sim, selectedBlueIds);
+            redNaiveDiversity = GetDiversity(sim, topRed.Select(r => r.index).ToList());
+            redActualDiversity = GetDiversity(sim, selectedRedIds);
         }
 
-
-
+        private double GetDiversity(Simulation sim, List<int> indexes)
+        {
+            var matrix = new DistanceMatrix(sim, indexes);
+            return matrix.GetDiversity();
+        }
 
         public double time;
 
@@ -90,12 +90,12 @@ namespace PredPreySim.Models
 
         public double topSurvival;
 
-        public double blueDiversityL2;
+        public double blueNaiveDiversity;
 
-        public double blueDiversityBehavioral;
+        public double blueActualDiversity;
 
-        public double redDiversityL2;
+        public double redNaiveDiversity;
 
-        public double redDiversityBehavioral;
+        public double redActualDiversity;
     }
 }

@@ -13,7 +13,7 @@ namespace PredPreySim.Models
 
         private Dictionary<int, int> map;
 
-        public DistanceMatrix(Simulation sim, List<int> indexes, Func<INeuralNetwork, float[], int, int, double> norm) 
+        public DistanceMatrix(Simulation sim, List<int> indexes) 
         {
             map = new Dictionary<int, int>();
             matrix = new double[indexes.Count, indexes.Count];
@@ -26,7 +26,7 @@ namespace PredPreySim.Models
                         matrix[i, j] = 0;
                     else
                     {
-                        var dist = norm(sim.nn, sim.network, sim.agents[indexes[i]].nnOffset, sim.agents[indexes[j]].nnOffset);
+                        var dist = sim.diversityNorm(sim.nn, sim.network, sim.agents[indexes[i]].nnOffset, sim.agents[indexes[j]].nnOffset);
                         matrix[i, j] = dist;
                         matrix[j, i] = dist;
                     }
@@ -37,6 +37,19 @@ namespace PredPreySim.Models
         public double GetDistance(int agent1Idx, int agent2Idx)
         {
             return matrix[map[agent1Idx], map[agent2Idx]];
+        }
+
+        public double GetAvgDistance(int fromIdx, List<int> toIndexes)
+        {
+            double sum = 0;
+            foreach (var toIdx in toIndexes)
+                sum += GetDistance(fromIdx, toIdx);
+            return sum / toIndexes.Count;
+        }
+
+        public double GetMinDistance(int fromIdx, List<int> toIndexes)
+        {
+            return toIndexes.Select(t => GetDistance(fromIdx, t)).Min(d => d);
         }
 
         public double GetDiversity()

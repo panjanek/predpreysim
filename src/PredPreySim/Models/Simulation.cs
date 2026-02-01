@@ -172,11 +172,16 @@ namespace PredPreySim.Models
         private int Pick(List<int> indexes, double alpha, double beta, int excludeIndex = -1)
         {
             int pickedPos;
+            var distributionDecision = rnd.NextDouble();
             do
-            { 
-                //pickedIdx = indexes[rnd.Next(indexes.Count)];
-                var x = MathUtil.NextBeta(rnd, alpha, beta);
-                pickedPos = Math.Min((int)(x * indexes.Count), indexes.Count - 1);
+            {
+                if (distributionDecision < 0.15)          // 15% of times pick with uniform distribution
+                    pickedPos = rnd.Next(indexes.Count);
+                else                                      // 85% of times pick with beta distribution (top performers more often)
+                {
+                    var x = MathUtil.NextBeta(rnd, alpha, beta);
+                    pickedPos = Math.Min((int)(x * indexes.Count), indexes.Count - 1);
+                }
             }
             while (indexes[pickedPos] == excludeIndex);
             return indexes[pickedPos];
@@ -187,7 +192,6 @@ namespace PredPreySim.Models
         {
             foreach(var childIdx in spaces)
             {
-                //var parent1Idx = parents[rnd.Next(parents.Count)];
                 var parent1Idx = Pick(parents, 0.7, 2);
 
                 agents[childIdx].state = 0;
@@ -208,7 +212,7 @@ namespace PredPreySim.Models
                 {
                     Array.Copy(network, agents[parent1Idx].nnOffset, network, agents[childIdx].nnOffset, nn.Size);
                 }
-                else if (decision1 < 0.9) // 75% of times: mutate, single parent
+                else if (decision1 < 0.85) // 70% of times: mutate, single parent
                 {
                     Array.Copy(network, agents[parent1Idx].nnOffset, network, agents[childIdx].nnOffset, nn.Size);
 
@@ -223,15 +227,8 @@ namespace PredPreySim.Models
                     else //5% - mutate strong all inputs of one hidden neuron
                         nn.MutateAllIncomming(network, agents[childIdx].nnOffset, rnd, 0.3 * magnitudeAmplification);
                 }
-                else // 10% of times: cross-over, two parents
+                else // 15% of times: cross-over, two parents
                 {
-                    /*
-                    int parent2Idx;
-                    do
-                        parent2Idx = parents[rnd.Next(parents.Count)];
-                    while (parent2Idx == parent1Idx);
-                    */
-
                     var parent2Idx = Pick(parents, 0.7, 2, parent1Idx);
                     nn.CrossOver(network, agents[parent1Idx].nnOffset, agents[parent2Idx].nnOffset, agents[childIdx].nnOffset, rnd);
                 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PredPreySim.Models.NN;
+using static OpenTK.Graphics.OpenGL.GL;
 
 namespace PredPreySim.Models
 {
@@ -54,12 +55,36 @@ namespace PredPreySim.Models
 
         public double GetDiversity()
         {
+            /*
             double sum = 0;
             int n = map.Count;
             for(int i=0; i<n; i++)
                 for(int j=0; j<i; j++)
                     sum += matrix[i, j];
             return sum / (n * (n - 1) / 2);
+            */
+
+            /*
+            double minDistance = 1000000000;
+            int n = map.Count;
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < i; j++)
+                    if (matrix[i, j] < minDistance)
+                        minDistance = matrix[i, j];
+            */
+
+            List<double> minDistances = new List<double>();
+            int n = map.Count;
+            for (int i = 0; i < n; i++)
+            {
+                double minDistance = 1000000000;
+                for (int j = 0; j < n; j++)
+                    if (i != j && matrix[i, j] < minDistance)
+                        minDistance = matrix[i, j];
+                minDistances.Add(minDistance);
+            }
+
+            return minDistances.Average();
         }
 
         public static double L2Distance(INeuralNetwork nn, float[] network, int offset1, int offset2)

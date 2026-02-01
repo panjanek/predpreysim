@@ -137,7 +137,7 @@ namespace PredPreySim.Models
             }
 
             //selected = all.OrderByDescending(x => x.fitness).Take(selectCount).ToList(); //these will breed
-            var selectedIds = selected.Select(x => x.index).ToList();
+            var selectedIds = selected.OrderByDescending(r=>r.fitness).Select(x => x.index).ToList(); //important: ordered from best to worst
             var bottom = all.OrderBy(x => x.fitness).Take(bottomCount).ToList(); //this will be replaced with newly created agents
             var bottomIds = bottom.Select(x => x.index).ToList(); 
             if (selectedIds.Intersect(bottomIds).Count() > 0)
@@ -169,12 +169,26 @@ namespace PredPreySim.Models
             }
         }
 
+        private int Pick(List<int> indexes, double alpha, double beta, int excludeIndex = -1)
+        {
+            int pickedPos;
+            do
+            { 
+                //pickedIdx = indexes[rnd.Next(indexes.Count)];
+                var x = MathUtil.NextBeta(rnd, alpha, beta);
+                pickedPos = Math.Min((int)(x * indexes.Count), indexes.Count - 1);
+            }
+            while (indexes[pickedPos] == excludeIndex);
+            return indexes[pickedPos];
+        }
+
         // Take agents from "parents" indexes in agents array and breed. Overwrite agents from "spaces" indexes with newly created. 
         private void Breed(List<int> parents, List<int> spaces)
         {
             foreach(var childIdx in spaces)
             {
-                var parent1Idx = parents[rnd.Next(parents.Count)];
+                //var parent1Idx = parents[rnd.Next(parents.Count)];
+                var parent1Idx = Pick(parents, 0.7, 2);
 
                 agents[childIdx].state = 0;
                 agents[childIdx].age = 0;
@@ -211,10 +225,14 @@ namespace PredPreySim.Models
                 }
                 else // 10% of times: cross-over, two parents
                 {
+                    /*
                     int parent2Idx;
                     do
                         parent2Idx = parents[rnd.Next(parents.Count)];
                     while (parent2Idx == parent1Idx);
+                    */
+
+                    var parent2Idx = Pick(parents, 0.7, 2, parent1Idx);
                     nn.CrossOver(network, agents[parent1Idx].nnOffset, agents[parent2Idx].nnOffset, agents[childIdx].nnOffset, rnd);
                 }
             }

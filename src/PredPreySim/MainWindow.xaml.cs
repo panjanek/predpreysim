@@ -20,11 +20,11 @@ namespace PredPreySim
     // - show best performers
     // - rescale absolute sensors to -0.5,0.5 or -1,1 (???)
     // - longer tail
-    // - energySpent -> 0.001 
-    // - graph norms
-    // - diversity
+    // - energySpent -> 0.01
     // - tune speeds
     // - tune blurring (prey max?)
+    // - nn hidden13, memory x3, additional layer?
+    // - crossing over: select distant with beta
     public partial class MainWindow : Window
     {
         private bool uiPending;

@@ -107,10 +107,10 @@ namespace PredPreySim
                         $"fps:{fps.ToString("0.0")} " +
                         $"step:{app.simulation.step} " +
                         $"gen:{app.simulation.generation} " +
-                        $"blue meals: {blueMealsPerAge.ToString("0.00")} " +
-                        $"red meals: {redMealsPerAge.ToString("0.00")} " +
-                        $"blue fitness: {blueFitness.ToString("0.00")} " +
-                        $"red fitness: {redFitness.ToString("0.00")} ";
+                        $"blue meals: {blueMealsPerAge.ToString("0.000")} " +
+                        $"red meals: {redMealsPerAge.ToString("0.000")} " +
+                        $"blue fitness: {blueFitness.ToString("0.0")} " +
+                        $"red fitness: {redFitness.ToString("0.0")} ";
 
                 lastCheckFrameCount = app.renderer.FrameCounter;
                 lastCheckTime = now;

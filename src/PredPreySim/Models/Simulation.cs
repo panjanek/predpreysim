@@ -50,6 +50,10 @@ namespace PredPreySim.Models
         [JsonIgnore]
         public Func<INeuralNetwork, float[], int, int, double> diversityNorm = DistanceMatrix.BehavioralDistance;
 
+        public List<int> topBlueIds = new List<int>();
+
+        public List<int> topRedIds = new List<int>();
+
         public Simulation()
         {
             shaderConfig = new ShaderConfig();
@@ -101,12 +105,12 @@ namespace PredPreySim.Models
                                         + agent.meals * 4 //was 2
                                         + Math.Sqrt(agent.survivalDuration) * 0.2 //was: agent.survivalDuration * 0.003
                                         - agent.deaths * 3 //was 5
-                                        - agent.energySpent * 0.01 //was 0.002
+                                        - agent.energySpent * 0.003 //was 0.002, then 0.01
                                     : // predator
                                         + agent.meals * 3 //10?
                                         + agent.nearPrey * 0.015 //was 0.005?
                                         + 0.1 * shaderConfig.generationDuration * agent.meals / (agent.age + 1.0) //agent.meals * Math.Exp(-agent.age / shaderConfig.generationDuration)
-                                        - agent.energySpent * 0.02; // was 0.001
+                                        - agent.energySpent * 0.005; // was 0.001, then 0.02
         }
 
         public double GetFitness(Agent agent)
@@ -152,24 +156,45 @@ namespace PredPreySim.Models
             generation++;
             var ranking = agents.Select((a, i) => new RankedAgent() { index = i, agent = a, fitness = GetFitness(a) }).Where(a=>a.agent.type > 0).ToList();
 
-           
+            // select and breed blue
             (var selectedBlueIds, var bottomBlueIds) = Selection(ranking, 1, 0.2, 0.1, 0.5, 3);
             var selectedBlueDistanceMatrix = new DistanceMatrix(this, selectedBlueIds);
             Breed(selectedBlueIds, bottomBlueIds, selectedBlueDistanceMatrix);
 
+            //select and breed red
             (var selectedRedIds, var bottomRedIds) = Selection(ranking, 2, 0.2, 0.1, 0.5, 3);
             var selectedRedDistanceMatrix = new DistanceMatrix(this, selectedRedIds);
             Breed(selectedRedIds, bottomRedIds, selectedRedDistanceMatrix);
 
             // record stats
+            topBlueIds = selectedBlueIds;
+            topRedIds = selectedRedIds;
             stats.Add(new Stats(this, ranking, selectedBlueIds, selectedRedIds, selectedBlueDistanceMatrix, selectedRedDistanceMatrix));
 
-            //highlight best
-            var bestBlueIdx = selectedBlueIds[0];
-            var bestRedIdx = selectedRedIds[0];
-            for(int i=0; i<agents.Length; i++)
+            // set visual flags
+            SetFlags();
+        }
+
+        public void SetFlags()
+        {
+            if (topBlueIds != null && topRedIds != null)
             {
-                agents[i].flag = (i == bestBlueIdx || i == bestRedIdx) ? 1 : 0;
+                var bestBlueIdx = topBlueIds.Count > 0 ? topBlueIds[0] : -1;
+                var bestRedIdx = topRedIds.Count > 0 ? topRedIds[0] : -1;
+                var topBlueSet = new HashSet<int>(topBlueIds);
+                var topRedSet = new HashSet<int>(topRedIds);
+                for (int i = 0; i < agents.Length; i++)
+                {
+                    int flag = 1;
+
+                    if (topBlueSet.Contains(i) || topRedSet.Contains(i))
+                        flag = 2;
+
+                    if (i == bestBlueIdx || i == bestRedIdx)
+                        flag = 3;
+
+                    agents[i].flag = flag;
+                }
             }
         }
 

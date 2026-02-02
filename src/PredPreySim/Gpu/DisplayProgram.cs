@@ -17,6 +17,8 @@ namespace PredPreySim.Gpu
 
         private int pointsProjLocation;
 
+        private int pointsZoomLocation;
+
         private int dispProgram;
 
         private int greenImageLocation;
@@ -43,6 +45,8 @@ namespace PredPreySim.Gpu
             pointsProgram = ShaderUtil.CompileAndLinkRenderShader("points.vert", "points.frag");
             pointsProjLocation = GL.GetUniformLocation(pointsProgram, "projection");
             if (pointsProjLocation == -1) throw new Exception("Uniform 'projection' not found. Shader optimized it out?");
+            pointsZoomLocation = GL.GetUniformLocation(pointsProgram, "zoom");
+            if (pointsZoomLocation == -1) throw new Exception("Uniform 'zoom' not found. Shader optimized it out?");
 
             dispProgram = ShaderUtil.CompileAndLinkRenderShader("display.vert", "display.frag");
             greenImageLocation = GL.GetUniformLocation(dispProgram, "uGreenImage");
@@ -65,7 +69,7 @@ namespace PredPreySim.Gpu
             GL.BindVertexArray(dummyVao);
         }
 
-        public void Draw(Simulation simulation, Matrix4 projectionMatrix, int agentsBuffer, int greenTex, int blueTex, int redTex, Vector2 worldMin, Vector2 worldMax)
+        public void Draw(Simulation simulation, Matrix4 projectionMatrix, int agentsBuffer, int greenTex, int blueTex, int redTex, Vector2 worldMin, Vector2 worldMax, float zoom)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
@@ -99,6 +103,7 @@ namespace PredPreySim.Gpu
             GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 1, agentsBuffer);
             GL.BindVertexArray(dummyVao);
             GL.UniformMatrix4(pointsProjLocation, false, ref projectionMatrix);
+            GL.Uniform1(pointsZoomLocation, zoom);
             GL.DrawArrays(PrimitiveType.Points, 0, simulation.agents.Length);      
         }
     }

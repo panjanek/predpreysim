@@ -148,7 +148,7 @@ namespace PredPreySim.Gpu
             Vector2 min = center - new Vector2(halfW, halfH);
             Vector2 max = center + new Vector2(halfW, halfH);
 
-            displayProgram.Draw(app.simulation, GetProjectionMatrix(), solverProgram.AgentsBuffer, solverProgram.GreenTex, solverProgram.BlueTex, solverProgram.RedTex, min, max);
+            displayProgram.Draw(app.simulation, GetProjectionMatrix(), solverProgram.AgentsBuffer, solverProgram.GreenTex, solverProgram.BlueTex, solverProgram.RedTex, min, max, zoom);
 
             glControl.SwapBuffers();
             frameCounter++;

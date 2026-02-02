@@ -26,8 +26,10 @@ layout(std430, binding = 1) buffer AgentsBuffer {
 };
 
 uniform mat4 projection;
+uniform float zoom;
 
 layout(location=0) out vec3 vColor;
+layout(location=1) flat out int flag;
 
 void main()
 {
@@ -35,21 +37,30 @@ void main()
     Agent agent = agents[id];
     gl_Position = projection * vec4(agent.position, 0.0, 1.0);
     gl_PointSize = 5.0;
-    vColor = vec3(0.3,1,0.3);
+
+    //color
+    vColor = vec3(0.0,1,0.0);
     if (agent.type == 1)
-        vColor = vec3(0.3,0.3,1);
+        vColor = vec3(0.0,0.0,1);
     else if (agent.type == 2)
-        vColor = vec3(1,0.3,0.3);
+        vColor = vec3(1,0.0,0.0);
 
+    //size
+    float baseSize = 0;
     if (agent.flag == 1)
-    {
-        gl_PointSize = 15;
-    }
+        baseSize = 1.0;
+    else if (agent.flag == 2)
+        baseSize = 2.0;
+    else if (agent.flag == 3)
+        baseSize = 15.0;
 
-    if (agent.state == 1)
+    gl_PointSize = baseSize * zoom;
+
+    flag = agent.flag;
+    if (agent.state == 1 || agent.type == 0)
     {
+        flag = 0;
         gl_PointSize = 0;
         vColor = vec3(0,0,0);
     }
-
 }

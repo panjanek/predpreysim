@@ -129,7 +129,7 @@ vec3 sense(Agent agent, float sensorAngle, float sensorDist, int sensorSize)
 }
 
 const int NN_INPUTS = 19;
-const int NN_HIDDEN = 8;
+const int NN_HIDDEN = 12;
 const int NN_OUTPUTS = 4;
 
 float[NN_INPUTS] prepare_input(Agent agent)

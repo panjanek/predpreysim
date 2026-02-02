@@ -39,7 +39,7 @@ namespace PredPreySim.Models
 
         public List<Stats> stats;
 
-        public NetworkConfig networkConfig = new NetworkConfig() { inputs = 19, hidden = 8, outputs = 4, memoryInputs = [17, 18], memoryOutputs = [2, 3] };
+        public NetworkConfig networkConfig = new NetworkConfig() { inputs = 19, hidden = 12, outputs = 4, memoryInputs = [17, 18], memoryOutputs = [2, 3] };
 
         [JsonIgnore]
         public INeuralNetwork nn;

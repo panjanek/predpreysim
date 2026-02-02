@@ -23,7 +23,7 @@ namespace PredPreySim.Utils
             var rng = new Random(1);
             List<double> sample = new List<double>();
             for (int i = 0; i < 50000; i++)
-                sample.Add(MathUtil.NextBeta(rng, 0.7, 2));
+                sample.Add(MathUtil.NextBeta(rng, 0.8, 1.5));
 
             int[] histogram = new int[50];
             foreach(var x in sample)

@@ -152,11 +152,14 @@ namespace PredPreySim.Models
             generation++;
             var ranking = agents.Select((a, i) => new RankedAgent() { index = i, agent = a, fitness = GetFitness(a) }).Where(a=>a.agent.type > 0).ToList();
 
+           
             (var selectedBlueIds, var bottomBlueIds) = Selection(ranking, 1, 0.2, 0.1, 0.5, 3);
-            Breed(selectedBlueIds, bottomBlueIds);
+            var selectedBlueDistanceMatrix = new DistanceMatrix(this, selectedBlueIds);
+            Breed(selectedBlueIds, bottomBlueIds, selectedBlueDistanceMatrix);
 
             (var selectedRedIds, var bottomRedIds) = Selection(ranking, 2, 0.2, 0.1, 0.5, 3);
-            Breed(selectedRedIds, bottomRedIds);
+            var selectedRedDistanceMatrix = new DistanceMatrix(this, selectedRedIds);
+            Breed(selectedRedIds, bottomRedIds, selectedRedDistanceMatrix);
 
             // record stats
             stats.Add(new Stats(this, ranking, selectedBlueIds, selectedRedIds));
@@ -189,7 +192,7 @@ namespace PredPreySim.Models
         }
 
         // Take agents from "parents" indexes in agents array and breed. Overwrite agents from "spaces" indexes with newly created. 
-        private void Breed(List<int> parents, List<int> spaces)
+        private void Breed(List<int> parents, List<int> spaces, DistanceMatrix distanceMatrix)
         {
             foreach(var childIdx in spaces)
             {
@@ -230,7 +233,11 @@ namespace PredPreySim.Models
                 }
                 else // 20% of times: cross-over, two parents
                 {
-                    var parent2Idx = Pick(parents, 0.7, 2, parent1Idx);
+                    //var parent2Idx = Pick(parents, 0.7, 2, parent1Idx);
+
+                    var parentsByDistance = parents.OrderByDescending(p => distanceMatrix.GetDistance(parent1Idx, p)).ToList();
+                    var parent2Idx = Pick(parentsByDistance, 0.8, 1.5, parent1Idx);
+
                     nn.CrossOver(network, agents[parent1Idx].nnOffset, agents[parent2Idx].nnOffset, agents[childIdx].nnOffset, rnd);
                     if (rnd.NextDouble() < 0.6) // 60% of the time apply weak mutation to the child
                     {

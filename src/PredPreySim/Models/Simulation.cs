@@ -101,12 +101,12 @@ namespace PredPreySim.Models
                                         + agent.meals * 4 //was 2
                                         + Math.Sqrt(agent.survivalDuration) * 0.2 //was: agent.survivalDuration * 0.003
                                         - agent.deaths * 3 //was 5
-                                        - agent.energySpent * 0.001 //was 0.002
+                                        - agent.energySpent * 0.01 //was 0.002
                                     : // predator
                                         + agent.meals * 3 //10?
                                         + agent.nearPrey * 0.015 //was 0.005?
                                         + 0.1 * shaderConfig.generationDuration * agent.meals / (agent.age + 1.0) //agent.meals * Math.Exp(-agent.age / shaderConfig.generationDuration)
-                                        - agent.energySpent * 0.002; // was 0.001
+                                        - agent.energySpent * 0.02; // was 0.001
         }
 
         public double GetFitness(Agent agent)

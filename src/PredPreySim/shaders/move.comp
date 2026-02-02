@@ -157,8 +157,8 @@ float[NN_INPUTS] prepare_input(Agent agent)
         for(int a=0; a<5; a++)
         {
             vec3 sensor = sense(agent, angles[a], 4, 1);
-            inp[a*3+0] = sensor.r * 0.07;  // other predator scent - not important for predators
-            inp[a*3+1] = sensor.g * 0.15;  // plants scent - slightly important for predators
+            inp[a*3+0] = sensor.r * 0.15;  // other predator scent - not important for predators
+            inp[a*3+1] = sensor.g * 0.3;   // plants scent - slightly important for predators
             inp[a*3+2] = sensor.b;
         }
 

@@ -120,14 +120,15 @@ namespace PredPreySim.Models
             var all = ranking.Where(x => x.agent.type == type);
             var allCount = all.Count();
             int candidateCount = (int)Math.Ceiling(allCount * candidateRatio);      // first phase: select this many of best agents
-            int selectCount = (int)Math.Ceiling(allCount * selectRatio);  // then select subset of diverse agents amont them - these will breed
-            int bottomCount = (int)Math.Ceiling(allCount * bottomRatio);   // this many worse performers will be replaced
+            int selectCount = (int)Math.Ceiling(allCount * selectRatio);            // then select subset of diverse agents amont them - these will breed
+            int bottomCount = (int)Math.Ceiling(allCount * bottomRatio);            // this many worsst performers will be replaced
 
+            // select candidates
             var candidates = all.OrderByDescending(x => x.fitness).Take(candidateCount).ToList();
             var distanceMatrix = new DistanceMatrix(this, candidates.Select(x => x.index).ToList());
             List<RankedAgent> selected = [candidates[0]];
             candidates.Remove(candidates[0]);
-            while (selected.Count < selectCount)
+            while (selected.Count < selectCount) // greedy algorithm for selecting diverse subset
             {
                 var currentIndexes = selected.Select(r => r.index).ToList();
                 var candidatesByDiversity = candidates.Select(t => new RankedAgentWithDistance() { ranked = t, distance = distanceMatrix.GetMinDistance(t.index, currentIndexes) });
@@ -137,7 +138,6 @@ namespace PredPreySim.Models
                 candidates.Remove(select.ranked);
             }
 
-            //selected = all.OrderByDescending(x => x.fitness).Take(selectCount).ToList(); //these will breed
             var selectedIds = selected.OrderByDescending(r=>r.fitness).Select(x => x.index).ToList(); //important: ordered from best to worst
             var bottom = all.OrderBy(x => x.fitness).Take(bottomCount).ToList(); //this will be replaced with newly created agents
             var bottomIds = bottom.Select(x => x.index).ToList(); 
@@ -162,7 +162,7 @@ namespace PredPreySim.Models
             Breed(selectedRedIds, bottomRedIds, selectedRedDistanceMatrix);
 
             // record stats
-            stats.Add(new Stats(this, ranking, selectedBlueIds, selectedRedIds));
+            stats.Add(new Stats(this, ranking, selectedBlueIds, selectedRedIds, selectedBlueDistanceMatrix, selectedRedDistanceMatrix));
 
             //highlight best
             var bestBlueIdx = selectedBlueIds[0];

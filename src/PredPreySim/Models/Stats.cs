@@ -12,7 +12,7 @@ namespace PredPreySim.Models
     {
         public Stats() { }
 
-        public Stats(Simulation sim, List<RankedAgent> ranking, List<int> selectedBlueIds, List<int> selectedRedIds)
+        public Stats(Simulation sim, List<RankedAgent> ranking, List<int> selectedBlueIds, List<int> selectedRedIds, DistanceMatrix blueSelectedMatrix, DistanceMatrix redSelectedMatrix)
         {
             var allBlueCount = ranking.Count(a => a.agent.type == 1);
             var allBlue = ranking.Where(x => x.agent.type == 1);
@@ -46,16 +46,8 @@ namespace PredPreySim.Models
 
             topSurvival = topBlue.Average(x => x.agent.survivalDuration);
 
-            blueNaiveDiversity = GetDiversity(sim, topBlue.Select(r => r.index).ToList());
-            blueActualDiversity = GetDiversity(sim, selectedBlueIds);
-            redNaiveDiversity = GetDiversity(sim, topRed.Select(r => r.index).ToList());
-            redActualDiversity = GetDiversity(sim, selectedRedIds);
-        }
-
-        private double GetDiversity(Simulation sim, List<int> indexes)
-        {
-            var matrix = new DistanceMatrix(sim, indexes);
-            return matrix.GetDiversity();
+            blueDiversity = blueSelectedMatrix.GetDiversity();
+            redDiversity = redSelectedMatrix.GetDiversity();
         }
 
         public double time;
@@ -90,12 +82,8 @@ namespace PredPreySim.Models
 
         public double topSurvival;
 
-        public double blueNaiveDiversity;
+        public double blueDiversity;
 
-        public double blueActualDiversity;
-
-        public double redNaiveDiversity;
-
-        public double redActualDiversity;
+        public double redDiversity;
     }
 }

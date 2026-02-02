@@ -152,26 +152,14 @@ namespace PredPreySim.Gui
                 },
 
                 new StatsSeries() {
-                    Name = "blue naiv div",
-                    Selector = s=>s.blueNaiveDiversity,
-                    Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.DarkBlue, StrokeDashArray = new DoubleCollection() { 2, 4 } },
-                    IsSelected = true
-                },
-                new StatsSeries() {
-                    Name = "blue act div",
-                    Selector = s=>s.blueActualDiversity,
+                    Name = "blue diversity",
+                    Selector = s=>s.blueDiversity,
                     Style = new SeriesStyle() { StrokeThickness = 3, Stroke = Brushes.DarkBlue, StrokeDashArray = new DoubleCollection() { 2, 4 } },
                     IsSelected = true
                 },
                 new StatsSeries() {
-                    Name = "red naiv div",
-                    Selector = s=>s.redNaiveDiversity,
-                    Style = new SeriesStyle() { StrokeThickness = 2, Stroke = Brushes.DarkRed, StrokeDashArray = new DoubleCollection() { 2, 4 } },
-                    IsSelected = true
-                },
-                new StatsSeries() {
-                    Name = "red actual div",
-                    Selector = s=>s.redActualDiversity,
+                    Name = "red diversity",
+                    Selector = s=>s.redDiversity,
                     Style = new SeriesStyle() { StrokeThickness = 3, Stroke = Brushes.DarkRed, StrokeDashArray = new DoubleCollection() { 2, 4 } },
                     IsSelected = true
                 },

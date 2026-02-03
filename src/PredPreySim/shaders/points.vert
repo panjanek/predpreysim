@@ -30,13 +30,13 @@ uniform float zoom;
 
 layout(location=0) out vec3 vColor;
 layout(location=1) flat out int flag;
+layout(location=2) flat out float pointSize;
 
 void main()
 {
     uint id = gl_VertexID;
     Agent agent = agents[id];
     gl_Position = projection * vec4(agent.position, 0.0, 1.0);
-    gl_PointSize = 5.0;
 
     //color
     vColor = vec3(0.0,1,0.0);
@@ -52,7 +52,7 @@ void main()
     else if (agent.flag == 2)
         baseSize = 2.0;
     else if (agent.flag == 3)
-        baseSize = 15.0;
+        baseSize = 5.0;
 
     gl_PointSize = baseSize * zoom;
 
@@ -63,4 +63,6 @@ void main()
         gl_PointSize = 0;
         vColor = vec3(0,0,0);
     }
+
+    pointSize = gl_PointSize;
 }

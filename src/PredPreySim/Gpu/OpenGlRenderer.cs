@@ -165,15 +165,15 @@ namespace PredPreySim.Gpu
             {
                 app.simulation.shaderConfig.t += app.simulation.shaderConfig.dt;
                 solverProgram.Run(ref app.simulation.shaderConfig, app.simulation.kernelRed, app.simulation.kernelGreen, app.simulation.kernelBlue);
-            }
 
-            app.simulation.step++;
-            if (app.simulation.step % app.simulation.shaderConfig.generationDuration == 0)
-            {
-                DownloadAgents();
-                app.simulation.ChangeEpoch();
-                app.DrawStats();
-                UploadAgents();
+                app.simulation.step++;
+                if (app.simulation.step % app.simulation.shaderConfig.generationDuration == 0)
+                {
+                    DownloadAgents();
+                    app.simulation.ChangeEpoch();
+                    app.DrawStats();
+                    UploadAgents();
+                }
             }
 
             glControl.Invalidate();

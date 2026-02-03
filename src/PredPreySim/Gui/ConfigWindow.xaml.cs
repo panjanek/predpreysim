@@ -202,6 +202,8 @@ namespace PredPreySim.Gui
                     }
                 }
             };
+
+            KeyDown += (s, e) => app.mainWindow.MainWindow_KeyDown(s, e);
         }
 
         private void ConfigWindow_Loaded(object sender, RoutedEventArgs e)

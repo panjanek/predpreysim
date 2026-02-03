@@ -19,6 +19,8 @@ namespace PredPreySim.Gpu
 
         private int pointsZoomLocation;
 
+        private int pointsOffsetLocation;
+
         private int dispProgram;
 
         private int greenImageLocation;
@@ -47,6 +49,8 @@ namespace PredPreySim.Gpu
             if (pointsProjLocation == -1) throw new Exception("Uniform 'projection' not found. Shader optimized it out?");
             pointsZoomLocation = GL.GetUniformLocation(pointsProgram, "zoom");
             if (pointsZoomLocation == -1) throw new Exception("Uniform 'zoom' not found. Shader optimized it out?");
+            pointsOffsetLocation = GL.GetUniformLocation(pointsProgram, "offset");
+            if (pointsOffsetLocation == -1) throw new Exception("Uniform 'offset' not found. Shader optimized it out?");
 
             dispProgram = ShaderUtil.CompileAndLinkRenderShader("display.vert", "display.frag");
             greenImageLocation = GL.GetUniformLocation(dispProgram, "uGreenImage");
@@ -94,17 +98,24 @@ namespace PredPreySim.Gpu
 
 
             //draw points
-            GL.Enable(EnableCap.ProgramPointSize);
-            GL.Enable(EnableCap.Blend);
-            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.One);
-            GL.BlendEquation(OpenTK.Graphics.OpenGL.BlendEquationMode.FuncAdd);
-            GL.Enable(EnableCap.PointSprite);
-            GL.UseProgram(pointsProgram);
-            GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 1, agentsBuffer);
-            GL.BindVertexArray(dummyVao);
-            GL.UniformMatrix4(pointsProjLocation, false, ref projectionMatrix);
-            GL.Uniform1(pointsZoomLocation, zoom);
-            GL.DrawArrays(PrimitiveType.Points, 0, simulation.agents.Length);      
+            for (int x = -1; x <= 1; x++)
+                for (int y = -1; y <= 1; y++)
+                {
+                    //GL.Enable(EnableCap.FramebufferSrgb);
+                    GL.Enable(EnableCap.ProgramPointSize);
+                    GL.Enable(EnableCap.Blend);
+                    GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+                    GL.BlendEquation(BlendEquationMode.FuncAdd);
+
+                    GL.Enable(EnableCap.PointSprite);
+                    GL.UseProgram(pointsProgram);
+                    GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 1, agentsBuffer);
+                    GL.BindVertexArray(dummyVao);
+                    GL.UniformMatrix4(pointsProjLocation, false, ref projectionMatrix);
+                    GL.Uniform1(pointsZoomLocation, zoom);
+                    GL.Uniform2(pointsOffsetLocation, new Vector2(x * simulation.shaderConfig.width, y * simulation.shaderConfig.height));
+                    GL.DrawArrays(PrimitiveType.Points, 0, simulation.agents.Length);
+                }
         }
     }
 }

@@ -4,6 +4,7 @@ layout(location=0) in vec3 vColor;
 layout(location=1) flat in int flag;
 layout(location=2) flat in float pointSize;
 layout(location=3) flat in float angle;
+layout(location=4) flat in uint type;
 
 out vec4 outputColor;
 
@@ -71,7 +72,8 @@ void main()
         outputColor.a *= alpha;
     }
 
-    vec4 pointerColor = vec4(1.0);
+    //vec4 pointerColor = vec4(1.0);
+    vec4 pointerColor = type == 1 ? vec4(0.8,0.8,1,1) : vec4(1,0.8,0.8,1);
     float pointerSize = 1;
     if (flag == 2) pointerSize = 0.66;
     if (flag == 3) pointerSize = 0.5;

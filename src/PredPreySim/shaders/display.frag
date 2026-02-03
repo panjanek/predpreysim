@@ -24,7 +24,7 @@ void main()
     float red = texture(uRedImage, uv).r;
     
     float r = amplify(red, 3);
-    float g = amplify(green, 3);
+    float g = amplify(green, 1);
     float b = amplify(blue, 3);
     
     fragColor = vec4(r, g, b ,1);

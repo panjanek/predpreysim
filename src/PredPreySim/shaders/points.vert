@@ -27,17 +27,19 @@ layout(std430, binding = 1) buffer AgentsBuffer {
 
 uniform mat4 projection;
 uniform float zoom;
+uniform vec2 offset;
 
 layout(location=0) out vec3 vColor;
 layout(location=1) flat out int flag;
 layout(location=2) flat out float pointSize;
 layout(location=3) flat out float angle;
+layout(location=4) flat out uint type;
 
 void main()
 {
     uint id = gl_VertexID;
     Agent agent = agents[id];
-    gl_Position = projection * vec4(agent.position, 0.0, 1.0);
+    gl_Position = projection * vec4(agent.position + offset, 0.0, 1.0);
 
     //color
     vColor = vec3(0.0,1,0.0);
@@ -67,4 +69,5 @@ void main()
 
     pointSize = gl_PointSize;
     angle = agent.angle;
+    type = agent.type;
 }

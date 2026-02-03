@@ -137,8 +137,31 @@ namespace PredPreySim.Gpu
             return matrix;
         }
 
+        private void Follow()
+        {
+            if (app.configWindow.NavigationMode != 0)
+            {
+                var trackedScreenPosition = tracked.position;
+                var delta = trackedScreenPosition - center; 
+                var move = delta * 0.05f;
+
+                if (Math.Abs(delta.X) > 0.75 * app.simulation.shaderConfig.width)
+                {
+                    move.X = (float)Math.Sign(delta.X) * app.simulation.shaderConfig.width;
+                }
+
+                if (Math.Abs(delta.Y) > 0.75 * app.simulation.shaderConfig.height)
+                {
+                    move.Y = (float)Math.Sign(delta.Y) * app.simulation.shaderConfig.height;
+                }
+                center += move;
+            }
+        }
+
         private void GlControl_Paint(object? sender, PaintEventArgs e)
         {
+            Follow();
+
             //clear
             GL.Viewport(0, 0, glControl.Width, glControl.Height);
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);

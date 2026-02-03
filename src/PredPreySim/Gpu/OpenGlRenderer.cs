@@ -9,7 +9,6 @@ using OpenTK.GLControl;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
-using OpenTK.Windowing.Common;
 using PredPreySim.Models;
 using PredPreySim.Utils;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
@@ -102,8 +101,11 @@ namespace PredPreySim.Gpu
                 var topLeft2 = zoomCenter - b;
                 var bottomRight2 = topLeft2 + newSize;
 
-                center = (bottomRight2 + topLeft2) / 2;
-                zoom = zoom * zoomRatio;
+                var newCenter = (bottomRight2 + topLeft2) / 2;
+                var newZoom = zoom * zoomRatio;
+
+                center = newCenter;
+                zoom = newZoom;
             };
 
             glControl.Paint += GlControl_Paint;

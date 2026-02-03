@@ -31,6 +31,7 @@ uniform float zoom;
 layout(location=0) out vec3 vColor;
 layout(location=1) flat out int flag;
 layout(location=2) flat out float pointSize;
+layout(location=3) flat out float angle;
 
 void main()
 {
@@ -48,9 +49,9 @@ void main()
     //size
     float baseSize = 0;
     if (agent.flag == 1)
-        baseSize = 1.0;
-    else if (agent.flag == 2)
         baseSize = 2.0;
+    else if (agent.flag == 2)
+        baseSize = 3.0;
     else if (agent.flag == 3)
         baseSize = 5.0;
 
@@ -65,4 +66,5 @@ void main()
     }
 
     pointSize = gl_PointSize;
+    angle = agent.angle;
 }

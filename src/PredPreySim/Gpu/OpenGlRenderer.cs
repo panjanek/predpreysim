@@ -173,7 +173,14 @@ namespace PredPreySim.Gpu
             Vector2 min = center - new Vector2(halfW, halfH);
             Vector2 max = center + new Vector2(halfW, halfH);
 
-            displayProgram.Draw(app.simulation, GetProjectionMatrix(), solverProgram.AgentsBuffer, solverProgram.GreenTex, solverProgram.BlueTex, solverProgram.RedTex, min, max, zoom);
+            displayProgram.Draw(app.simulation, 
+                                GetProjectionMatrix(), 
+                                solverProgram.AgentsBuffer, 
+                                solverProgram.GreenTex, 
+                                solverProgram.BlueTex, 
+                                solverProgram.RedTex, 
+                                min, max, zoom,
+                                app.configWindow.ShowPointers);
 
             glControl.SwapBuffers();
             frameCounter++;
@@ -194,7 +201,7 @@ namespace PredPreySim.Gpu
                 tracked = solverProgram.DownloadTrackedAgent();
 
                 app.simulation.step++;
-                if (app.simulation.step % app.simulation.shaderConfig.generationDuration == 0)
+                if (app.simulation.step % app.simulation.shaderConfig.generationDuration == 0 && app.configWindow.Evolve)
                 {
                     DownloadAgents();
                     app.simulation.ChangeEpoch();

@@ -31,7 +31,11 @@ namespace PredPreySim.Gui
 
         public bool GraphCommonScale => commonScaleCheckbox.IsChecked == true;
 
-        public int NavigationMode { get; private set; }
+        public int NavigationMode { get; private set; } = 0;
+
+        public bool Evolve { get; private set; } = true;
+
+        public bool ShowPointers { get; private set; } = true;
 
         public int GraphHistory
         {
@@ -207,6 +211,9 @@ namespace PredPreySim.Gui
 
             KeyDown += (s, e) => app.mainWindow.MainWindow_KeyDown(s, e);
             navigationCombo.SelectionChanged += (s, e) => NavigationMode = WpfUtil.GetTagAsInt(navigationCombo.SelectedItem);
+            evolveCheckbox.Click += (s, e) => Evolve = evolveCheckbox.IsChecked == true;
+            pointersCheckbox.Click += (s, e) => ShowPointers = pointersCheckbox.IsChecked == true;
+
         }
 
         private void ConfigWindow_Loaded(object sender, RoutedEventArgs e)

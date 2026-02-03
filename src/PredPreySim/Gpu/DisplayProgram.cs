@@ -73,7 +73,7 @@ namespace PredPreySim.Gpu
             GL.BindVertexArray(dummyVao);
         }
 
-        public void Draw(Simulation simulation, Matrix4 projectionMatrix, int agentsBuffer, int greenTex, int blueTex, int redTex, Vector2 worldMin, Vector2 worldMax, float zoom)
+        public void Draw(Simulation simulation, Matrix4 projectionMatrix, int agentsBuffer, int greenTex, int blueTex, int redTex, Vector2 worldMin, Vector2 worldMax, float zoom, bool showPointers)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
@@ -98,24 +98,27 @@ namespace PredPreySim.Gpu
 
 
             //draw points
-            for (int x = -1; x <= 1; x++)
-                for (int y = -1; y <= 1; y++)
-                {
-                    //GL.Enable(EnableCap.FramebufferSrgb);
-                    GL.Enable(EnableCap.ProgramPointSize);
-                    GL.Enable(EnableCap.Blend);
-                    GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-                    GL.BlendEquation(BlendEquationMode.FuncAdd);
+            if (showPointers)
+            {
+                for (int x = -1; x <= 1; x++)
+                    for (int y = -1; y <= 1; y++)
+                    {
+                        //GL.Enable(EnableCap.FramebufferSrgb);
+                        GL.Enable(EnableCap.ProgramPointSize);
+                        GL.Enable(EnableCap.Blend);
+                        GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+                        GL.BlendEquation(BlendEquationMode.FuncAdd);
 
-                    GL.Enable(EnableCap.PointSprite);
-                    GL.UseProgram(pointsProgram);
-                    GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 1, agentsBuffer);
-                    GL.BindVertexArray(dummyVao);
-                    GL.UniformMatrix4(pointsProjLocation, false, ref projectionMatrix);
-                    GL.Uniform1(pointsZoomLocation, zoom);
-                    GL.Uniform2(pointsOffsetLocation, new Vector2(x * simulation.shaderConfig.width, y * simulation.shaderConfig.height));
-                    GL.DrawArrays(PrimitiveType.Points, 0, simulation.agents.Length);
-                }
+                        GL.Enable(EnableCap.PointSprite);
+                        GL.UseProgram(pointsProgram);
+                        GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 1, agentsBuffer);
+                        GL.BindVertexArray(dummyVao);
+                        GL.UniformMatrix4(pointsProjLocation, false, ref projectionMatrix);
+                        GL.Uniform1(pointsZoomLocation, zoom);
+                        GL.Uniform2(pointsOffsetLocation, new Vector2(x * simulation.shaderConfig.width, y * simulation.shaderConfig.height));
+                        GL.DrawArrays(PrimitiveType.Points, 0, simulation.agents.Length);
+                    }
+            }
         }
     }
 }

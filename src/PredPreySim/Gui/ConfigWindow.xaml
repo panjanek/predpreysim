@@ -75,10 +75,13 @@
                     <ComboBoxItem Tag="0" IsSelected="True">Free mouse navigation</ComboBoxItem>
                     <ComboBoxItem Tag="1">Follow best blue</ComboBoxItem>
                     <ComboBoxItem Tag="2">Follow best red</ComboBoxItem>
-                </ComboBox>                
+                </ComboBox>
+
+                <CheckBox Name="evolveCheckbox" Grid.Row="0" Grid.Column="3" IsChecked="True" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White">Evolve</CheckBox>
+                <CheckBox Name="pointersCheckbox" Grid.Row="0" Grid.Column="4" IsChecked="True" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White">Pointers</CheckBox>
                 
-                <!-- graph controles -->
-                <CheckBox Name="commonScaleCheckbox" Grid.Row="0" Grid.Column="9">Common scale</CheckBox>
+                <!-- graph controls -->
+                <CheckBox Name="commonScaleCheckbox" Grid.Row="0" Grid.Column="9"  HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White">Common scale</CheckBox>
                 <ComboBox Name="graphHistoryCombo" Grid.Row="0" Grid.Column="8">
                     <ComboBoxItem Tag="50">Show 50</ComboBoxItem>
                     <ComboBoxItem Tag="100" IsSelected="True">Show 100</ComboBoxItem>

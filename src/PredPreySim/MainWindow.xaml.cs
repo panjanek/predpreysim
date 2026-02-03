@@ -133,6 +133,8 @@ namespace PredPreySim
                         $"blue fitness: {blueFitness.ToString("0.0")} " +
                         $"red fitness: {redFitness.ToString("0.0")} ";
 
+                app.configWindow.SetTitle(Title);
+
                 lastCheckFrameCount = app.renderer.FrameCounter;
                 lastCheckTime = now;
             }

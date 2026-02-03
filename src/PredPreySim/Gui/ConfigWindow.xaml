@@ -32,7 +32,8 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Title -->
-                <TextBlock Text="Configuration"
+                <TextBlock Text="Configuration" 
+                           Name="titleText"
                            VerticalAlignment="Center"
                            Margin="10,0,0,0"
                            Foreground="White"
@@ -76,8 +77,16 @@
                     <ComboBoxItem Tag="1">Follow best blue</ComboBoxItem>
                     <ComboBoxItem Tag="2">Follow best red</ComboBoxItem>
                 </ComboBox>
+                
+                <ComboBox Name="evolveCombo" Grid.Row="0" Grid.Column="3">
+                    <ComboBoxItem Tag="0">Stop evolution</ComboBoxItem>
+                    <ComboBoxItem Tag="5000" IsSelected="True">Each 5k steps</ComboBoxItem>
+                    <ComboBoxItem Tag="10000">Each 10k steps</ComboBoxItem>
+                    <ComboBoxItem Tag="20000">Each 20k steps</ComboBoxItem>
+                    <ComboBoxItem Tag="30000">Each 50k steps</ComboBoxItem>
+                    <ComboBoxItem Tag="100000">Each 100k steps</ComboBoxItem>
+                </ComboBox>
 
-                <CheckBox Name="evolveCheckbox" Grid.Row="0" Grid.Column="3" IsChecked="True" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White">Evolve</CheckBox>
                 <CheckBox Name="pointersCheckbox" Grid.Row="0" Grid.Column="4" IsChecked="True" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White">Pointers</CheckBox>
                 
                 <!-- graph controls -->

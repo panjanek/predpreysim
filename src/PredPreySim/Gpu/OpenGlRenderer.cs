@@ -82,13 +82,14 @@ namespace PredPreySim.Gpu
 
             glControl.MouseWheel += (s, e) =>
             {
-                var pos = new Vector2(e.X, e.Y);
                 float zoomRatio = (float)(1.0 + ZoomingSpeed * e.Delta);
 
                 var projectionMatrix = GetProjectionMatrix();
                 var topLeft1 = GpuUtil.ScreenToWorld(new Vector2(0, 0), projectionMatrix, glControl.Width, glControl.Height);
                 var bottomRight1 = GpuUtil.ScreenToWorld(new Vector2(glControl.Width, glControl.Height), projectionMatrix, glControl.Width, glControl.Height);
-                var zoomCenter = GpuUtil.ScreenToWorld(pos, projectionMatrix, glControl.Width, glControl.Height);
+                var zoomCenter = app.configWindow.NavigationMode == 0
+                                 ? GpuUtil.ScreenToWorld(new Vector2(e.X, e.Y), projectionMatrix, glControl.Width, glControl.Height)
+                                 : app.renderer.tracked.position;
 
                 var currentSize = bottomRight1 - topLeft1;
                 var newSize = currentSize / (float)zoomRatio;
@@ -143,7 +144,7 @@ namespace PredPreySim.Gpu
             {
                 var trackedScreenPosition = tracked.position;
                 var delta = trackedScreenPosition - center; 
-                var move = delta * 0.05f;
+                var move = delta * 0.03f;
 
                 if (Math.Abs(delta.X) > 0.75 * app.simulation.shaderConfig.width)
                 {

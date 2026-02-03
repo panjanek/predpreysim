@@ -193,6 +193,7 @@ namespace PredPreySim.Gui
             };
             loadButton.Click += (s, e) =>
             {
+                app.renderer.Paused = true;
                 var dialog = new CommonOpenFileDialog { Title = "Open simulation json file", DefaultExtension = "json" };
                 dialog.Filters.Add(new CommonFileDialogFilter("JSON files", "*.json"));
                 if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
@@ -207,13 +208,26 @@ namespace PredPreySim.Gui
                         PopupMessage.Show(app.mainWindow, $"Something went wrong");
                     }
                 }
+                app.renderer.Paused = false;
             };
 
             KeyDown += (s, e) => app.mainWindow.MainWindow_KeyDown(s, e);
             navigationCombo.SelectionChanged += (s, e) => NavigationMode = WpfUtil.GetTagAsInt(navigationCombo.SelectedItem);
-            evolveCheckbox.Click += (s, e) => Evolve = evolveCheckbox.IsChecked == true;
             pointersCheckbox.Click += (s, e) => ShowPointers = pointersCheckbox.IsChecked == true;
+            evolveCombo.SelectionChanged += (s, e) =>
+            {
+                var value = WpfUtil.GetTagAsInt(evolveCombo.SelectedItem);
+                Evolve = (value > 0);
+                if (Evolve)
+                    app.simulation.shaderConfig.generationDuration = value;
+            };
 
+        }
+
+        public void SetTitle(string title)
+        {
+            Title = title;
+            titleText.Text = title;
         }
 
         private void ConfigWindow_Loaded(object sender, RoutedEventArgs e)

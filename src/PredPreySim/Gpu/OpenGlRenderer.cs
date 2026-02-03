@@ -46,6 +46,8 @@ namespace PredPreySim.Gpu
 
         private Vector2 center;
 
+        private Agent tracked;
+
         public OpenGlRenderer(Panel placeholder, AppContext app)
         {
             this.placeholder = placeholder;
@@ -164,7 +166,9 @@ namespace PredPreySim.Gpu
             if (!Paused)
             {
                 app.simulation.shaderConfig.t += app.simulation.shaderConfig.dt;
+                app.simulation.shaderConfig.trackedIdx = GetTrackedIdx();
                 solverProgram.Run(ref app.simulation.shaderConfig, app.simulation.kernelRed, app.simulation.kernelGreen, app.simulation.kernelBlue);
+                tracked = solverProgram.DownloadTrackedAgent();
 
                 app.simulation.step++;
                 if (app.simulation.step % app.simulation.shaderConfig.generationDuration == 0)
@@ -179,9 +183,21 @@ namespace PredPreySim.Gpu
             glControl.Invalidate();
         }
 
+        private int GetTrackedIdx()
+        {
+            if (app.configWindow.NavigationMode == 1 && app.simulation.topBlueIds?.Count > 0)
+                return app.simulation.topBlueIds[0];
+            else if (app.configWindow.NavigationMode == 2 && app.simulation.topRedIds?.Count > 0)
+                return app.simulation.topRedIds[0];
+            else
+                return 0;
+        }
+
         public void UploadAgents() => solverProgram.UploadAgents(app.simulation.shaderConfig, app.simulation.agents, app.simulation.network);
 
         public void DownloadAgents() => solverProgram.DownloadAgents(app.simulation.agents);
+
+        public Agent DownloadTrackedAgent() => solverProgram.DownloadTrackedAgent();
 
         public void ClearTextures() => solverProgram.ClearTextures();
     }

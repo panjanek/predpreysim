@@ -81,6 +81,10 @@ namespace PredPreySim.Gpu
 
         private int vbo;
 
+        private int trackingBuffer;
+
+        private Agent trackedAgent;
+
         public SolverProgram()
         {
             moveProgram = ShaderUtil.CompileAndLinkComputeShader("move.comp");
@@ -108,6 +112,11 @@ namespace PredPreySim.Gpu
             (vao, vbo) = PolygonUtil.CreateQuad();
 
             GL.GetInteger((OpenTK.Graphics.OpenGL.GetIndexedPName)All.MaxComputeWorkGroupCount, 0, out maxGroupsX);
+
+            //tracking buffer - initialized once
+            GL.GenBuffers(1, out trackingBuffer);
+            GL.BindBuffer(BufferTarget.ShaderStorageBuffer, trackingBuffer);
+            GL.BufferData(BufferTarget.ShaderStorageBuffer, Marshal.SizeOf<Agent>(), IntPtr.Zero, BufferUsageHint.DynamicDraw);
         }
 
         public void Run(ref ShaderConfig config, float[] kernelRed, float[] kernelGreen, float[] kernelBlue)
@@ -122,6 +131,7 @@ namespace PredPreySim.Gpu
                 GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 0, configBuffer);
                 GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 1, agentsBuffer);
                 GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 5, networkBuffer);
+                GL.BindBufferBase(BufferRangeTarget.ShaderStorageBuffer, 6, trackingBuffer);
                 GL.BindImageTexture(2, greenTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
                 GL.BindImageTexture(3, blueTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
                 GL.BindImageTexture(4, redTexA, 0, false, 0, TextureAccess.ReadWrite, SizedInternalFormat.Rgba32f);
@@ -216,6 +226,21 @@ namespace PredPreySim.Gpu
             GL.BindBuffer(BufferTarget.ShaderStorageBuffer, agentsBuffer);
             GL.GetBufferSubData(BufferTarget.ShaderStorageBuffer, IntPtr.Zero, agents.Length * Marshal.SizeOf<Agent>(), agents);
             GL.BindBuffer(BufferTarget.ShaderStorageBuffer, 0);
+        }
+
+        public Agent DownloadTrackedAgent()
+        {
+            GL.BindBuffer(BufferTarget.ShaderStorageBuffer, trackingBuffer);
+
+            GL.GetBufferSubData(
+                BufferTarget.ShaderStorageBuffer,
+                IntPtr.Zero,
+                Marshal.SizeOf<Agent>(),
+                ref trackedAgent
+            );
+
+            GL.BindBuffer(BufferTarget.ShaderStorageBuffer, 0);
+            return trackedAgent;
         }
 
         private void PrepareBuffers(ShaderConfig config, int networkLen)

@@ -15,7 +15,7 @@ struct ShaderConfig {
     float plantEnergy;
     float killEnergy;
     int plantRegrowDuration;
-    float pad0;
+    int trackedIdx;
     float pad1;
 };
 
@@ -54,6 +54,11 @@ layout(rgba32f, binding = 4) uniform image2D inRed;
 
 layout(std430, binding = 5) buffer NetworkBuffer {
     float network[];
+};
+
+layout(std430, binding = 6) writeonly buffer TrackingBuffer
+{
+    Agent tracked;
 };
 
 const float M_PI        = 3.14159265358979323846;
@@ -270,5 +275,7 @@ void main()
     if (idx >=0 && idx < config.agentsCount) 
     {
         update_one(idx);
+        if (idx == config.trackedIdx)
+            tracked = agents[idx];
     }
 }

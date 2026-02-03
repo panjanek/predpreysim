@@ -15,7 +15,7 @@ struct ShaderConfig {
     float plantEnergy;
     float killEnergy;
     int plantRegrowDuration;
-    float pad0;
+    int trackedIdx;
     float pad1;
 };
 

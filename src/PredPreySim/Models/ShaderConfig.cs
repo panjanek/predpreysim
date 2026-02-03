@@ -43,7 +43,7 @@ namespace PredPreySim.Models
         public int plantRegrowDuration = 1000;
 
         [FieldOffset(40)]
-        public float pad0;
+        public int trackedIdx;
 
         [FieldOffset(44)]
         public float pad1;

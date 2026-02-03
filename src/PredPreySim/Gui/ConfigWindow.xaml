@@ -71,6 +71,13 @@
 
                 <Button Name="saveButton" Grid.Row="0" Grid.Column="0">Save</Button>
                 <Button Name="loadButton" Grid.Row="0" Grid.Column="1">Load</Button>
+                <ComboBox Name="navigationCombo" Grid.Row="0" Grid.Column="2">
+                    <ComboBoxItem Tag="0" IsSelected="True">Free mouse navigation</ComboBoxItem>
+                    <ComboBoxItem Tag="1">Follow best blue</ComboBoxItem>
+                    <ComboBoxItem Tag="2">Follow best red</ComboBoxItem>
+                </ComboBox>                
+                
+                <!-- graph controles -->
                 <CheckBox Name="commonScaleCheckbox" Grid.Row="0" Grid.Column="9">Common scale</CheckBox>
                 <ComboBox Name="graphHistoryCombo" Grid.Row="0" Grid.Column="8">
                     <ComboBoxItem Tag="50">Show 50</ComboBoxItem>

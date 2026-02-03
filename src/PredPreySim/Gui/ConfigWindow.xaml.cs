@@ -31,6 +31,8 @@ namespace PredPreySim.Gui
 
         public bool GraphCommonScale => commonScaleCheckbox.IsChecked == true;
 
+        public int NavigationMode { get; private set; }
+
         public int GraphHistory
         {
             get
@@ -204,6 +206,7 @@ namespace PredPreySim.Gui
             };
 
             KeyDown += (s, e) => app.mainWindow.MainWindow_KeyDown(s, e);
+            navigationCombo.SelectionChanged += (s, e) => NavigationMode = WpfUtil.GetTagAsInt(navigationCombo.SelectedItem);
         }
 
         private void ConfigWindow_Loaded(object sender, RoutedEventArgs e)

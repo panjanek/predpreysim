@@ -19,6 +19,9 @@ namespace PredPreySim.Gui
 
         public static string GetTagAsString(object element)
         {
+            if (element == null)
+                return null;
+
             if (element is FrameworkElement)
             {
                 var el = (FrameworkElement)element;
@@ -30,6 +33,18 @@ namespace PredPreySim.Gui
             else
                 return null;
         }
+
+        public static int GetTagAsInt(object element)
+        {
+            var str = GetTagAsString(element);
+            if (int.TryParse(str, out var val))
+            {
+                return val;
+            }
+
+            return 0;
+        }
+
 
         public static T GetTagAsObject<T>(object element) where T : class
         {

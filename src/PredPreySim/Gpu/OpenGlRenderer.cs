@@ -28,6 +28,8 @@ namespace PredPreySim.Gpu
 
         public bool Paused { get; set; }
 
+        public bool Stopped { get; set; }
+
         private GLControl glControl;
 
         private int frameCounter;
@@ -161,6 +163,9 @@ namespace PredPreySim.Gpu
 
         private void GlControl_Paint(object? sender, PaintEventArgs e)
         {
+            if (Stopped)
+                return;
+
             Follow();
 
             //clear
@@ -190,7 +195,7 @@ namespace PredPreySim.Gpu
 
         public void Step()
         {
-            if (Application.Current.MainWindow == null || Application.Current.MainWindow.WindowState == System.Windows.WindowState.Minimized)
+            if (Application.Current.MainWindow == null || Application.Current.MainWindow.WindowState == System.Windows.WindowState.Minimized || Stopped)
                 return;
 
             //compute

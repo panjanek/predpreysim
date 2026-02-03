@@ -210,6 +210,12 @@ namespace PredPreySim.Gui
                 }
                 app.renderer.Paused = false;
             };
+            newButton.Click += (s, e) =>
+            {
+                var parameters = DialogUtil.ShowStartNewSimulationDialog();
+                if (parameters != null)
+                    app.Start(parameters);
+            };
 
             KeyDown += (s, e) => app.mainWindow.MainWindow_KeyDown(s, e);
             navigationCombo.SelectionChanged += (s, e) => NavigationMode = WpfUtil.GetTagAsInt(navigationCombo.SelectedItem);
@@ -239,6 +245,11 @@ namespace PredPreySim.Gui
         {
             statsGraph.UpdateSeries(GetVisibleSeries());
             statsGraph.Draw(stats);
+        }
+
+        public void ClearStats()
+        {
+            statsGraph.Children.Clear();
         }
 
         public List<StatsSeries> GetVisibleSeries()

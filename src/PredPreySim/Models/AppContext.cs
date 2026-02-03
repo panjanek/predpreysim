@@ -37,18 +37,32 @@ namespace PredPreySim.Models
         public void Load(string fn)
         {
             string json = File.ReadAllText(fn);
+            renderer.Stopped = true;
             simulation = SerializationUtil.DeserializeFromJson(json);
             simulation.InitAfterLoad();
             renderer.UploadAgents();
             renderer.ClearTextures();
+            renderer.Stopped = false;
             configWindow.DrawStats(simulation.stats);
         }
 
         public void Save(string fn)
         {
+            renderer.Stopped = true;
             renderer.DownloadAgents();
+            renderer.Stopped = false;
             var json = SerializationUtil.SerializeToJson(simulation);
             File.WriteAllText(fn, json);
+        }
+
+        public void Start(StartNewSimulationParameters parameters)
+        {
+            renderer.Stopped = true;
+            simulation = new Simulation(parameters);
+            renderer.UploadAgents();
+            renderer.ClearTextures();
+            renderer.Stopped = false;
+            configWindow.ClearStats();
         }
 
         public void DrawStats()

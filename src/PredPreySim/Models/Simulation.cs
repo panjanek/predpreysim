@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using OpenTK.Mathematics;
+using PredPreySim.Gui;
 using PredPreySim.Models.NN;
 using PredPreySim.Utils;
 
@@ -60,6 +61,27 @@ namespace PredPreySim.Models
             agents = new Agent[shaderConfig.agentsCount];
             nn = new NeuralNetwork(networkConfig);
             InitRandomly(0.6, 0.1);
+            kernelRed = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decayRed);
+            kernelGreen = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decayGreen);
+            kernelBlue = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decayBlue);
+            stats = new List<Stats>();
+        }
+
+        public Simulation(StartNewSimulationParameters parameters)
+        {
+            InitWithParameters(parameters);
+        }
+
+        private void InitWithParameters(StartNewSimulationParameters parameters)
+        {
+            shaderConfig = new ShaderConfig();
+            shaderConfig.width = parameters.width;
+            shaderConfig.height = parameters.height;
+            shaderConfig.agentsCount = parameters.agentsCount;
+            agents = new Agent[shaderConfig.agentsCount];
+            nn = new NeuralNetwork(networkConfig);
+            InitRandomly(parameters.plantsRatio, parameters.predatorsRatio);
+            rnd = parameters.fixedSeed ? new Random(1) : new Random();
             kernelRed = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decayRed);
             kernelGreen = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decayGreen);
             kernelBlue = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decayBlue);

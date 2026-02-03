@@ -9,6 +9,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using PredPreySim.Gui;
 using PredPreySim.Utils;
 using AppContext = PredPreySim.Models.AppContext;
 using Application = System.Windows.Application;
@@ -27,6 +28,8 @@ namespace PredPreySim
         private DateTime lastCheckTime;
 
         private long lastCheckFrameCount;
+
+        private FullscreenWindow fullscreen;
 
         private AppContext app;
         public MainWindow()
@@ -56,6 +59,29 @@ namespace PredPreySim
                     app.renderer.Paused = !app.renderer.Paused;
                     e.Handled = true;
                     break;
+                case Key.F:
+                    ToggleFullscreen();
+                    e.Handled = true;
+                    break;
+            }
+        }
+
+        public void ToggleFullscreen()
+        {
+            if (fullscreen == null)
+            {
+                parent.Children.Remove(placeholder);
+                fullscreen = new FullscreenWindow() { Owner = Window.GetWindow(this) };
+                fullscreen.KeyDown += MainWindow_KeyDown;
+                fullscreen.ContentHost.Content = placeholder;
+                fullscreen.Show();
+            }
+            else
+            {
+                fullscreen.ContentHost.Content = null;
+                parent.Children.Add(placeholder);
+                fullscreen.Close();
+                fullscreen = null;
             }
         }
 

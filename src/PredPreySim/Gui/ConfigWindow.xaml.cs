@@ -176,36 +176,38 @@ namespace PredPreySim.Gui
             commonScaleCheckbox.Click += (s, e) => statsGraph.Redraw();
             saveButton.Click += (s, e) =>
             {
-                var dialog = new CommonSaveFileDialog { Title = "Save simulation to json file", DefaultExtension = "json" };
+                var dialog = new CommonSaveFileDialog { Title = "Save simulation to gz or json file", DefaultExtension = "gz",  AlwaysAppendDefaultExtension = false
+                };
+                dialog.Filters.Add(new CommonFileDialogFilter("GZIP files", "*.gz"));
                 dialog.Filters.Add(new CommonFileDialogFilter("JSON files", "*.json"));
                 if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
                 {
                     try
                     {
                         app.Save(dialog.FileName);
-                        PopupMessage.Show(app.mainWindow, $"Config saved to {dialog.FileName}");
+                        PopupMessage.Show(app.mainWindow, $"Simulation saved to {dialog.FileName}");
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        PopupMessage.Show(app.mainWindow, $"Something went wrong");
+                        PopupMessage.Show(app.mainWindow, $"Something went wrong: {ex.Message}");
                     }
                 }
             };
             loadButton.Click += (s, e) =>
             {
                 app.renderer.Paused = true;
-                var dialog = new CommonOpenFileDialog { Title = "Open simulation json file", DefaultExtension = "json" };
-                dialog.Filters.Add(new CommonFileDialogFilter("JSON files", "*.json"));
+                var dialog = new CommonOpenFileDialog { Title = "Open simulation gz or json file" };
+                dialog.Filters.Add(new CommonFileDialogFilter("Simulation files", "*.gz;*.json"));
                 if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
                 {
                     try
                     {
                         app.Load(dialog.FileName);
-                        PopupMessage.Show(app.mainWindow, $"Config loaded from {dialog.FileName}");
+                        PopupMessage.Show(app.mainWindow, $"Simulation loaded from {dialog.FileName}");
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        PopupMessage.Show(app.mainWindow, $"Something went wrong");
+                        PopupMessage.Show(app.mainWindow, $"Something went wrong: {ex.Message}");
                     }
                 }
                 app.renderer.Paused = false;

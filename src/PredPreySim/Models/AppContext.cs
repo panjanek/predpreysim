@@ -36,7 +36,7 @@ namespace PredPreySim.Models
 
         public void Load(string fn)
         {
-            string json = File.ReadAllText(fn);
+            string json = fn.EndsWith(".gz") ? GzipUtil.Decompress(File.ReadAllBytes(fn)) : File.ReadAllText(fn);
             renderer.Stopped = true;
             simulation = SerializationUtil.DeserializeFromJson(json);
             simulation.InitAfterLoad();
@@ -52,7 +52,10 @@ namespace PredPreySim.Models
             renderer.DownloadAgents();
             renderer.Stopped = false;
             var json = SerializationUtil.SerializeToJson(simulation);
-            File.WriteAllText(fn, json);
+            if (fn.EndsWith(".gz"))
+                File.WriteAllBytes(fn, GzipUtil.Compress(json));
+            else
+                File.WriteAllText(fn, json);
         }
 
         public void Start(StartNewSimulationParameters parameters)

@@ -16,7 +16,11 @@ struct ShaderConfig {
     float killEnergy;
     int plantRegrowDuration;
     int trackedIdx;
-    float pad1;
+    float blueMaxVelocity;
+    float redMaxVelocity;
+    int pad0;
+    int pad1;
+    int pad2;
 };
 
 struct Agent
@@ -153,7 +157,6 @@ float[NN_INPUTS] prepare_input(Agent agent)
         }
 
         inp[15] = inp[2*3+0] - inp[0*3+0];  // difference between forward-right and forward-left predator scent
-        //inp[16] = inp[2*3+1] - inp[0*3+1];  // difference between forward-right and forward-left plant scent (??)
         inp[16] = inp[4*3+0] - inp[3*3+0];  // difference between right and left predator scent
     }
     else //predator
@@ -234,8 +237,7 @@ void update_one(uint idx)
         agent.angle = mod(agent.angle + M_PI, 2*M_PI) - M_PI;
 
         //velocity
-        float maxVelocity = agent.type == 1 ? 0.3 : 0.5;
-        //float energyFactor = clamp(agent.energy / config.initialEnergy, 0.5, 1.2); //to use later
+        float maxVelocity = agent.type == 1 ? config.blueMaxVelocity : config.redMaxVelocity;
         float velocity = maxVelocity * 0.5 * (res[1] + 1);
         agent.position += vec2(velocity*cos(agent.angle),velocity*sin(agent.angle));
 

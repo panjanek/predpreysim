@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PredPreySim.Models
 {
-    [StructLayout(LayoutKind.Explicit, Size = 48)]
+    [StructLayout(LayoutKind.Explicit, Size = 64)]
     public struct ShaderConfig
     {
         public ShaderConfig() { }
@@ -28,7 +28,7 @@ namespace PredPreySim.Models
         public float t;
 
         [FieldOffset(20)]
-        public int generationDuration = 30000;
+        public int generationDuration = 5000;
 
         [FieldOffset(24)]
         public float initialEnergy = 300;
@@ -46,7 +46,18 @@ namespace PredPreySim.Models
         public int trackedIdx;
 
         [FieldOffset(44)]
-        public float pad1;
+        public float blueMaxVelocity = 0.3f;
 
+        [FieldOffset(48)]
+        public float redMaxVelocity = 0.5f;
+
+        [FieldOffset(52)]
+        public int pad0;
+
+        [FieldOffset(56)]
+        public int pad1;
+
+        [FieldOffset(60)]
+        public int pad2;
     }
 }

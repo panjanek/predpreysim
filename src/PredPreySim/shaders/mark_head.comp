@@ -16,7 +16,11 @@ struct ShaderConfig {
     float killEnergy;
     int plantRegrowDuration;
     int trackedIdx;
-    float pad1;
+    float blueMaxVelocity;
+    float redMaxVelocity;
+    int pad0;
+    int pad1;
+    int pad2;
 };
 
 struct Agent

@@ -126,6 +126,7 @@ namespace PredPreySim
                 double fps = frames / timespan.TotalSeconds;
                 Title = $"Predator Prey Sim. " +
                         $"fps:{fps.ToString("0.0")} " +
+                        $"config:{app.simulation.shaderConfig.width}x{app.simulation.shaderConfig.height}/{app.simulation.shaderConfig.agentsCount} " +
                         $"step:{app.simulation.step} " +
                         $"gen:{app.simulation.generation} " +
                         $"blue meals: {blueMealsPerAge.ToString("0.000")} " +

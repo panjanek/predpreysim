@@ -42,6 +42,16 @@ namespace PredPreySim.Models
 
         public NetworkConfig networkConfig = new NetworkConfig() { inputs = 19, hidden = 12, outputs = 4, memoryInputs = [17, 18], memoryOutputs = [2, 3] };
 
+        public double mutationMagnitude = 4.0;
+
+        public double mutationFrequency = 4.0;
+
+        public double crossingOverFrequency = 0.2;
+        
+        public List<int> topBlueIds = new List<int>();
+
+        public List<int> topRedIds = new List<int>();
+
         [JsonIgnore]
         public INeuralNetwork nn;
 
@@ -50,10 +60,6 @@ namespace PredPreySim.Models
 
         [JsonIgnore]
         public Func<INeuralNetwork, float[], int, int, double> diversityNorm = DistanceMatrix.BehavioralDistance;
-
-        public List<int> topBlueIds = new List<int>();
-
-        public List<int> topRedIds = new List<int>();
 
         public Simulation()
         {
@@ -263,12 +269,12 @@ namespace PredPreySim.Models
                 {
                     Array.Copy(network, agents[parent1Idx].nnOffset, network, agents[childIdx].nnOffset, nn.Size);
                 }
-                else if (decision1 < 0.80) // 65% of times: mutate, single parent
+                else if (decision1 < 1.0 - crossingOverFrequency) // mutate, single parent
                 {
                     Array.Copy(network, agents[parent1Idx].nnOffset, network, agents[childIdx].nnOffset, nn.Size);
 
-                    double probabilityAmplification = 1.0 + 4 * rnd.NextDouble();
-                    double magnitudeAmplification = 1.0 + 4 * rnd.NextDouble(); 
+                    double probabilityAmplification = 0.5 + mutationFrequency * rnd.NextDouble();
+                    double magnitudeAmplification = 0.5 + mutationMagnitude * rnd.NextDouble(); 
 
                     double decision2 = rnd.NextDouble();
                     if (decision2 < 0.6) //60% - mutate slightly
@@ -278,10 +284,8 @@ namespace PredPreySim.Models
                     else //5% - mutate strong all inputs of one hidden neuron
                         nn.MutateAllIncomming(network, agents[childIdx].nnOffset, rnd, 0.3 * magnitudeAmplification);
                 }
-                else // 20% of times: cross-over, two parents
+                else //cross-over, two parents
                 {
-                    //var parent2Idx = Pick(parents, 0.7, 2, parent1Idx);
-
                     var parentsByDistance = parents.OrderByDescending(p => distanceMatrix.GetDistance(parent1Idx, p)).ToList();
                     var parent2Idx = Pick(parentsByDistance, 0.8, 1.5, parent1Idx);
 

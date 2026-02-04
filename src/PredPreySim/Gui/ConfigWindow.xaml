@@ -61,38 +61,66 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <Button Name="saveButton" Grid.Row="0" Grid.Column="0">Save</Button>
                 <Button Name="loadButton" Grid.Row="0" Grid.Column="1">Load</Button>
                 <Button Name="newButton" Grid.Row="0" Grid.Column="2">New</Button>
-                <ComboBox Name="navigationCombo" Grid.Row="0" Grid.Column="3">
-                    <ComboBoxItem Tag="0" IsSelected="True">Free mouse navigation</ComboBoxItem>
-                    <ComboBoxItem Tag="1">Follow best blue</ComboBoxItem>
-                    <ComboBoxItem Tag="2">Follow best red</ComboBoxItem>
-                </ComboBox>
+
                 
-                <ComboBox Name="evolveCombo" Grid.Row="0" Grid.Column="4">
+                <ComboBox Name="evolveCombo" Grid.Row="0" Grid.Column="3">
                     <ComboBoxItem Tag="0">Stop evolution</ComboBoxItem>
                     <ComboBoxItem Tag="5000" IsSelected="True">Evolve each 5k steps</ComboBoxItem>
                     <ComboBoxItem Tag="10000">Evolve each 10k steps</ComboBoxItem>
                     <ComboBoxItem Tag="20000">Evolve each 20k steps</ComboBoxItem>
-                    <ComboBoxItem Tag="30000">Evolve each 50k steps</ComboBoxItem>
+                    <ComboBoxItem Tag="30000">Evolve each 30k steps</ComboBoxItem>
+                    <ComboBoxItem Tag="50000">Evolve each 50k steps</ComboBoxItem>
                     <ComboBoxItem Tag="100000">Evolve each 100k steps</ComboBoxItem>
+                    <ComboBoxItem Tag="200000">Evolve each 200k steps</ComboBoxItem>
+                    <ComboBoxItem Tag="300000">Evolve each 300k steps</ComboBoxItem>
+                    <ComboBoxItem Tag="500000">Evolve each 500k steps</ComboBoxItem>
+                </ComboBox>
+                <ComboBox Name="mutationMagnitudeCombo" Grid.Row="0" Grid.Column="4">
+                    <ComboBoxItem Tag="0.5">Mutate slightly</ComboBoxItem>
+                    <ComboBoxItem Tag="1">Mutate very weakly</ComboBoxItem>
+                    <ComboBoxItem Tag="2">Mutate weakly</ComboBoxItem>
+                    <ComboBoxItem Tag="4" IsSelected="True">Mutate with medium magnitude</ComboBoxItem>
+                    <ComboBoxItem Tag="8">Mutate strongly</ComboBoxItem>
+                    <ComboBoxItem Tag="16">Mutate very strongly</ComboBoxItem>
+                </ComboBox>
+                <ComboBox Name="mutationFrequencyCombo" Grid.Row="0" Grid.Column="5">
+                    <ComboBoxItem Tag="0.5">Mutate occasionaly</ComboBoxItem>
+                    <ComboBoxItem Tag="1">Mutate very rarely</ComboBoxItem>
+                    <ComboBoxItem Tag="2">Mutate rarely</ComboBoxItem>
+                    <ComboBoxItem Tag="4" IsSelected="True">Mutate with medium frequency</ComboBoxItem>
+                    <ComboBoxItem Tag="8">Mutate frequently</ComboBoxItem>
+                    <ComboBoxItem Tag="16">Mutate very frequently</ComboBoxItem>
+                </ComboBox>
+                <ComboBox Name="crossingoverFrequencyCombo" Grid.Row="0" Grid.Column="6">
+                    <ComboBoxItem Tag="0.05">Crossover 5%</ComboBoxItem>
+                    <ComboBoxItem Tag="0.1">Crossover 10%</ComboBoxItem>
+                    <ComboBoxItem Tag="0.2" IsSelected="True">Crossover 20%</ComboBoxItem>
+                    <ComboBoxItem Tag="0.3">Crossover 30%</ComboBoxItem>
+                    <ComboBoxItem Tag="0.4">Crossover 40%</ComboBoxItem>
+                    <ComboBoxItem Tag="0.5">Crossover 50%</ComboBoxItem>
                 </ComboBox>
 
-                <CheckBox Name="pointersCheckbox" Grid.Row="0" Grid.Column="5" IsChecked="True" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White">Pointers</CheckBox>
+                <!-- row below graph -->
+                <ComboBox Name="navigationCombo" Grid.Row="2" Grid.Column="0">
+                    <ComboBoxItem Tag="0" IsSelected="True">Free mouse navigation</ComboBoxItem>
+                    <ComboBoxItem Tag="1">Follow best blue</ComboBoxItem>
+                    <ComboBoxItem Tag="2">Follow best red</ComboBoxItem>
+                </ComboBox>
+                <CheckBox Name="pointersCheckbox" Grid.Row="2" Grid.Column="1" IsChecked="True" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White">Show pointers</CheckBox>
                 
                 <!-- graph controls -->
-                <CheckBox Name="commonScaleCheckbox" Grid.Row="0" Grid.Column="9"  HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White">Common scale</CheckBox>
-                <ComboBox Name="graphHistoryCombo" Grid.Row="0" Grid.Column="8">
+                <CheckBox Name="commonScaleCheckbox" Grid.Row="2" Grid.Column="5"  HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White">Common scale</CheckBox>
+                <ComboBox Name="graphHistoryCombo" Grid.Row="2" Grid.Column="6">
                     <ComboBoxItem Tag="50">Show 50</ComboBoxItem>
                     <ComboBoxItem Tag="100" IsSelected="True">Show 100</ComboBoxItem>
                     <ComboBoxItem Tag="300">Show 300</ComboBoxItem>

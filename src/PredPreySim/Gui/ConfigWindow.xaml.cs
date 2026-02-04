@@ -29,6 +29,8 @@ namespace PredPreySim.Gui
 
         private List<StatsSeries> series;
 
+        private bool updating;
+
         public bool GraphCommonScale => commonScaleCheckbox.IsChecked == true;
 
         public int NavigationMode { get; private set; } = 0;
@@ -222,14 +224,43 @@ namespace PredPreySim.Gui
             KeyDown += (s, e) => app.mainWindow.MainWindow_KeyDown(s, e);
             navigationCombo.SelectionChanged += (s, e) => NavigationMode = WpfUtil.GetTagAsInt(navigationCombo.SelectedItem);
             pointersCheckbox.Click += (s, e) => ShowPointers = pointersCheckbox.IsChecked == true;
+
+            // evolution rate combos
             evolveCombo.SelectionChanged += (s, e) =>
             {
-                var value = WpfUtil.GetTagAsInt(evolveCombo.SelectedItem);
-                Evolve = (value > 0);
-                if (Evolve)
-                    app.simulation.shaderConfig.generationDuration = value;
+                if (!updating)
+                {
+                    var value = WpfUtil.GetTagAsInt(evolveCombo.SelectedItem);
+                    Evolve = (value > 0);
+                    if (Evolve)
+                        app.simulation.shaderConfig.generationDuration = value;
+                }
             };
+            mutationMagnitudeCombo.SelectionChanged += (s, e) =>
+            {
+                if (!updating)
+                    app.simulation.mutationMagnitude = WpfUtil.GetTagAsDouble(mutationMagnitudeCombo.SelectedItem);
+            };
+            mutationFrequencyCombo.SelectionChanged += (s, e) =>
+            {
+                if (!updating)
+                    app.simulation.mutationFrequency = WpfUtil.GetTagAsDouble(mutationFrequencyCombo.SelectedItem);
+            };
+            crossingoverFrequencyCombo.SelectionChanged += (s, e) =>
+            {
+                if (!updating)
+                    app.simulation.crossingOverFrequency = WpfUtil.GetTagAsDouble(crossingoverFrequencyCombo.SelectedItem);
+            };
+        }
 
+        public void SetControls()
+        {
+            updating = true;
+            WpfUtil.SelectByIntTag(evolveCombo, app.simulation.shaderConfig.generationDuration);
+            WpfUtil.SelectByDoubleTag(mutationMagnitudeCombo, app.simulation.mutationMagnitude);
+            WpfUtil.SelectByDoubleTag(mutationFrequencyCombo, app.simulation.mutationFrequency);
+            WpfUtil.SelectByDoubleTag(crossingoverFrequencyCombo, app.simulation.crossingOverFrequency);
+            updating = false;
         }
 
         public void SetTitle(string title)

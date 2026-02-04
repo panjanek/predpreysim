@@ -40,6 +40,7 @@ namespace PredPreySim.Models
             renderer.Stopped = true;
             simulation = SerializationUtil.DeserializeFromJson(json);
             simulation.InitAfterLoad();
+            configWindow.SetControls();
             renderer.UploadAgents();
             renderer.ClearTextures();
             renderer.Stopped = false;

@@ -45,6 +45,16 @@ namespace PredPreySim.Gui
             return 0;
         }
 
+        public static double GetTagAsDouble(object element)
+        {
+            var str = GetTagAsString(element);
+            if (double.TryParse(str, out var val))
+            {
+                return val;
+            }
+
+            return 0;
+        }
 
         public static T GetTagAsObject<T>(object element) where T : class
         {
@@ -58,6 +68,20 @@ namespace PredPreySim.Gui
             }
             else
                 return null;
+        }
+
+        public static void SelectByDoubleTag(System.Windows.Controls.ComboBox combo, double value)
+        {
+            for (int i = 0; i < combo.Items.Count; i++)
+                if (GetTagAsDouble(combo.Items[i]) == value)
+                    combo.SelectedIndex = i;
+        }
+
+        public static void SelectByIntTag(System.Windows.Controls.ComboBox combo, int value)
+        {
+            for (int i = 0; i < combo.Items.Count; i++)
+                if (GetTagAsInt(combo.Items[i]) == value)
+                    combo.SelectedIndex = i;
         }
     }
 }

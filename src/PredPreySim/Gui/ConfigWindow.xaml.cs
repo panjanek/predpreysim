@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using PredPreySim.Models;
+using PredPreySim.Utils;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using AppContext = PredPreySim.Models.AppContext;
 using Brush = System.Windows.Media.Brush;
 using Brushes = System.Windows.Media.Brushes;
@@ -217,9 +220,38 @@ namespace PredPreySim.Gui
             };
             newButton.Click += (s, e) =>
             {
+                app.renderer.Stopped = true;
                 var parameters = DialogUtil.ShowStartNewSimulationDialog();
                 if (parameters != null)
-                    app.Start(parameters);
+                {
+                    try
+                    {
+                        if (parameters.useExistingAgents)
+                        {
+                            if (parameters.loadAgentsFromFiles)
+                            {
+                                foreach(var fn in parameters.fileNames)
+                                {
+                                    string json = fn.EndsWith(".gz") ? GzipUtil.Decompress(File.ReadAllBytes(fn)) : File.ReadAllText(fn);
+                                    var sim = SerializationUtil.DeserializeFromJson(json);
+                                    sim.InitAfterLoad();
+                                    parameters.sources.Add(sim);
+                                }
+                            }
+                            else
+                            {
+                                parameters.sources.Add(app.simulation);
+                            }
+                        }
+                        app.Start(parameters);
+                        PopupMessage.Show(app.mainWindow, $"New simulation started.");
+                    }
+                    catch (Exception ex)
+                    {
+                        PopupMessage.Show(app.mainWindow, $"Something went wrong: {ex.Message}");
+                    }
+                }
+                app.renderer.Stopped = false;
             };
 
             KeyDown += (s, e) => app.mainWindow.MainWindow_KeyDown(s, e);

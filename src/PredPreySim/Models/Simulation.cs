@@ -92,8 +92,10 @@ namespace PredPreySim.Models
 
             agents = new Agent[shaderConfig.agentsCount];
             nn = new NeuralNetwork(networkConfig);
-            InitRandomly(parameters.plantsRatio, parameters.predatorsRatio);
             rnd = parameters.fixedSeed ? new Random(1) : new Random();
+            InitRandomly(parameters.plantsRatio, parameters.predatorsRatio);
+            if (parameters.sources.Count > 0)
+                InitWithGivenAgents(parameters.sources);
             kernelRed = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decayRed);
             kernelGreen = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decayGreen);
             kernelBlue = MathUtil.Normalize(Blurs.AvailableKernels["Strong"], decayBlue);
@@ -103,6 +105,28 @@ namespace PredPreySim.Models
         public void InitAfterLoad()
         {
             nn = new NeuralNetwork(networkConfig);
+        }
+
+        private void InitWithGivenAgents(List<Simulation> sources)
+        {
+            List<float[]> blue = new List<float[]>();
+            List<float[]> red = new List<float[]>();
+            foreach (var sim in sources)
+                for(int i=0; i<sim.agents.Length; i++)
+                    if (sim.agents[i].type > 0)
+                    {
+                        var addTo = sim.agents[i].type == 1 ? blue : red;
+                        var agentNetwork = new float[nn.Size];
+                        Array.Copy(sim.network, sim.agents[i].nnOffset, agentNetwork, 0, nn.Size);
+                        addTo.Add(agentNetwork);
+                    }
+
+            for(int i=0; i<agents.Length; i++)
+                if (agents[i].type > 0)
+                {
+                    var agentNetwork = agents[i].type == 1 ? blue[rnd.Next(blue.Count)] : red[rnd.Next(red.Count)];
+                    Array.Copy(agentNetwork, 0, network, agents[i].nnOffset, nn.Size);
+                }
         }
 
         private void InitRandomly(double plants, double predators)

@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using PredPreySim.Models;
 using static System.Net.Mime.MediaTypeNames;
 using AppContext = PredPreySim.Models.AppContext;
 using Application = System.Windows.Application;
@@ -27,7 +30,7 @@ namespace PredPreySim.Gui
             Window dialog = new Window()
             {
                 Width = 400,
-                Height = 400,
+                Height = 470,
                 Title = "Start new simulation",
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 ResizeMode = ResizeMode.NoResize,
@@ -68,11 +71,6 @@ namespace PredPreySim.Gui
             proportionCombo.Items.Add(new ComboBoxItem() { Content = "70% plants / 25% prey / 5% predators", Tag = new StartNewSimulationParameters() { plantsRatio = 0.7, predatorsRatio = 0.05 } });
             proportionCombo.Items.Add(new ComboBoxItem() { Content = "50% plants / 45% prey / 5% predators", Tag = new StartNewSimulationParameters() { plantsRatio = 0.5, predatorsRatio = 0.05 } });
             proportionCombo.Items.Add(new ComboBoxItem() { Content = "30% plants / 40% prey / 30% predators", Tag = new StartNewSimulationParameters() { plantsRatio = 0.3, predatorsRatio = 0.4 } });
-
-            ComboBox seedCombo = new ComboBox() { Margin = new Thickness(0, 5, 0, 0) };
-            seedCombo.Items.Add(new ComboBoxItem() { Content = "Initialize agents randomly with fixed seed", Tag = new StartNewSimulationParameters() { fixedSeed = true }, IsSelected = true });
-            seedCombo.Items.Add(new ComboBoxItem() { Content = "Initialize agents randomly with random seed", Tag = new StartNewSimulationParameters() { fixedSeed = false } });
-            seedCombo.Items.Add(new ComboBoxItem() { Content = "Use agents from current simulation", Tag = new StartNewSimulationParameters() { useExistingAgents = true } });
 
             ComboBox decayGreenCombo = new ComboBox() { Margin = new Thickness(0, 5, 0, 0) };
             decayGreenCombo.Items.Add(new ComboBoxItem() { Content = "Shortest plant scent radius (decay = 0.950)", Tag = new StartNewSimulationParameters() { decayGreen = 0.950f } });
@@ -117,6 +115,12 @@ namespace PredPreySim.Gui
             redMaxVelocityCombo.Items.Add(new ComboBoxItem() { Content = "Predator very fast (0.7)", Tag = new StartNewSimulationParameters() { redMaxVelocity = 0.7f } });
             redMaxVelocityCombo.Items.Add(new ComboBoxItem() { Content = "Predator fastest (1.0)", Tag = new StartNewSimulationParameters() { redMaxVelocity = 1.0f } });
 
+            ComboBox seedCombo = new ComboBox() { Margin = new Thickness(0, 5, 0, 0) };
+            seedCombo.Items.Add(new ComboBoxItem() { Content = "Initialize agents randomly with fixed seed", Tag = new StartNewSimulationParameters() { fixedSeed = true }, IsSelected = true });
+            seedCombo.Items.Add(new ComboBoxItem() { Content = "Initialize agents randomly with random seed", Tag = new StartNewSimulationParameters() { fixedSeed = false } });
+            seedCombo.Items.Add(new ComboBoxItem() { Content = "Use agents from current simulation", Tag = new StartNewSimulationParameters() { useExistingAgents = true } });
+            seedCombo.Items.Add(new ComboBoxItem() { Content = "Load agents from (multiple) files", Tag = new StartNewSimulationParameters() { useExistingAgents = true, loadAgentsFromFiles = true } });
+
             // Buttons
             StackPanel buttonPanel = new StackPanel()
             {
@@ -127,6 +131,27 @@ namespace PredPreySim.Gui
 
             Button ok = new Button() { Content = "Start!", Width = 70, Margin = new Thickness(5, 0, 0, 0) };
             Button cancel = new Button() { Content = "Cancel", Width = 70 };
+            Button addFiles = new Button() { Content = "Add...", Width = 70, Margin = new Thickness(5, 0, 0, 0), HorizontalAlignment = HorizontalAlignment.Right, IsEnabled = false };
+            TextBlock txtFiles = new TextBlock() { Text = "", Margin = new Thickness(0, 0, 0, 10), FontSize = 10, TextWrapping = TextWrapping.Wrap, Height = 50 };
+            List<string> fileNames = new List<string>();
+            seedCombo.SelectionChanged += (s, e) =>
+            {
+                var selectedSeed = WpfUtil.GetTagAsObject<StartNewSimulationParameters>(seedCombo.SelectedItem);
+                addFiles.IsEnabled = selectedSeed.loadAgentsFromFiles;
+                ok.IsEnabled = !selectedSeed.loadAgentsFromFiles || fileNames.Count > 0;
+            };
+
+           
+            addFiles.Click += (s, e) =>
+            {
+                var openDialog = new CommonOpenFileDialog { Title = "Open simulation gz or json file", Multiselect = true };
+                openDialog.Filters.Add(new CommonFileDialogFilter("Simulation files", "*.gz;*.json"));
+                if (openDialog.ShowDialog() == CommonFileDialogResult.Ok)
+                    fileNames.AddRange(openDialog.FileNames);
+                txtFiles.Text = "Load agents from files: " + string.Join(",  ", fileNames.Select(fn=>Path.GetFileName(fn)));
+                var selectedSeed = WpfUtil.GetTagAsObject<StartNewSimulationParameters>(seedCombo.SelectedItem);
+                ok.IsEnabled = !selectedSeed.loadAgentsFromFiles || fileNames.Count > 0;
+            };
 
             ok.Click += (s, e) => { dialog.DialogResult = true; dialog.Close(); };
             cancel.Click += (s, e) => { dialog.DialogResult = false; dialog.Close(); };
@@ -145,6 +170,8 @@ namespace PredPreySim.Gui
             panel.Children.Add(blueMaxVelocityCombo);
             panel.Children.Add(redMaxVelocityCombo);
             panel.Children.Add(seedCombo);
+            panel.Children.Add(addFiles);
+            panel.Children.Add(txtFiles);
             panel.Children.Add(buttonPanel);
 
             dialog.Content = panel;
@@ -170,11 +197,13 @@ namespace PredPreySim.Gui
                     predatorsRatio = selectedPoportion.predatorsRatio,
                     fixedSeed = selectedSeed.fixedSeed,
                     useExistingAgents = selectedSeed.useExistingAgents,
+                    loadAgentsFromFiles = selectedSeed.loadAgentsFromFiles,
                     decayGreen = selectedDecayGreen.decayGreen,
                     decayBlue = selectedDecayBlue.decayBlue,
                     decayRed = selectedDecayRed.decayRed,
                     blueMaxVelocity = selectedBlueMaxVelocity.blueMaxVelocity,
                     redMaxVelocity = selectedRedMaxVelocity.redMaxVelocity,
+                    fileNames = fileNames
                 };
             }
             else
@@ -182,32 +211,5 @@ namespace PredPreySim.Gui
                 return null;
             }
         }
-    }
-
-    public class StartNewSimulationParameters
-    {
-        public int width;
-
-        public int height;
-
-        public double plantsRatio;
-
-        public double predatorsRatio;
-
-        public int agentsCount;
-
-        public bool fixedSeed;
-
-        public bool useExistingAgents;
-
-        public float decayGreen;
-
-        public float decayBlue;
-
-        public float decayRed;
-
-        public float blueMaxVelocity;
-
-        public float redMaxVelocity;
     }
 }

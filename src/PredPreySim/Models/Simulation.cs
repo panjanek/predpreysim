@@ -84,6 +84,12 @@ namespace PredPreySim.Models
             shaderConfig.width = parameters.width;
             shaderConfig.height = parameters.height;
             shaderConfig.agentsCount = parameters.agentsCount;
+            decayGreen = parameters.decayGreen;
+            decayBlue = parameters.decayBlue;
+            decayRed = parameters.decayRed;
+            shaderConfig.blueMaxVelocity = parameters.blueMaxVelocity;
+            shaderConfig.redMaxVelocity = parameters.redMaxVelocity;
+
             agents = new Agent[shaderConfig.agentsCount];
             nn = new NeuralNetwork(networkConfig);
             InitRandomly(parameters.plantsRatio, parameters.predatorsRatio);

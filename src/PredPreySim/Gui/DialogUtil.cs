@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -26,7 +27,7 @@ namespace PredPreySim.Gui
             Window dialog = new Window()
             {
                 Width = 400,
-                Height = 250,
+                Height = 400,
                 Title = "Start new simulation",
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 ResizeMode = ResizeMode.NoResize,
@@ -73,6 +74,49 @@ namespace PredPreySim.Gui
             seedCombo.Items.Add(new ComboBoxItem() { Content = "Initialize agents randomly with random seed", Tag = new StartNewSimulationParameters() { fixedSeed = false } });
             seedCombo.Items.Add(new ComboBoxItem() { Content = "Use agents from current simulation", Tag = new StartNewSimulationParameters() { useExistingAgents = true } });
 
+            ComboBox decayGreenCombo = new ComboBox() { Margin = new Thickness(0, 5, 0, 0) };
+            decayGreenCombo.Items.Add(new ComboBoxItem() { Content = "Shortest plant scent radius (decay = 0.950)", Tag = new StartNewSimulationParameters() { decayGreen = 0.950f } });
+            decayGreenCombo.Items.Add(new ComboBoxItem() { Content = "Shorter plant scent radius (decay = 0.970)", Tag = new StartNewSimulationParameters() { decayGreen = 0.970f } });
+            decayGreenCombo.Items.Add(new ComboBoxItem() { Content = "Short plant scent radius (decay = 0.980)", Tag = new StartNewSimulationParameters() { decayGreen = 0.980f } });
+            decayGreenCombo.Items.Add(new ComboBoxItem() { Content = "Medium plant scent radius (decay = 0.990)", Tag = new StartNewSimulationParameters() { decayGreen = 0.990f }, IsSelected = true });
+            decayGreenCombo.Items.Add(new ComboBoxItem() { Content = "Far plant scent radius (decay = 0.994)", Tag = new StartNewSimulationParameters() { decayGreen = 0.994f } });
+            decayGreenCombo.Items.Add(new ComboBoxItem() { Content = "Farther plant scent radius (decay = 0.997)", Tag = new StartNewSimulationParameters() { decayGreen = 0.997f } });
+            decayGreenCombo.Items.Add(new ComboBoxItem() { Content = "Farthest plant scent radius (decay = 0.999)", Tag = new StartNewSimulationParameters() { decayGreen = 0.999f } });
+
+            ComboBox decayBlueCombo = new ComboBox() { Margin = new Thickness(0, 5, 0, 0) };
+            decayBlueCombo.Items.Add(new ComboBoxItem() { Content = "Shortest prey scent radius (decay = 0.950)", Tag = new StartNewSimulationParameters() { decayBlue = 0.950f } });
+            decayBlueCombo.Items.Add(new ComboBoxItem() { Content = "Shorter prey scent radius (decay = 0.970)", Tag = new StartNewSimulationParameters() { decayBlue = 0.970f } });
+            decayBlueCombo.Items.Add(new ComboBoxItem() { Content = "Short prey scent radius (decay = 0.950)", Tag = new StartNewSimulationParameters() { decayBlue = 0.950f } });
+            decayBlueCombo.Items.Add(new ComboBoxItem() { Content = "Medium prey scent radius (decay = 0.990)", Tag = new StartNewSimulationParameters() { decayBlue = 0.990f } });
+            decayBlueCombo.Items.Add(new ComboBoxItem() { Content = "Far prey scent radius (decay = 0.994)", Tag = new StartNewSimulationParameters() { decayBlue = 0.994f }, IsSelected = true });
+            decayBlueCombo.Items.Add(new ComboBoxItem() { Content = "Farther prey scent radius (decay = 0.997)", Tag = new StartNewSimulationParameters() { decayBlue = 0.997f } });
+            decayBlueCombo.Items.Add(new ComboBoxItem() { Content = "Farthest prey scent radius (decay = 0.999)", Tag = new StartNewSimulationParameters() { decayBlue = 0.999f } });
+
+            ComboBox decayRedCombo = new ComboBox() { Margin = new Thickness(0, 5, 0, 0) };
+            decayRedCombo.Items.Add(new ComboBoxItem() { Content = "Shortest predator scent radius (decay = 0.950)", Tag = new StartNewSimulationParameters() { decayRed = 0.950f } });
+            decayRedCombo.Items.Add(new ComboBoxItem() { Content = "Shorter predator scent radius (decay = 0.970)", Tag = new StartNewSimulationParameters() { decayRed = 0.970f } });
+            decayRedCombo.Items.Add(new ComboBoxItem() { Content = "Short predator scent radius (decay = 0.980)", Tag = new StartNewSimulationParameters() { decayRed = 0.980f } });
+            decayRedCombo.Items.Add(new ComboBoxItem() { Content = "Medium predator scent radius (decay = 0.990)", Tag = new StartNewSimulationParameters() { decayRed = 0.990f }, IsSelected = true });
+            decayRedCombo.Items.Add(new ComboBoxItem() { Content = "Far predator scent radius (decay = 0.994)", Tag = new StartNewSimulationParameters() { decayRed = 0.994f } });
+            decayRedCombo.Items.Add(new ComboBoxItem() { Content = "Farther predator scent radius (decay = 0.997)", Tag = new StartNewSimulationParameters() { decayRed = 0.997f } });
+            decayRedCombo.Items.Add(new ComboBoxItem() { Content = "Farthest predator scent radius (decay = 0.999)", Tag = new StartNewSimulationParameters() { decayRed = 0.999f } });
+
+            ComboBox blueMaxVelocityCombo = new ComboBox() { Margin = new Thickness(0, 5, 0, 0) };
+            blueMaxVelocityCombo.Items.Add(new ComboBoxItem() { Content = "Prey very slow (0.1)", Tag = new StartNewSimulationParameters() { blueMaxVelocity = 0.1f } });
+            blueMaxVelocityCombo.Items.Add(new ComboBoxItem() { Content = "Prey slow (0.2)", Tag = new StartNewSimulationParameters() { blueMaxVelocity = 0.2f } });
+            blueMaxVelocityCombo.Items.Add(new ComboBoxItem() { Content = "Prey medium velocity (0.3)", Tag = new StartNewSimulationParameters() { blueMaxVelocity = 0.3f }, IsSelected = true });
+            blueMaxVelocityCombo.Items.Add(new ComboBoxItem() { Content = "Prey fast (0.5)", Tag = new StartNewSimulationParameters() { blueMaxVelocity = 0.5f } });
+            blueMaxVelocityCombo.Items.Add(new ComboBoxItem() { Content = "Prey very fast (0.7)", Tag = new StartNewSimulationParameters() { blueMaxVelocity = 0.7f } });
+            blueMaxVelocityCombo.Items.Add(new ComboBoxItem() { Content = "Prey fastest (1.0)", Tag = new StartNewSimulationParameters() { blueMaxVelocity = 1.0f } });
+
+            ComboBox redMaxVelocityCombo = new ComboBox() { Margin = new Thickness(0, 5, 0, 0) };
+            redMaxVelocityCombo.Items.Add(new ComboBoxItem() { Content = "Predator very slow (0.1)", Tag = new StartNewSimulationParameters() { redMaxVelocity = 0.1f } });
+            redMaxVelocityCombo.Items.Add(new ComboBoxItem() { Content = "Predator slow (0.2)", Tag = new StartNewSimulationParameters() { redMaxVelocity = 0.2f } });
+            redMaxVelocityCombo.Items.Add(new ComboBoxItem() { Content = "Predator medium velocity (0.3)", Tag = new StartNewSimulationParameters() { redMaxVelocity = 0.3f } });
+            redMaxVelocityCombo.Items.Add(new ComboBoxItem() { Content = "Predator fast (0.5)", Tag = new StartNewSimulationParameters() { redMaxVelocity = 0.5f }, IsSelected = true });
+            redMaxVelocityCombo.Items.Add(new ComboBoxItem() { Content = "Predator very fast (0.7)", Tag = new StartNewSimulationParameters() { redMaxVelocity = 0.7f } });
+            redMaxVelocityCombo.Items.Add(new ComboBoxItem() { Content = "Predator fastest (1.0)", Tag = new StartNewSimulationParameters() { redMaxVelocity = 1.0f } });
+
             // Buttons
             StackPanel buttonPanel = new StackPanel()
             {
@@ -95,6 +139,11 @@ namespace PredPreySim.Gui
             panel.Children.Add(sizeCombo);
             panel.Children.Add(countCombo);
             panel.Children.Add(proportionCombo);
+            panel.Children.Add(decayGreenCombo);
+            panel.Children.Add(decayBlueCombo);
+            panel.Children.Add(decayRedCombo);
+            panel.Children.Add(blueMaxVelocityCombo);
+            panel.Children.Add(redMaxVelocityCombo);
             panel.Children.Add(seedCombo);
             panel.Children.Add(buttonPanel);
 
@@ -107,6 +156,11 @@ namespace PredPreySim.Gui
                 var selectedCount = WpfUtil.GetTagAsObject<StartNewSimulationParameters>(countCombo.SelectedItem);
                 var selectedPoportion = WpfUtil.GetTagAsObject<StartNewSimulationParameters>(proportionCombo.SelectedItem);
                 var selectedSeed = WpfUtil.GetTagAsObject<StartNewSimulationParameters>(seedCombo.SelectedItem);
+                var selectedDecayGreen = WpfUtil.GetTagAsObject<StartNewSimulationParameters>(decayGreenCombo.SelectedItem);
+                var selectedDecayBlue = WpfUtil.GetTagAsObject<StartNewSimulationParameters>(decayBlueCombo.SelectedItem);
+                var selectedDecayRed = WpfUtil.GetTagAsObject<StartNewSimulationParameters>(decayRedCombo.SelectedItem);
+                var selectedBlueMaxVelocity = WpfUtil.GetTagAsObject<StartNewSimulationParameters>(blueMaxVelocityCombo.SelectedItem);
+                var selectedRedMaxVelocity = WpfUtil.GetTagAsObject<StartNewSimulationParameters>(redMaxVelocityCombo.SelectedItem);
                 return new StartNewSimulationParameters()
                 {
                     agentsCount = selectedCount.agentsCount,
@@ -115,7 +169,12 @@ namespace PredPreySim.Gui
                     plantsRatio = selectedPoportion.plantsRatio,
                     predatorsRatio = selectedPoportion.predatorsRatio,
                     fixedSeed = selectedSeed.fixedSeed,
-                    useExistingAgents = selectedSeed.useExistingAgents
+                    useExistingAgents = selectedSeed.useExistingAgents,
+                    decayGreen = selectedDecayGreen.decayGreen,
+                    decayBlue = selectedDecayBlue.decayBlue,
+                    decayRed = selectedDecayRed.decayRed,
+                    blueMaxVelocity = selectedBlueMaxVelocity.blueMaxVelocity,
+                    redMaxVelocity = selectedRedMaxVelocity.redMaxVelocity,
                 };
             }
             else
@@ -140,5 +199,15 @@ namespace PredPreySim.Gui
         public bool fixedSeed;
 
         public bool useExistingAgents;
+
+        public float decayGreen;
+
+        public float decayBlue;
+
+        public float decayRed;
+
+        public float blueMaxVelocity;
+
+        public float redMaxVelocity;
     }
 }

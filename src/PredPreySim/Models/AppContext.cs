@@ -76,5 +76,13 @@ namespace PredPreySim.Models
                 WpfUtil.DispatchRender(configWindow.Dispatcher, () => configWindow.DrawStats(simulation.stats));
             }
         }
+
+        public void NextGeneration()
+        {
+            renderer.DownloadAgents();
+            simulation.ChangeEpoch();
+            DrawStats();
+            renderer.UploadAgents();
+        }
     }
 }

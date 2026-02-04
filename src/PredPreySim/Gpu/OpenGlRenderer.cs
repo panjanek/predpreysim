@@ -210,12 +210,7 @@ namespace PredPreySim.Gpu
 
                 app.simulation.step++;
                 if (app.simulation.step % app.simulation.shaderConfig.generationDuration == 0 && app.configWindow.Evolve)
-                {
-                    DownloadAgents();
-                    app.simulation.ChangeEpoch();
-                    app.DrawStats();
-                    UploadAgents();
-                }
+                    app.NextGeneration();
             }
 
             glControl.Invalidate();

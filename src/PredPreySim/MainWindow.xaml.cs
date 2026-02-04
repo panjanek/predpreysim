@@ -63,6 +63,11 @@ namespace PredPreySim
                     ToggleFullscreen();
                     e.Handled = true;
                     break;
+                case Key.Escape:
+                    if (fullscreen!=null)
+                        ToggleFullscreen();
+                    e.Handled = true;
+                    break;
             }
         }
 

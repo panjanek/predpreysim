@@ -178,8 +178,8 @@ namespace PredPreySim.Gui
             commonScaleCheckbox.Click += (s, e) => statsGraph.Redraw();
             saveButton.Click += (s, e) =>
             {
-                var dialog = new CommonSaveFileDialog { Title = "Save simulation to gz or json file", DefaultExtension = "gz",  AlwaysAppendDefaultExtension = false
-                };
+                app.renderer.Stopped = true;
+                var dialog = new CommonSaveFileDialog { Title = "Save simulation to gz or json file", DefaultExtension = "gz",  AlwaysAppendDefaultExtension = false };
                 dialog.Filters.Add(new CommonFileDialogFilter("GZIP files", "*.gz"));
                 dialog.Filters.Add(new CommonFileDialogFilter("JSON files", "*.json"));
                 if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
@@ -194,6 +194,7 @@ namespace PredPreySim.Gui
                         PopupMessage.Show(app.mainWindow, $"Something went wrong: {ex.Message}");
                     }
                 }
+                app.renderer.Stopped = false;
             };
             loadButton.Click += (s, e) =>
             {

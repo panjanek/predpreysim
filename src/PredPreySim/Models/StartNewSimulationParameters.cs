@@ -2,40 +2,50 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace PredPreySim.Models
 {
     public class StartNewSimulationParameters
     {
-        public int width;
+        [JsonIgnore]
+        public int width = 1920;
 
-        public int height;
+        [JsonIgnore]
+        public int height = 1080;
 
-        public double plantsRatio;
+        public double plantsRatio = 0.6;
 
-        public double predatorsRatio;
+        public double predatorsRatio = 0.1;
 
-        public int agentsCount;
+        public int agentsCount = 5000;
 
-        public bool fixedSeed;
+        public float decayGreen = 0.99f;
 
-        public bool useExistingAgents;
+        public float decayBlue = 0.994f;
 
-        public bool loadAgentsFromFiles;
+        public float decayRed = 0.990f;
 
-        public float decayGreen;
+        public float blueMaxVelocity = 0.3f;
 
-        public float decayBlue;
+        public float redMaxVelocity = 0.5f;
 
-        public float decayRed;
+        public FitnessFunctionConfig fitnessConfig = new FitnessFunctionConfig();
 
-        public float blueMaxVelocity;
+        [JsonIgnore]
+        public bool fixedSeed = true;
 
-        public float redMaxVelocity;
+        [JsonIgnore]
+        public bool useExistingAgents = false;
 
+        [JsonIgnore]
+        public bool loadAgentsFromFiles = false;
+
+        [JsonIgnore]
         public List<string> fileNames = new List<string>();
 
+        [JsonIgnore]
         public List<Simulation> sources = new List<Simulation>();
     }
 }

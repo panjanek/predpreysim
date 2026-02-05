@@ -139,6 +139,11 @@ namespace PredPreySim
                         $"blue fitness: {blueFitness.ToString("0.0")} " +
                         $"red fitness: {redFitness.ToString("0.0")} ";
 
+                if (!string.IsNullOrWhiteSpace(app.configWindow.RecordDir))
+                {
+                    Title += $"[recording to {app.configWindow.RecordDir}] ";
+                }
+
                 app.configWindow.SetTitle(Title);
 
                 lastCheckFrameCount = app.renderer.FrameCounter;

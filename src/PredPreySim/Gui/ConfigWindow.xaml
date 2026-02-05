@@ -117,7 +117,39 @@
                     <ComboBoxItem Tag="2">Follow best red</ComboBoxItem>
                 </ComboBox>
                 <CheckBox Name="pointersCheckbox" Grid.Row="2" Grid.Column="1" IsChecked="True" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White">Show pointers</CheckBox>
-                
+
+
+                <ToggleButton Name="recordButton" Grid.Row="2" Grid.Column="4" ToolTip="Record frames as PNG files to given folder">
+                    <ToggleButton.Style>
+                        <Style TargetType="ToggleButton">
+                            <Setter Property="Content">
+                                <Setter.Value>
+                                    <!-- Default: red circle -->
+                                    <Ellipse Width="12"
+                             Height="12"
+                             Fill="Red"/>
+                                </Setter.Value>
+                            </Setter>
+
+                            <Style.Triggers>
+                                <!-- When recording -->
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <!-- Stop: black square -->
+                                            <Rectangle Width="12"
+                                       Height="12"
+                                       Fill="Black"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ToggleButton.Style>
+                </ToggleButton>
+
+
+
                 <!-- graph controls -->
                 <CheckBox Name="commonScaleCheckbox" Grid.Row="2" Grid.Column="5"  HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White">Common scale</CheckBox>
                 <ComboBox Name="graphHistoryCombo" Grid.Row="2" Grid.Column="6">
@@ -129,8 +161,8 @@
                     <ComboBoxItem Tag="2000">Show 2000</ComboBoxItem>
                 </ComboBox>
 
-
-                <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="10"> <!-- graph + series selector -->
+                <!-- graph + series selector -->
+                <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="10"> 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="200"/>

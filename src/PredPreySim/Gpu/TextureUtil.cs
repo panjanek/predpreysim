@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL;
+using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 
 namespace PredPreySim.Gpu
 {
@@ -102,6 +104,43 @@ namespace PredPreySim.Gpu
 
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             return fbo;
+        }
+
+        public static void SaveBufferToFile(byte[] pixels, int width, int height, string fileName)
+        {
+            for (int i = 0; i < pixels.Length; i += 4)
+            {
+                pixels[i + 3] = 255;   // force A = 255 for BGRA
+            }
+
+            using (Bitmap bmp = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
+            {
+                var data = bmp.LockBits(
+                    new Rectangle(0, 0, width, height),
+                    ImageLockMode.WriteOnly,
+                    System.Drawing.Imaging.PixelFormat.Format32bppArgb
+                );
+
+                System.Runtime.InteropServices.Marshal.Copy(pixels, 0, data.Scan0, pixels.Length);
+                bmp.UnlockBits(data);
+                bmp.Save(fileName, ImageFormat.Png);
+            }
+        }
+
+        public static void FlipVertical(byte[] buffer, int width, int height)
+        {
+            int stride = width * 4;
+            byte[] tempRow = new byte[stride];
+
+            for (int y = 0; y < height / 2; y++)
+            {
+                int top = y * stride;
+                int bottom = (height - 1 - y) * stride;
+
+                System.Buffer.BlockCopy(buffer, top, tempRow, 0, stride);
+                System.Buffer.BlockCopy(buffer, bottom, buffer, top, stride);
+                System.Buffer.BlockCopy(tempRow, 0, buffer, bottom, stride);
+            }
         }
     }
 }

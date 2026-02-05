@@ -42,6 +42,8 @@ namespace PredPreySim.Gui
 
         public bool ShowPointers { get; private set; } = true;
 
+        public string RecordDir { get; private set; }
+
         public int GraphHistory
         {
             get
@@ -283,6 +285,27 @@ namespace PredPreySim.Gui
             {
                 if (!updating)
                     app.simulation.crossingOverFrequency = WpfUtil.GetTagAsDouble(crossingoverFrequencyCombo.SelectedItem);
+            };
+
+            recordButton.Click += (s, e) =>
+            {
+
+                if (recordButton.IsChecked == true)
+                {
+                    app.renderer.Paused = true;
+                    var dialog = new CommonOpenFileDialog { IsFolderPicker = true, Title = "Select folder to save frames as PNG files" };
+                    if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+                        RecordDir = dialog.FileName;
+                    else
+                        recordButton.IsChecked = false;
+                    app.renderer.Paused = false;
+                }
+                else
+                {
+                    RecordDir = null;
+                }
+
+                e.Handled = true;
             };
         }
 

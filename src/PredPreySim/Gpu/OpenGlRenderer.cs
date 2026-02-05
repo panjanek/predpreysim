@@ -49,6 +49,10 @@ namespace PredPreySim.Gpu
 
         private Agent tracked;
 
+        public byte[] captureBuffer;
+
+        private int? recFrameNr;
+
         public OpenGlRenderer(Panel placeholder, AppContext app)
         {
             this.placeholder = placeholder;
@@ -192,7 +196,7 @@ namespace PredPreySim.Gpu
 
             glControl.SwapBuffers();
             frameCounter++;
-
+            Capture();
         }
 
         public void Step()
@@ -233,5 +237,44 @@ namespace PredPreySim.Gpu
         public Agent DownloadTrackedAgent() => solverProgram.DownloadTrackedAgent();
 
         public void ClearTextures() => solverProgram.ClearTextures();
+
+        private void Capture()
+        {
+            //combine PNGs into video:
+            //mp4: ffmpeg -f image2 -framerate 60 -i rec/frame_%05d.png -r 60 -vcodec libx264 -preset veryslow -crf 12 -profile:v high -pix_fmt yuv420p out.mp4 -y
+            //gif: ffmpeg -framerate 60 -ss2 -i rec/frame_%05d.png -vf "select='not(mod(n,2))',setpts=N/FRAME_RATE/TB" -t 5 -r 20 simple2.gif
+            //reduce bitrate:  ffmpeg -i in.mp4 -c:v libx264 -b:v 4236000 -pass 2 -c:a aac -b:a 128k out.mp4
+            //C:\tmp\graphs-anim\rec
+            var recDir = app.configWindow.RecordDir?.ToString();
+            if (!recFrameNr.HasValue && !string.IsNullOrWhiteSpace(recDir))
+            {
+                recFrameNr = 0;
+            }
+
+            if (recFrameNr.HasValue && string.IsNullOrWhiteSpace(recDir))
+                recFrameNr = null;
+
+            if (recFrameNr.HasValue && !string.IsNullOrWhiteSpace(recDir))
+            {
+                string recFilename = $"{recDir}\\frame_{recFrameNr.Value.ToString("00000")}.png";
+                glControl.MakeCurrent();
+                int width = glControl.Width;
+                int height = glControl.Height;
+                int bufferSize = width * height * 4;
+                if (captureBuffer == null || bufferSize != captureBuffer.Length)
+                    captureBuffer = new byte[bufferSize];
+                GL.ReadPixels(
+                    0, 0,
+                    width, height,
+                    OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
+                    PixelType.UnsignedByte,
+                    captureBuffer
+                );
+
+                TextureUtil.FlipVertical(captureBuffer, width, height);
+                TextureUtil.SaveBufferToFile(captureBuffer, width, height, recFilename);
+                recFrameNr = recFrameNr.Value + 1;
+            }
+        }
     }
 }

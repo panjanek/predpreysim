@@ -16,11 +16,19 @@ using Application = System.Windows.Application;
 
 namespace PredPreySim
 {
+    // sanity check: run with default config, expect:
+    // -------------------------------------------------------------------------------------
+    // |Generation     |  blue meals    |  red meals   |   blue fitness      | red fitness |
+    // -------------------------------------------------------------------------------------
+    // |    20         |    0.38        |    0.40      |       9600          |     8100    |
+    // |    30         |    0.57        |    0.43      |      16000          |     9000    |
+    // |    50         |    0.70        |    0.43      |      25000          |     9000    |
+    // |   100   
+    // -------------------------------------------------------------------------------------
+
     //TODO:
     // - rescale absolute sensors to -0.5,0.5 or -1,1 (???)
     // - longer tail
-    // - tune speeds
-    // - tune blurring (prey max?)
     public partial class MainWindow : Window
     {
         private bool uiPending;

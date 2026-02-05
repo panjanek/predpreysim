@@ -54,6 +54,8 @@ namespace PredPreySim.Models
 
         public List<int> topRedIds = new List<int>();
 
+        public StartNewSimulationParameters startedWith;
+
         [JsonIgnore]
         public INeuralNetwork nn;
 
@@ -91,7 +93,9 @@ namespace PredPreySim.Models
             decayRed = parameters.decayRed;
             shaderConfig.blueMaxVelocity = parameters.blueMaxVelocity;
             shaderConfig.redMaxVelocity = parameters.redMaxVelocity;
+            fitnessConfig = parameters.fitnessConfig;
 
+            startedWith = parameters;
             agents = new Agent[shaderConfig.agentsCount];
             nn = new NeuralNetwork(networkConfig);
             rnd = parameters.fixedSeed ? new Random(1) : new Random();

@@ -218,6 +218,7 @@ namespace PredPreySim.Models
         public void ChangeEpoch()
         {
             generation++;
+
             var ranking = agents.Select((a, i) => new RankedAgent() { index = i, agent = a, fitness = GetFitness(a) }).Where(a=>a.agent.type > 0).ToList();
 
             // select and breed blue

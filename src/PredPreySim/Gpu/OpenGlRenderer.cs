@@ -172,29 +172,34 @@ namespace PredPreySim.Gpu
             if (Stopped)
                 return;
 
-            Follow();
+            if (!app.configWindow.MaxSpeed || frameCounter % 50 == 0)
+            {
+                Follow();
 
-            //clear
-            GL.Viewport(0, 0, glControl.Width, glControl.Height);
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-            GL.ClearColor(0f, 0f, 0f, 1f);
-            GL.Clear(ClearBufferMask.ColorBufferBit);
+                //clear
+                GL.Viewport(0, 0, glControl.Width, glControl.Height);
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+                GL.ClearColor(0f, 0f, 0f, 1f);
+                GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            float halfW = glControl.Width / zoom * 0.5f;
-            float halfH = glControl.Height / zoom * 0.5f;
-            Vector2 min = center - new Vector2(halfW, halfH);
-            Vector2 max = center + new Vector2(halfW, halfH);
+                float halfW = glControl.Width / zoom * 0.5f;
+                float halfH = glControl.Height / zoom * 0.5f;
+                Vector2 min = center - new Vector2(halfW, halfH);
+                Vector2 max = center + new Vector2(halfW, halfH);
 
-            displayProgram.Draw(app.simulation, 
-                                GetProjectionMatrix(), 
-                                solverProgram.AgentsBuffer, 
-                                solverProgram.GreenTex, 
-                                solverProgram.BlueTex, 
-                                solverProgram.RedTex, 
-                                min, max, zoom,
-                                app.configWindow.ShowPointers);
+                displayProgram.Draw(app.simulation,
+                                    GetProjectionMatrix(),
+                                    solverProgram.AgentsBuffer,
+                                    solverProgram.GreenTex,
+                                    solverProgram.BlueTex,
+                                    solverProgram.RedTex,
+                                    min, max, zoom,
+                                    app.configWindow.ShowPointers);
 
-            glControl.SwapBuffers();
+                glControl.SwapBuffers();
+            }
+
+
             frameCounter++;
             Capture();
         }

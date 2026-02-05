@@ -47,7 +47,9 @@ namespace PredPreySim.Models
         public double mutationFrequency = 4.0;
 
         public double crossingOverFrequency = 0.2;
-        
+
+        public FitnessFunctionConfig fitnessConfig = new FitnessFunctionConfig();
+
         public List<int> topBlueIds = new List<int>();
 
         public List<int> topRedIds = new List<int>();
@@ -160,21 +162,21 @@ namespace PredPreySim.Models
         public double GetRawFitness(Agent agent)
         {
             return agent.type == 1  ? // prey
-                                        + agent.meals * 4 //was 2
-                                        + Math.Sqrt(agent.survivalDuration) * 0.2 //was: agent.survivalDuration * 0.003
-                                        - agent.deaths * 3 //was 5
-                                        - agent.energySpent * 0.003 //was 0.002, then 0.01
+                                        + agent.meals * fitnessConfig.blueMealAward //4
+                                        + Math.Sqrt(agent.survivalDuration) * fitnessConfig.blueSurvivalAward //0.2
+                                        - agent.deaths * fitnessConfig.blueDeathPenalty //3
+                                        - agent.energySpent * fitnessConfig.blueEnergySpentPenalty //0.003
                                     : // predator
-                                        + agent.meals * 3 //10?
-                                        + agent.nearPrey * 0.015 //was 0.005?
-                                        + 0.1 * shaderConfig.generationDuration * agent.meals / (agent.age + 1.0) //agent.meals * Math.Exp(-agent.age / shaderConfig.generationDuration)
-                                        - agent.energySpent * 0.005; // was 0.001, then 0.02
+                                        + agent.meals * fitnessConfig.redMealsAward //3
+                                        + agent.nearPrey * fitnessConfig.redNearPreyAward //0.015
+                                        + 0.1 * shaderConfig.generationDuration * agent.meals / (agent.age + 1.0) 
+                                        - agent.energySpent * fitnessConfig.redEnergySpentPenalty; //0.005
         }
 
         public double GetFitness(Agent agent)
         {
             var raw = GetRawFitness(agent);
-            return raw * Math.Exp(-agent.age / (2.0 * shaderConfig.generationDuration));
+            return raw * Math.Exp(-agent.age / (fitnessConfig.decayGenerationsCount * shaderConfig.generationDuration));   //2
         }
 
         private (List<int>, List<int>) Selection(List<RankedAgent> ranking, int type, double candidateRatio, double selectRatio, double bottomRatio, int diversitySoftening)

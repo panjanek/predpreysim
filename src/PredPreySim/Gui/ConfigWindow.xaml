@@ -117,6 +117,7 @@
                     <ComboBoxItem Tag="2">Follow best red</ComboBoxItem>
                 </ComboBox>
                 <CheckBox Name="pointersCheckbox" Grid.Row="2" Grid.Column="1" IsChecked="True" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White">Show pointers</CheckBox>
+                <CheckBox Name="maxSpeedCheckbox" Grid.Row="2" Grid.Column="3" IsChecked="False" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White">Run at max speed</CheckBox>
 
 
                 <ToggleButton Name="recordButton" Grid.Row="2" Grid.Column="4" ToolTip="Record frames as PNG files to given folder">

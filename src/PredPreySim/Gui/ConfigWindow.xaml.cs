@@ -44,6 +44,8 @@ namespace PredPreySim.Gui
 
         public string RecordDir { get; private set; }
 
+        public bool MaxSpeed { get; private set; }
+
         public int GraphHistory
         {
             get
@@ -259,6 +261,7 @@ namespace PredPreySim.Gui
             KeyDown += (s, e) => app.mainWindow.MainWindow_KeyDown(s, e);
             navigationCombo.SelectionChanged += (s, e) => NavigationMode = WpfUtil.GetTagAsInt(navigationCombo.SelectedItem);
             pointersCheckbox.Click += (s, e) => ShowPointers = pointersCheckbox.IsChecked == true;
+            maxSpeedCheckbox.Click += (s, e) => MaxSpeed = maxSpeedCheckbox.IsChecked == true;
 
             // evolution rate combos
             evolveCombo.SelectionChanged += (s, e) =>

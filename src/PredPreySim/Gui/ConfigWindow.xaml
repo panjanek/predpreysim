@@ -61,6 +61,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -117,9 +118,12 @@
                     <ComboBoxItem Tag="2">Follow best red</ComboBoxItem>
                 </ComboBox>
                 <CheckBox Name="pointersCheckbox" Grid.Row="2" Grid.Column="1" IsChecked="True" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White">Show pointers</CheckBox>
+                <CheckBox Name="memoryCheckbox" Grid.Row="2" Grid.Column="2" IsChecked="False" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White">Show memory</CheckBox>
                 <CheckBox Name="maxSpeedCheckbox" Grid.Row="2" Grid.Column="3" IsChecked="False" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White">Run at max speed</CheckBox>
 
-
+                <ProgressBar Name="memory0Bar" Grid.Row="0" Grid.Column="7" Minimum="-1" Maximum="1" Value="-1" Height="8" Width="120" IsIndeterminate="False" Background="Black"/>
+                <ProgressBar Name="memory1Bar" Grid.Row="2" Grid.Column="7" Minimum="-1" Maximum="1" Value="-1" Height="8" Width="120" IsIndeterminate="False" Background="Black"/>
+                
                 <ToggleButton Name="recordButton" Grid.Row="2" Grid.Column="4" ToolTip="Record frames as PNG files to given folder">
                     <ToggleButton.Style>
                         <Style TargetType="ToggleButton">

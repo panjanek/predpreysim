@@ -46,6 +46,8 @@ namespace PredPreySim.Gui
 
         public bool MaxSpeed { get; private set; }
 
+        public bool ShowMemory { get; private set; }
+
         public int GraphHistory
         {
             get
@@ -262,6 +264,7 @@ namespace PredPreySim.Gui
             navigationCombo.SelectionChanged += (s, e) => NavigationMode = WpfUtil.GetTagAsInt(navigationCombo.SelectedItem);
             pointersCheckbox.Click += (s, e) => ShowPointers = pointersCheckbox.IsChecked == true;
             maxSpeedCheckbox.Click += (s, e) => MaxSpeed = maxSpeedCheckbox.IsChecked == true;
+            memoryCheckbox.Click += (s, e) => ShowMemory = memoryCheckbox.IsChecked == true;
 
             // evolution rate combos
             evolveCombo.SelectionChanged += (s, e) =>
@@ -326,6 +329,18 @@ namespace PredPreySim.Gui
         {
             Title = title;
             titleText.Text = title;
+        }
+
+        public void SetMemoryBars(Agent agent)
+        {
+            if (ShowMemory)
+            {
+                var brush = agent.type == 1 ? Brushes.Blue : Brushes.Red;
+                memory0Bar.Foreground = brush;
+                memory1Bar.Foreground = brush;
+                memory0Bar.Value = agent.memory0;
+                memory1Bar.Value = agent.memory1;
+            }
         }
 
         private void ConfigWindow_Loaded(object sender, RoutedEventArgs e)

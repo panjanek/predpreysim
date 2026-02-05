@@ -197,6 +197,9 @@ namespace PredPreySim.Gpu
                                     app.configWindow.ShowPointers);
 
                 glControl.SwapBuffers();
+
+                if (app.configWindow.ShowMemory && frameCounter % 5 == 0)
+                    app.configWindow.SetMemoryBars(tracked);
             }
 
 

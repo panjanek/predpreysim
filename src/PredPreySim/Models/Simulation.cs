@@ -130,6 +130,7 @@ namespace PredPreySim.Models
             for(int i=0; i<agents.Length; i++)
                 if (agents[i].type > 0)
                 {
+                    agents[i].flag = 1;
                     var agentNetwork = agents[i].type == 1 ? blue[rnd.Next(blue.Count)] : red[rnd.Next(red.Count)];
                     Array.Copy(agentNetwork, 0, network, agents[i].nnOffset, nn.Size);
                 }
@@ -143,6 +144,7 @@ namespace PredPreySim.Models
                 var r = rnd.NextDouble();
 
                 agents[i] = new Agent();
+                agents[i].flag = 1;
                 agents[i].type = r < plants ? 0 : (r < (1 - predators) ? 1 : 2);
                 agents[i].energy = shaderConfig.initialEnergy;
                 agents[i].angle = (float)(2 * Math.PI * rnd.NextDouble());
@@ -298,7 +300,8 @@ namespace PredPreySim.Models
                 agents[childIdx].memory0 = 0;
                 agents[childIdx].memory1 = 0;
                 agents[childIdx].nearPrey = 0;
-                agents[childIdx].SetPosition(agents[parent1Idx].position + new Vector2((float)rnd.NextDouble() * 10 - 5, (float)rnd.NextDouble() * 10 - 5));
+                //agents[childIdx].SetPosition(agents[parent1Idx].position + new Vector2((float)rnd.NextDouble() * 10 - 5, (float)rnd.NextDouble() * 10 - 5));
+                agents[childIdx].SetPosition(new Vector2((float)(shaderConfig.width * rnd.NextDouble()), (float)(shaderConfig.height * rnd.NextDouble())));
                 agents[childIdx].angle = (float)(2 * Math.PI * rnd.NextDouble());
 
                 var decision1 = rnd.NextDouble();

@@ -9,6 +9,8 @@ namespace PredPreySim.Models
 {
     public class StartNewSimulationParameters
     {
+        public StartNewSimulationParameters() { }
+
         [JsonIgnore]
         public int width = 1920;
 

@@ -132,7 +132,7 @@ namespace PredPreySim.Gui
             {
                 var selectedSize = WpfUtil.GetTagAsObject<StartNewSimulationParameters>(sizeCombo.SelectedItem);
                 var selectedSeed = WpfUtil.GetTagAsObject<StartNewSimulationParameters>(seedCombo.SelectedItem);
-                var parameters = JsonSerializer.Deserialize<StartNewSimulationParameters>(jsonBox.Text);
+                var parameters = JsonSerializer.Deserialize<StartNewSimulationParameters>(jsonBox.Text, options);
                 parameters.width = selectedSize.width;
                 parameters.height = selectedSize.height;
                 parameters.fixedSeed = selectedSeed.fixedSeed;

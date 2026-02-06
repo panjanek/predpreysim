@@ -1,4 +1,4 @@
------ increased energy penalty and redMealsAward, run ad 3840, to try: increase blueDeathPenalty to 10
+----- increased energy penalty and redMealsAward, run ad 3840, to try: increase blueDeathPenalty to 10, e0102-v0305-sparse-gen173.gz
 {
   "plantsRatio": 0.6,
   "predatorsRatio": 0.1,

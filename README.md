@@ -50,7 +50,10 @@ Mechanics implemented in GPU shaders. Evolution done on CPU side.
 
 # Visualisations
 
-| <p align="center"><br/></p> | <p align="center"><img src="https://github.com/panjanek/predpreysim/blob/3054890fd0b513ed57aadf631a57c93fc96a3d2c/shots/chase.gif" /><br/>after 50 generations: chase</p> | <p align="center"><br/></p> |
-|---|---|---|
+<p align="center">start: random movements<br/><img src="https://github.com/panjanek/predpreysim/blob/e8cf0fa2b7318372035ef2c74e6283d70a37bbf1/shots/random.gif" /></p>
+<p align="center">after 50 generations: prey learns to eat plants<br/><img src="https://github.com/panjanek/predpreysim/blob/e8cf0fa2b7318372035ef2c74e6283d70a37bbf1/shots/feed.gif" /></p>
+<p align="center">after 100 generations: predators learn to chase<br/><img src="https://github.com/panjanek/predpreysim/blob/3054890fd0b513ed57aadf631a57c93fc96a3d2c/shots/chase.gif" /></p>
+<p align="center">after 150 generations: predators save energy and enter pursuit mode only if there is something to catch<br/><img src="https://github.com/panjanek/predpreysim/blob/e8cf0fa2b7318372035ef2c74e6283d70a37bbf1/shots/chase2.gif" /></p>
 
-<p align="center"><img src="https://github.com/panjanek/predpreysim/blob/3054890fd0b513ed57aadf631a57c93fc96a3d2c/shots/screen.png" /></p>
+
+<p align="center">GUI shows pan-and-zoom simulation space and graph multiple metrics<br/><img src="https://github.com/panjanek/predpreysim/blob/3054890fd0b513ed57aadf631a57c93fc96a3d2c/shots/screen.png" /></p>

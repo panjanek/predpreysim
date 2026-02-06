@@ -78,6 +78,7 @@
                     <ComboBoxItem Tag="0">Stop evolution</ComboBoxItem>
                     <ComboBoxItem Tag="5000" IsSelected="True">Evolve each 5k steps</ComboBoxItem>
                     <ComboBoxItem Tag="10000">Evolve each 10k steps</ComboBoxItem>
+                    <ComboBoxItem Tag="15000">Evolve each 15k steps</ComboBoxItem>
                     <ComboBoxItem Tag="20000">Evolve each 20k steps</ComboBoxItem>
                     <ComboBoxItem Tag="30000">Evolve each 30k steps</ComboBoxItem>
                     <ComboBoxItem Tag="50000">Evolve each 50k steps</ComboBoxItem>

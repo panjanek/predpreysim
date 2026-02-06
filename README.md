@@ -50,4 +50,7 @@ Mechanics implemented in GPU shaders. Evolution done on CPU side.
 
 # Visualisations
 
+| <p align="center"><br/></p> | <p align="center"><img src="https://github.com/panjanek/predpreysim/blob/3054890fd0b513ed57aadf631a57c93fc96a3d2c/shots/chase.gif" /><br/>after 50 generations: chase</p> | <p align="center"><br/></p> |
+|---|---|---|
 
+<p align="center"><img src="https://github.com/panjanek/predpreysim/blob/3054890fd0b513ed57aadf631a57c93fc96a3d2c/shots/screen.png" /></p>

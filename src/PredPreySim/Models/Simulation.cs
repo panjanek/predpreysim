@@ -332,8 +332,8 @@ namespace PredPreySim.Models
                     nn.CrossOver(network, agents[parent1Idx].nnOffset, agents[parent2Idx].nnOffset, agents[childIdx].nnOffset, rnd);
                     if (rnd.NextDouble() < 0.6) // 60% of the time apply weak mutation to the child
                     {
-                        double probabilityAmplification = 0.3 * (1.0 + 4 * rnd.NextDouble());
-                        double magnitudeAmplification = 0.3 * (1.0 + 4 * rnd.NextDouble());
+                        double probabilityAmplification = 0.3 * (0.5 + mutationFrequency * rnd.NextDouble());
+                        double magnitudeAmplification = 0.3 * (0.5 + mutationMagnitude * rnd.NextDouble());
                         nn.Mutate(network, agents[childIdx].nnOffset, rnd, 0.01 * probabilityAmplification, 0.05 * magnitudeAmplification);
                     }
                 }

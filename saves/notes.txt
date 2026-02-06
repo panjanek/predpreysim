@@ -1,0 +1,22 @@
+----- increased energy penalty and redMealsAward, run ad 3840, to try: increase blueDeathPenalty to 10
+{
+  "plantsRatio": 0.6,
+  "predatorsRatio": 0.1,
+  "agentsCount": 8000,
+  "decayGreen": 0.99,
+  "decayBlue": 0.995,
+  "decayRed": 0.993,
+  "blueMaxVelocity": 0.3,
+  "redMaxVelocity": 0.5,
+  "fitnessConfig": {
+    "blueMealAward": 4,
+    "blueSurvivalAward": 0.2,
+    "blueDeathPenalty": 3,
+    "blueEnergySpentPenalty": 0.01,
+    "redMealsAward": 5,                           
+    "redNearPreyAward": 0.015,
+    "redEnergySpentPenalty": 0.02,
+    "decayGenerationsCount": 2
+  }
+}
+

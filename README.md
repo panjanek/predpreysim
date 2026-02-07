@@ -3,6 +3,8 @@ Predator-Prey model with agents controlled by small (196 weights) neural network
 Networks evolve by mutation and crossing over of the fittest.
 Mechanics implemented in GPU shaders. Evolution done on CPU side.
 
+Video: https://www.youtube.com/watch?v=WRxYPB4dECw
+
 ## Mechanics
  * Plants, prey and predators emit a scent
  * Plants are stationary, regrow at different, random, place after eaten
